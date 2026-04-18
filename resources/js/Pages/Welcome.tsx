@@ -134,8 +134,8 @@ export default function Welcome({ auth }: any) {
                                 <Search className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-white/60">Crawler Active</p>
-                                <p className="text-white text-sm">300+ Jobs/Day</p>
+                                <p className="text-xs font-bold text-black">Crawler Active</p>
+                                <p className="text-black text-sm">300+ Jobs/Day</p>
                             </div>
                         </div>
                     </FloatingCard>
@@ -146,8 +146,8 @@ export default function Welcome({ auth }: any) {
                                 <Target className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-white/60">Market Fit</p>
-                                <p className="text-white text-sm">87% Success Rate</p>
+                                <p className="text-xs font-bold text-black">Market Fit</p>
+                                <p className="text-black text-sm">87% Success Rate</p>
                             </div>
                         </div>
                     </FloatingCard>
@@ -158,8 +158,8 @@ export default function Welcome({ auth }: any) {
                                 <Rocket className="w-5 h-5" />
                             </div>
                             <div className="text-left">
-                                <p className="text-xs font-bold text-white/60">Level Up</p>
-                                <p className="text-white text-sm">Adaptive Path</p>
+                                <p className="text-xs font-bold text-black">Level Up</p>
+                                <p className="text-black text-sm">Adaptive Path</p>
                             </div>
                         </div>
                     </FloatingCard>
@@ -234,7 +234,7 @@ export default function Welcome({ auth }: any) {
 
                     <div className="relative z-10">
                         <h2 className="text-3xl md:text-5xl font-black text-white mb-8">Siap Bersaing di Industri IT 2026?</h2>
-                        <p className="text-navy-200 text-lg md:text-xl mb-12 max-w-2xl mx-auto">
+                        <p className="text-white text-lg md:text-xl mb-12 max-w-2xl mx-auto">
                             Tutup gap sekarang, apply dengan percaya diri besok. Ribuan data lowongan sedang menunggumu.
                         </p>
                         <Link href={route('register')} className="inline-flex items-center gap-3 px-10 py-5 bg-teal-500 text-white rounded-2xl font-black text-xl hover:bg-teal-400 hover:scale-105 transition-all shadow-xl shadow-teal-500/30">

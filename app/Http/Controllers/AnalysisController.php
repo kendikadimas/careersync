@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Data\JobMarketData;
 use App\Models\UserProfile;
+use App\Services\CvParserService;
 use App\Services\GeminiService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class AnalysisController extends Controller
 {
-    public function __construct(protected GeminiService $gemini) {}
+    public function __construct(
+        protected GeminiService $gemini,
+        protected CvParserService $cvParser
+    ) {}
 
     public function index()
     {
@@ -32,28 +36,48 @@ class AnalysisController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'cv_text' => 'required|string',
+            'cv_text' => 'nullable|string',
+            'cv_file' => 'nullable|file|mimes:pdf,doc,docx,txt|max:5120', // max 5MB
             'career_target' => 'required|string'
         ]);
 
-        $analysis = $this->gemini->parseCV($request->cv_text, $request->career_target);
+        try {
+            $cvText = '';
 
-        if (empty($analysis)) {
-            return back()->with('error', 'Gagal menganalisis CV. Coba lagi nanti.');
+            // Priority: file upload > text input
+            if ($request->hasFile('cv_file')) {
+                $cvText = $this->cvParser->extractText($request->file('cv_file'));
+            } elseif ($request->filled('cv_text')) {
+                $cvText = $request->cv_text;
+            } else {
+                return back()->with('error', 'Silakan upload file CV atau masukkan teks CV.');
+            }
+
+            if (strlen(trim($cvText)) < 50) {
+                return back()->with('error', 'Teks CV terlalu pendek. Minimal 50 karakter agar AI bisa menganalisis dengan akurat.');
+            }
+
+            $analysis = $this->gemini->parseCV($cvText, $request->career_target);
+
+            if (empty($analysis)) {
+                return back()->with('error', 'Gagal menganalisis CV. AI tidak memberikan data yang valid.');
+            }
+
+            $profile = UserProfile::updateOrCreate(
+                ['user_id' => auth()->id()],
+                [
+                    'career_target' => $request->career_target,
+                    'skills' => $analysis['skills'] ?? [],
+                    'experiences' => $analysis['experiences'] ?? [],
+                    'education' => $analysis['education'] ?? [],
+                    'cv_raw_text' => $cvText,
+                    'onboarding_completed' => true
+                ]
+            );
+
+            return redirect()->route('analysis')->with('success', 'CV berhasil dianalisis!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error: ' . $e->getMessage());
         }
-
-        $profile = UserProfile::updateOrCreate(
-            ['user_id' => auth()->id()],
-            [
-                'career_target' => $request->career_target,
-                'skills' => $analysis['skills'] ?? [],
-                'experiences' => $analysis['experiences'] ?? [],
-                'education' => $analysis['education'] ?? [],
-                'cv_raw_text' => $request->cv_text,
-                'onboarding_completed' => true
-            ]
-        );
-
-        return redirect()->route('analysis')->with('success', 'CV berhasil dianalisis!');
     }
 }

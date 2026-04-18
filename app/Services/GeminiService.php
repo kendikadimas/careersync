@@ -2,15 +2,18 @@
 
 namespace App\Services;
 
-use Gemini\Laravel\Facades\Gemini;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class GeminiService
 {
-    private string $model = 'gemini-1.5-flash'; // Note: User requested 2.5 flash but usually it's 1.5 flash for now, I'll use 1.5 flash unless 2.5 is really out
+    private string $model = 'gemini-2.5-flash';
 
     public function parseCV(string $cvText, string $careerTarget): array
     {
+        $apiKey = config('gemini.api_key');
+        $url = "https://generativelanguage.googleapis.com/v1/models/{$this->model}:generateContent?key={$apiKey}";
+
         $prompt = <<<PROMPT
 Kamu adalah career analyst ahli teknologi Indonesia.
 Analisis CV berikut dan ekstrak informasi dalam format JSON.
@@ -20,7 +23,7 @@ CV:
 
 Target Karir: {$careerTarget}
 
-Kembalikan HANYA JSON valid tanpa markdown backtick, tanpa penjelasan apapun:
+Kembalikan HANYA JSON valid tanpa markdown backtick, tanpa penjelasan apapun. Struktur:
 {
   "name": "string",
   "education": {
@@ -51,21 +54,53 @@ Kembalikan HANYA JSON valid tanpa markdown backtick, tanpa penjelasan apapun:
 PROMPT;
 
         try {
-            $result = Gemini::geminiFlash()->generateContent($prompt);
-            $text = $result->text();
+            $response = Http::withoutVerifying()->timeout(30)->post($url, [
+                'contents' => [
+                    [
+                        'parts' => [
+                            ['text' => $prompt]
+                        ]
+                    ]
+                ]
+            ]);
 
-            // Strip markdown backticks jika ada
+            if ($response->failed()) {
+                $errorMsg = 'Gemini API Error: ' . ($response->json('error.message') ?? $response->body());
+                Log::error($errorMsg);
+                throw new \Exception($errorMsg);
+            }
+
+            $data = $response->json();
+            $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+            if (!$text) {
+                throw new \Exception('Gemini did not return any content. Response: ' . json_encode($data));
+            }
+
+            // Clean JSON
+            $text = trim($text);
             $text = preg_replace('/```json\n?|\n?```/', '', $text);
+            $text = trim($text);
 
-            return json_decode(trim($text), true) ?? [];
+            $result = json_decode($text, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('Gemini JSON Decode Error: ' . json_last_error_msg() . ' | Raw: ' . $text);
+                throw new \Exception('Failed to parse AI response: ' . json_last_error_msg());
+            }
+
+            return $result ?? [];
         } catch (\Exception $e) {
-            Log::error('Gemini parseCV Error: ' . $e->getMessage());
-            return [];
+            Log::error('Gemini parseCV Debug: ' . $e->getMessage());
+            throw $e;
         }
     }
 
     public function generateRoadmap(array $data): array
     {
+        $apiKey = config('gemini.api_key');
+        $url = "https://generativelanguage.googleapis.com/v1/models/{$this->model}:generateContent?key={$apiKey}";
+
         $existingSkills = implode(', ', array_map(fn($s) => $s['name'], $data['existing_skills'] ?? []));
         $skillGaps = implode(', ', array_map(fn($s) => $s['skill'], $data['skill_gaps'] ?? []));
         $marketSkills = implode(', ', array_map(fn($s) => $s['skill'], $data['market_skills'] ?? []));
@@ -82,13 +117,7 @@ Data user:
 Data pasar kerja Indonesia saat ini:
 - Top skills yang paling dicari: {$marketSkills}
 
-Buat learning path yang terstruktur dengan aturan:
-1. Maksimal 5 milestones, minimal 3
-2. Prioritaskan skill dengan demand tertinggi di pasar
-3. Timeline realistis untuk Indonesia
-4. Setiap milestone punya 1 capstone project konkret yang bisa masuk portfolio
-
-Kembalikan HANYA JSON valid tanpa markdown backtick:
+Buat learning path yang terstruktur. Kembalikan HANYA JSON valid:
 {
   "total_duration_weeks": number,
   "milestones": [
@@ -98,19 +127,14 @@ Kembalikan HANYA JSON valid tanpa markdown backtick:
       "emoji": "1 emoji representatif",
       "duration_weeks": number,
       "skills": ["string"],
-      "why_important": "string 1 kalimat kenapa skill ini penting di pasar",
+      "why_important": "string 1 kalimat",
       "capstone_project": {
-        "title": "string nama project",
-        "description": "string 2 kalimat deskripsi project",
+        "title": "string",
+        "description": "string",
         "tech_used": ["string"]
       },
       "resources": [
-        {
-          "title": "string nama resource",
-          "url": "https://url-nyata.com",
-          "type": "youtube|docs|course|article",
-          "is_free": true
-        }
+        { "title": "string", "url": "https://url.com", "type": "youtube|docs", "is_free": true }
       ],
       "status": "locked"
     }
@@ -119,14 +143,29 @@ Kembalikan HANYA JSON valid tanpa markdown backtick:
 PROMPT;
 
         try {
-            $result = Gemini::geminiFlash()->generateContent($prompt);
-            $text = $result->text();
-            $text = preg_replace('/```json\n?|\n?```/', '', $text);
+            $response = Http::withoutVerifying()->timeout(30)->post($url, [
+                'contents' => [
+                    [
+                        'parts' => [
+                            ['text' => $prompt]
+                        ]
+                    ]
+                ]
+            ]);
 
+            if ($response->failed()) {
+                Log::error('Gemini API Roadmap Failed: ' . $response->body());
+                throw new \Exception('Roadmap API Failed: ' . $response->status());
+            }
+
+            $respData = $response->json();
+            $text = $respData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $text = preg_replace('/```json\n?|\n?```/', '', $text);
+            
             return json_decode(trim($text), true) ?? [];
         } catch (\Exception $e) {
             Log::error('Gemini generateRoadmap Error: ' . $e->getMessage());
-            return [];
+            throw $e;
         }
     }
 

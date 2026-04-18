@@ -7,8 +7,6 @@
         <meta name="description" content="Career-Sync Academy: Platform EdTech adaptive yang menyelaraskan skill kamu dengan data pasar kerja IT Indonesia secara real-time.">
         <meta name="theme-color" content="#0f172a">
 
-        <title inertia>{{ config('app.name', 'Career-Sync Academy') }}</title>
-
         <!-- Fonts: Inter & Outfit for premium look -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +16,9 @@
         @routes
         @viteReactRefresh
         @vite(['resources/js/app.tsx'])
-        @inertiaHead
+        <x-inertia::head>
+            <title>{{ config('app.name', 'Career-Sync Academy') }}</title>
+        </x-inertia::head>
         
         <style>
             body { font-family: 'Inter', sans-serif; }
@@ -26,6 +26,6 @@
         </style>
     </head>
     <body class="font-sans antialiased text-navy-900">
-        @inertia
+        <x-inertia::app />
     </body>
 </html>

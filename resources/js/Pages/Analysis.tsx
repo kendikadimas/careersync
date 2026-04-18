@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, router, usePage } from '@inertiajs/react';
 import { 
@@ -14,24 +14,92 @@ import {
     AlertTriangle, 
     CheckCircle2, 
     DollarSign,
-    Briefcase
+    Briefcase,
+    FileText,
+    X as XIcon,
+    Type
 } from 'lucide-react';
 
 export default function Analysis({ profile, marketSkills, trendingSkills, marketStats }: any) {
     const [loading, setLoading] = useState(false);
-    const [cvText, setCvText] = useState('');
+    const [cvText, setCvText] = useState(profile?.cv_raw_text || '');
     const [careerTarget, setCareerTarget] = useState(profile?.career_target || 'Frontend Engineer');
+    const [showForm, setShowForm] = useState(!profile?.cv_raw_text);
+    const [inputMode, setInputMode] = useState<'upload' | 'text'>('upload');
+    const [cvFile, setCvFile] = useState<File | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleAnalysis = (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        router.post(route('analysis.store'), {
-            cv_text: cvText,
-            career_target: careerTarget
-        }, {
-            onFinish: () => setLoading(false)
+
+        const formData = new FormData();
+        formData.append('career_target', careerTarget);
+
+        if (inputMode === 'upload' && cvFile) {
+            formData.append('cv_file', cvFile);
+        } else if (inputMode === 'text' && cvText) {
+            formData.append('cv_text', cvText);
+        } else {
+            setLoading(false);
+            return;
+        }
+
+        router.post(route('analysis.store'), formData, {
+            forceFormData: true,
+            onFinish: () => {
+                setLoading(false);
+                setShowForm(false);
+            }
         });
     };
+
+    const handleDrop = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const file = e.dataTransfer.files[0];
+        if (file && isValidFile(file)) {
+            setCvFile(file);
+        }
+    }, []);
+
+    const handleDragOver = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    }, []);
+
+    const handleDragLeave = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+    }, []);
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file && isValidFile(file)) {
+            setCvFile(file);
+        }
+    };
+
+    const isValidFile = (file: File) => {
+        const validTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'text/plain'
+        ];
+        const validExtensions = ['.pdf', '.doc', '.docx', '.txt'];
+        const ext = '.' + file.name.split('.').pop()?.toLowerCase();
+        return validTypes.includes(file.type) || validExtensions.includes(ext);
+    };
+
+    const formatFileSize = (bytes: number) => {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    };
+
+    const isSubmitDisabled = loading || (inputMode === 'upload' && !cvFile) || (inputMode === 'text' && !cvText.trim());
 
     const getUserScore = (skillName: string, userSkills: any[]) => {
         const found = userSkills.find(s => 
@@ -110,14 +178,14 @@ export default function Analysis({ profile, marketSkills, trendingSkills, market
 
                 {/* Right: Analysis Result or Form */}
                 <div className="lg:w-2/3">
-                    {!profile?.cv_raw_text ? (
+                    {showForm ? (
                         <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
                             <div className="text-center mb-10">
                                 <div className="w-20 h-20 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-6 text-teal-600">
                                     <Sparkles className="w-10 h-10" />
                                 </div>
-                                <h2 className="text-3xl font-black text-navy-900 mb-3">Mulai Analisis Skill AI</h2>
-                                <p className="text-slate-500">Paste isi CV kamu atau deskripsikan pengalamanmu untuk dipetakan dengan radar industri.</p>
+                                <h2 className="text-3xl font-black text-navy-900 mb-3">Analisis Skill AI</h2>
+                                <p className="text-slate-500">Upload file CV (PDF/DOCX) atau paste teks untuk dipetakan dengan radar industri.</p>
                             </div>
 
                             <form onSubmit={handleAnalysis}>
@@ -137,25 +205,116 @@ export default function Analysis({ profile, marketSkills, trendingSkills, market
                                     </select>
                                 </div>
 
-                                <div className="mb-8">
-                                    <label className="block text-sm font-bold text-navy-900 mb-3">Isi CV / Deskripsi Skill</label>
-                                    <textarea 
-                                        required
-                                        value={cvText}
-                                        onChange={(e) => setCvText(e.target.value)}
-                                        placeholder="Saya punya pengalaman 1 tahun sebagai frontend intern menggunakan React and Tailwind..."
-                                        className="w-full h-80 p-6 bg-slate-50 border-none rounded-3xl focus:ring-2 focus:ring-teal-500 font-medium leading-relaxed"
-                                    ></textarea>
+                                {/* Tab Switcher */}
+                                <div className="flex bg-slate-100 rounded-2xl p-1.5 mb-6">
+                                    <button
+                                        type="button"
+                                        onClick={() => setInputMode('upload')}
+                                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${
+                                            inputMode === 'upload' 
+                                            ? 'bg-white text-navy-900 shadow-sm' 
+                                            : 'text-slate-400 hover:text-slate-600'
+                                        }`}
+                                    >
+                                        <Upload className="w-4 h-4" />
+                                        Upload File
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setInputMode('text')}
+                                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${
+                                            inputMode === 'text' 
+                                            ? 'bg-white text-navy-900 shadow-sm' 
+                                            : 'text-slate-400 hover:text-slate-600'
+                                        }`}
+                                    >
+                                        <Type className="w-4 h-4" />
+                                        Tulis Manual
+                                    </button>
                                 </div>
 
+                                {/* Upload Mode */}
+                                {inputMode === 'upload' && (
+                                    <div className="mb-8">
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept=".pdf,.doc,.docx,.txt"
+                                            onChange={handleFileSelect}
+                                            className="hidden"
+                                        />
+
+                                        {!cvFile ? (
+                                            <div
+                                                onDrop={handleDrop}
+                                                onDragOver={handleDragOver}
+                                                onDragLeave={handleDragLeave}
+                                                onClick={() => fileInputRef.current?.click()}
+                                                className={`relative cursor-pointer border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 ${
+                                                    isDragging
+                                                    ? 'border-teal-500 bg-teal-50 scale-[1.02]'
+                                                    : 'border-slate-200 bg-slate-50 hover:border-teal-400 hover:bg-teal-50/50'
+                                                }`}
+                                            >
+                                                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-all ${
+                                                    isDragging ? 'bg-teal-500 text-white' : 'bg-slate-200 text-slate-400'
+                                                }`}>
+                                                    <Upload className="w-8 h-8" />
+                                                </div>
+                                                <p className="font-bold text-navy-900 mb-2">
+                                                    {isDragging ? 'Lepaskan file di sini...' : 'Drag & drop file CV'}
+                                                </p>
+                                                <p className="text-sm text-slate-400 mb-4">atau klik untuk browse</p>
+                                                <div className="flex items-center justify-center gap-3">
+                                                    {['PDF', 'DOCX', 'DOC', 'TXT'].map(ext => (
+                                                        <span key={ext} className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-500">{ext}</span>
+                                                    ))}
+                                                </div>
+                                                <p className="text-xs text-slate-300 mt-3">Maks. 5MB</p>
+                                            </div>
+                                        ) : (
+                                            <div className="bg-teal-50 border-2 border-teal-200 rounded-3xl p-6 flex items-center justify-between">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-14 h-14 bg-teal-500 rounded-2xl flex items-center justify-center text-white">
+                                                        <FileText className="w-7 h-7" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-navy-900 text-sm">{cvFile.name}</p>
+                                                        <p className="text-xs text-teal-600 font-medium">{formatFileSize(cvFile.size)} • Siap dianalisis</p>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => { setCvFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+                                                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                                >
+                                                    <XIcon className="w-5 h-5" />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Text Mode */}
+                                {inputMode === 'text' && (
+                                    <div className="mb-8">
+                                        <textarea 
+                                            value={cvText}
+                                            onChange={(e) => setCvText(e.target.value)}
+                                            placeholder="Saya punya pengalaman 1 tahun sebagai frontend intern menggunakan React and Tailwind. Pernah magang di startup fintech..."
+                                            className="w-full h-72 p-6 bg-slate-50 border-none rounded-3xl focus:ring-2 focus:ring-teal-500 font-medium leading-relaxed"
+                                        ></textarea>
+                                    </div>
+                                )}
+
                                 <button 
-                                    disabled={loading}
-                                    className="w-full p-5 bg-navy-900 text-white rounded-2xl font-black text-lg shadow-xl shadow-navy-900/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
+                                    disabled={isSubmitDisabled}
+                                    className="w-full p-5 bg-navy-900 text-white rounded-2xl font-black text-lg shadow-xl shadow-navy-900/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                                 >
                                     {loading ? (
                                         <>
                                             <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                                            Menganalisis dengan AI...
+                                            {inputMode === 'upload' ? 'Membaca & Menganalisis...' : 'Menganalisis dengan AI...'}
                                         </>
                                     ) : (
                                         <>
@@ -176,10 +335,11 @@ export default function Analysis({ profile, marketSkills, trendingSkills, market
                                         <p className="text-sm text-slate-500">Kemampuanmu vs Standar {careerTarget} Indonesia</p>
                                     </div>
                                     <button 
-                                        onClick={() => router.get(route('analysis'))}
-                                        className="p-3 bg-slate-50 text-navy-900 rounded-xl hover:bg-slate-100 transition-colors"
+                                        onClick={() => setShowForm(true)}
+                                        className="p-3 bg-slate-100 text-navy-900 rounded-xl hover:bg-teal-500 hover:text-white transition-all flex items-center gap-2 font-bold text-xs"
                                     >
-                                        <Upload className="w-5 h-5" />
+                                        <Upload className="w-4 h-4" />
+                                        Analisis Ulang
                                     </button>
                                 </div>
 

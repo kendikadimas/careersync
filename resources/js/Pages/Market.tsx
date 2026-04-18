@@ -25,10 +25,11 @@ import {
     TrendingUp
 } from 'lucide-react';
 
-export default function Market({ jobs, trendingSkills, stats, profile }: any) {
+export default function Market({ jobs, trendingSkills, stats, profile, isLiveData, apiDebug }: any) {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterLocation, setFilterLocation] = useState('All');
     const [showMatchedOnly, setShowMatchedOnly] = useState(false);
+    const [showDebug, setShowDebug] = useState(!!apiDebug);
 
     const filteredJobs = useMemo(() => {
         return jobs.filter((job: any) => {
@@ -41,11 +42,68 @@ export default function Market({ jobs, trendingSkills, stats, profile }: any) {
         });
     }, [jobs, searchTerm, filterLocation, showMatchedOnly]);
 
-    const locations = ['All', ...new Set<string>(jobs.map((j: any) => j.location))];
+    const staticLocations = ['All', 'Jakarta', 'Bandung', 'Surabaya', 'Remote', 'Indonesia'];
+    const locations = Array.from(new Set([...staticLocations, ...jobs.map((j: any) => j.location)]));
 
     return (
         <AppLayout header="Market Intelligence">
             <Head title="Market Data | Career-Sync" />
+
+            {/* Debug Console */}
+            {apiDebug && showDebug && (
+                <div className="mb-8 p-6 bg-slate-900 rounded-3xl text-xs font-mono text-teal-400 border border-teal-900/50 relative overflow-hidden">
+                    <button onClick={() => setShowDebug(false)} className="absolute top-4 right-4 text-slate-500 hover:text-white">✕</button>
+                    <h5 className="text-teal-500 font-bold mb-4 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+                        API DEBUG CONSOLE
+                    </h5>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <p className="text-slate-500 mb-1">API Endpoint</p>
+                            <p className="text-white truncate">{apiDebug.base_url}</p>
+                        </div>
+                        <div>
+                            <p className="text-slate-500 mb-1">API Key Status</p>
+                            <p className={apiDebug.has_api_key ? 'text-teal-400' : 'text-red-400'}>
+                                {apiDebug.has_api_key ? `Active (${apiDebug.api_key_masked})` : 'Missing'}
+                            </p>
+                        </div>
+                        <div>
+                            <p className="text-slate-500 mb-1">HTTP Status</p>
+                            <p className={apiDebug.last_http_code === 200 ? 'text-teal-400' : 'text-amber-400'}>
+                                {apiDebug.last_http_code || '---'}
+                            </p>
+                        </div>
+                        <div>
+                            <p className="text-slate-500 mb-1">Fetch Status</p>
+                            <p className={apiDebug.is_success ? 'text-teal-400' : 'text-red-400'}>
+                                {apiDebug.is_success ? 'SUCCESS' : 'FAILED'}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-800">
+                        <div>
+                            <p className="text-slate-500 mb-1">Data Source</p>
+                            <p className={apiDebug.data_source?.includes('Live') ? 'text-teal-400 font-bold' : 'text-amber-400 font-bold'}>
+                                {apiDebug.data_source || 'Unknown'}
+                            </p>
+                        </div>
+                        <div>
+                            <p className="text-slate-500 mb-1">Jobs Fetched</p>
+                            <p className="text-white">{apiDebug.jobs_fetched ?? '---'}</p>
+                        </div>
+                        <div>
+                            <p className="text-slate-500 mb-1">Career Target</p>
+                            <p className="text-white">{apiDebug.career_target || '(not set)'}</p>
+                        </div>
+                    </div>
+                    {apiDebug.error_message && (
+                        <div className="mt-4 p-3 bg-red-900/20 border border-red-900/50 rounded-xl text-red-400">
+                            Error: {apiDebug.error_message}
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Section A: Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -60,7 +118,7 @@ export default function Market({ jobs, trendingSkills, stats, profile }: any) {
                                 <stat.icon className="w-6 h-6" />
                             </div>
                             <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${stat.color === 'navy' ? 'bg-white/10' : 'bg-slate-100'}`}>
-                                Real-time
+                                {isLiveData ? '🟢 Live API' : '📋 Static'}
                             </span>
                         </div>
                         <p className={`text-xs font-black uppercase tracking-widest mb-1 ${stat.color === 'navy' ? 'text-navy-300' : 'text-slate-400'}`}>{stat.label}</p>
@@ -207,9 +265,9 @@ export default function Market({ jobs, trendingSkills, stats, profile }: any) {
                                                 </div>
                                             </div>
                                        )}
-                                       <button className="p-3 bg-navy-900 text-white rounded-xl hover:bg-teal-500 transition-all shadow-lg overflow-hidden group/btn">
+                                       <a href={job.apply_url || '#'} target="_blank" rel="noopener noreferrer" className="p-3 bg-navy-900 text-white rounded-xl hover:bg-teal-500 transition-all shadow-lg overflow-hidden group/btn inline-flex">
                                             <ArrowUpRight className="w-5 h-5 group-hover/btn:scale-125 transition-transform" />
-                                       </button>
+                                       </a>
                                    </div>
                                </div>
 
