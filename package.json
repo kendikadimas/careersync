@@ -29,6 +29,7 @@
         "@inertiajs/vite": "^3.0.3",
         "@xyflow/react": "^12.10.2",
         "axios": "^1.15.0",
+        "framer-motion": "^12.38.0",
         "lucide-react": "^1.8.0",
         "react-is": "^19.2.5",
         "recharts": "^3.8.1"

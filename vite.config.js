@@ -5,6 +5,11 @@ import tailwindcss from '@tailwindcss/vite';
 import inertia from '@inertiajs/vite';
 
 export default defineConfig({
+    build: {
+        rollupOptions: {
+            input: 'resources/js/app.tsx',
+        },
+    },
     plugins: [
         laravel({
             input: ['resources/js/app.tsx'],
@@ -13,6 +18,10 @@ export default defineConfig({
         }),
         react(),
         tailwindcss(),
-        inertia(),
     ],
+    resolve: {
+        alias: {
+            'react-is': 'react-is',
+        },
+    },
 });

@@ -1,21 +1,21 @@
 <?php
 
-use App\Http\Controllers\{DashboardController, AnalysisController, RoadmapController, MarketController, OnboardingController, WorkReadinessController, ProfileController};
+use App\Http\Controllers\{PublicController, DemoController, DashboardController, AnalysisController, RoadmapController, MarketController, OnboardingController, WorkReadinessController, ProfileController};
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Foundation\Application;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+// Public routes — tidak butuh login
+Route::get('/', [PublicController::class, 'landing'])->name('home');
+Route::get('/features', [PublicController::class, 'features'])->name('features');
+Route::get('/how-it-works', [PublicController::class, 'howItWorks'])->name('how-it-works');
+Route::get('/about', [PublicController::class, 'about'])->name('about');
+Route::get('/blog', [PublicController::class, 'blog'])->name('blog');
+Route::get('/blog/{slug}', [PublicController::class, 'blogPost'])->name('blog.post');
+Route::get('/faq', [PublicController::class, 'faq'])->name('faq');
 
-// Demo route (tanpa auth)
-Route::get('/demo', [DashboardController::class, 'demo'])->name('demo');
+// Demo route — tidak butuh login, tampilkan semua fitur dengan data dummy
+Route::get('/demo', [DemoController::class, 'index'])->name('demo');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['onboarding'])->group(function() {
