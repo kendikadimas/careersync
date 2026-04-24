@@ -1,106 +1,107 @@
-# 🚀 Career-Sync Academy
+# 🚀 Career-Sync Academy: AI-Driven Workforce Readiness
 
-**Career-Sync Academy** is a modern, AI-powered EdTech platform designed to help web developers bridge the gap between their current skills and job market requirements. 
+**Career-Sync Academy** adalah platform EdTech mutakhir berbasis AI yang dirancang untuk membantu pengembang web (Web Developers) menjembatani kesenjangan antara *skill* saat ini dengan kebutuhan pasar kerja yang dinamis. 
 
-Built with the latest technology stack, it provides real-time job intelligence, automated CV analysis, and personalized learning roadmaps.
+Platform ini tidak hanya menganalisis CV, tetapi juga memantau tren pasar kerja secara *real-time* dan menyusun jalur belajar khusus untuk memastikan pengguna menjadi tenaga kerja yang **siap pakai (Industry-Ready)**.
 
 ---
 
-## ✨ Key Features
+## ✨ Fitur Unggulan
 
-- **📊 AI CV Analysis**: Instant skill extraction and evaluation using Google Gemini 1.5 Flash.
-- **📁 Multi-format Support**: Upload your CV in PDF, DOCX, or TXT format with an intuitive drag-and-drop interface.
-- **📡 Live Job Intelligence**: Real-time job listings from Indonesia (via JSearch API) with automated skill matching.
-- **🛤️ Dynamic Roadmaps**: Automatically generated interactive learning milestones based on your career goals.
-- **🛠️ Skill Gap Analysis**: Visual radar charts showing the distance between your current skills and target role requirements.
-- **🎨 Premium UI/UX**: Ultra-modern design using Tailwind CSS v4, Framer Motion animations, and a sleek dark-mode aesthetic.
+- **📊 Intelligent CV Parsing**: Ekstraksi skill, pendidikan, dan pengalaman secara instan menggunakan **Google Gemini 2.5 Flash**.
+- **📡 Multi-Source Market Analytics**: Crawler data industri yang mengumpulkan tren skill dari **LinkedIn, JSearch, Arbeitnow, dan JobsAPI**.
+- **🛤️ Phased AI Roadmap (Lazy-Loading)**:
+  - Generasi jalur belajar instan tanpa *timeout*.
+  - Materi belajar terkurasi yang memprioritaskan konten **Bahasa Indonesia** (Sandhika Galih, Eko Kurniawan, dsb).
+  - Link YouTube 100% valid dengan sistem *Search-Engine fallback*.
+- **📈 Skill Gap & Readiness Score**: Visualisasi *Radar Chart* yang membandingkan kemampuan pengguna dengan standar industri saat ini.
+- **🤝 Community Hub**: Ruang kolaborasi untuk berdiskusi dengan rekan seperjuangan (Peer Discussion).
+- **🎨 Premium UI Experience**: Antarmuka modern menggunakan **Tailwind CSS v4** dengan animasi mikro dan indikator progres yang interaktif.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Laravel 11 (PHP 8.2+)
-- **Frontend**: React 18, Inertia.js
-- **Styling**: Tailwind CSS v4
-- **AI Engine**: Google Gemini API
-- **Job API**: JSearch (RapidAPI)
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **Animations**: Framer Motion
+- **Backend**: Laravel 13 (PHP 8.4+)
+- **Frontend**: React 18, Inertia.js (V3)
+- **Styling**: Tailwind CSS v4 (Sleek Aesthetic)
+- **AI Engine**: Google Gemini API (Model: gemini-2.5-flash)
+- **Market Data**: LinkedIn API, JSearch, RapidAPI
+- **Visuals**: Lucide React, Recharts, Framer Motion
 
 ---
 
-## 🚀 Installation Guide
+## 🚀 Panduan Instalasi Lokal
 
-Follow these steps to set up the project on a new device:
+### 1. Prasyarat
+- PHP 8.4+
+- Composer
+- Node.js & NPM
+- MySQL / PostgreSQL / SQLite
 
-### 1. Prerequisites
-Ensure you have the following installed:
-- [PHP 8.2+](https://www.php.net/downloads)
-- [Composer](https://getcomposer.org/)
-- [Node.js & NPM](https://nodejs.org/)
-- [SQLite](https://www.sqlite.org/index.html) (or any supported database)
-
-### 2. Clone the Repository
+### 2. Kloning Repositori
 ```bash
-git clone <repository-url>
-cd jkbfest
+git clone https://github.com/kendikadimas/careersync.git
+cd careersync
 ```
 
-### 3. Backend Setup
+### 3. Konfigurasi Backend
 ```bash
-# Install PHP dependencies
+# Install dependencies
 composer install
 
-# Prepare environment file
+# Environment file
 cp .env.example .env
 
-# Generate application key
+# Generate key
 php artisan key:generate
 ```
 
-### 4. Database Setup
+### 4. Konfigurasi Database & Seeding
 ```bash
-# Create SQLite database (if using sqlite)
-touch database/database.sqlite
-
-# Run migrations and seeders
+# Migrasi tabel dan data awal
 php artisan migrate --seed
 ```
 
-### 5. Frontend Setup
+### 5. Konfigurasi Frontend
 ```bash
-# Install NPM dependencies
+# Install Node modules
 npm install
 
-# Build assets
-npm run build
-```
-
-### 6. Configuration
-Open your `.env` file and add your API keys:
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-RAPIDAPI_KEY=your_rapidapi_key_here
-```
-
-### 7. Run Locally
-```bash
-# Start Laravel server
-php artisan serve
-
-# Start Vite dev server (in a separate terminal)
+# Build asset (Production) atau dev mode
 npm run dev
 ```
-Visit `http://localhost:8000` to see the application.
+
+### 6. Integrasi API
+Tambahkan API Key di `.env` agar fitur AI dan Market Intelligence berfungsi:
+```env
+GEMINI_API_KEY=AIzaSy...
+RAPIDAPI_KEY=your_rapidapi_key
+```
+
+### 7. Menjalankan Server
+```bash
+# Terminal 1: Laravel Server
+php artisan serve
+
+# Terminal 2: Vite Server
+npm run dev
+```
 
 ---
 
-## 🧪 Testing API
-To verify your API connection, you can access the debug mode:
-`http://localhost:8000/market?debug=1`
+## 🔧 Perintah Penting (Admin/Developer)
+
+Untuk memperbarui data tren pasar kerja secara manual:
+```bash
+# Menjalankan AI crawler untuk memindai pasar kerja terbaru
+php artisan jobs:crawl
+```
 
 ---
 
-## 📝 License
-This project is open-sourced software licensed under the [MIT license](LICENSE).
+## 📝 Lisensi
+Proyek ini dikembangkan untuk keperluan kompetisi dan berlisensi di bawah [MIT License](LICENSE).
+
+---
+*Built with ❤️ by Team Career-Sync*
