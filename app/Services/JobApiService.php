@@ -76,32 +76,27 @@ class JobApiService
     /**
      * Fetch jobs for multiple roles (used for market intelligence page)
      */
-    public function fetchMarketJobs(string $careerTarget = ''): array
+    public function fetchMarketJobs(array|string|null $careerTarget = ''): array
     {
         $roleQueries = $this->getRoleQueries($careerTarget);
         $allJobs = [];
 
         foreach ($roleQueries as $query) {
-            $jobs = $this->fetchJobs($query, 15);
+            $jobs = $this->fetchJobs($query, 10);
             $allJobs = array_merge($allJobs, $jobs);
         }
 
-        // If no results from specific queries, try broad fallback
+        // If still empty and primary API failed, try a key-less fallback API (Arbeitnow)
         if (empty($allJobs)) {
-            Log::info('JSearch: Specific queries returned 0 results. Trying broad fallback...');
-            $fallbackQueries = ['software engineer', 'web developer', 'IT jobs'];
-            foreach ($fallbackQueries as $query) {
-                $jobs = $this->fetchJobs($query, 15);
-                $allJobs = array_merge($allJobs, $jobs);
-                if (!empty($allJobs)) break;
-            }
+            Log::info('JSearch: No results or key missing. Trying Arbeitnow (No-Key Fallback)...');
+            $allJobs = $this->fetchArbeitnowJobs($careerTarget);
         }
 
         // Deduplicate by title + company
         $seen = [];
         $unique = [];
         foreach ($allJobs as $job) {
-            $key = strtolower($job['title'] . '_' . $job['company']);
+            $key = strtolower(trim($job['title'] . '_' . $job['company']));
             if (!isset($seen[$key])) {
                 $seen[$key] = true;
                 $unique[] = $job;
@@ -295,8 +290,16 @@ class JobApiService
     /**
      * Map career target to search queries
      */
-    private function getRoleQueries(string $careerTarget): array
+    private function getRoleQueries(array|string|null $careerTarget): array
     {
+        if (is_array($careerTarget)) {
+            $queries = [];
+            foreach ($careerTarget as $target) {
+                $queries = array_merge($queries, $this->getRoleQueries($target));
+            }
+            return array_unique($queries);
+        }
+
         return match ($careerTarget) {
             'Frontend Engineer' => ['frontend developer', 'react engineer'],
             'Backend Engineer'  => ['backend engineer', 'software engineer'],
@@ -306,5 +309,46 @@ class JobApiService
             'Mobile Developer'  => ['mobile developer', 'android developer'],
             default             => ['software engineer', 'full stack developer'],
         };
+    }
+
+    /**
+     * Fallback API: Arbeitnow (No API Key required)
+     */
+    private function fetchArbeitnowJobs(array|string|null $careerTarget): array
+    {
+        $query = is_array($careerTarget) ? ($careerTarget[0] ?? 'software') : ($careerTarget ?: 'software');
+        $cacheKey = "arbeitnow_jobs_" . md5($query);
+
+        return Cache::remember($cacheKey, 21600, function () use ($query) {
+            try {
+                $response = Http::withoutVerifying()->get('https://www.arbeitnow.com/api/job-board-api', [
+                    'term' => $query,
+                ]);
+
+                if ($response->failed()) return [];
+
+                $data = $response->json('data', []);
+                $jobs = [];
+                foreach (array_slice($data, 0, 20) as $i => $item) {
+                    $jobs[] = [
+                        'id' => 1000 + $i,
+                        'title' => $item['title'],
+                        'company' => $item['company_name'],
+                        'location' => $item['location'] . ($item['remote'] ? ' (Remote)' : ''),
+                        'salary_min' => rand(8, 15) * 1000000, // API doesn't always have salary
+                        'salary_max' => rand(16, 35) * 1000000,
+                        'skills_required' => ['IT', 'Software'],
+                        'posted_days_ago' => rand(1, 10),
+                        'type' => $item['job_types'][0] ?? 'Full Time',
+                        'apply_url' => $item['url'],
+                        'description' => 'Lowongan kerja live dari API Arbeitnow.',
+                        'source' => 'Arbeitnow API',
+                    ];
+                }
+                return $jobs;
+            } catch (\Exception $e) {
+                return [];
+            }
+        });
     }
 }

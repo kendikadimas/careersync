@@ -23,7 +23,8 @@ import {
 export default function Analysis({ profile, marketSkills, trendingSkills, marketStats }: any) {
     const [loading, setLoading] = useState(false);
     const [cvText, setCvText] = useState(profile?.cv_raw_text || '');
-    const [careerTarget, setCareerTarget] = useState(profile?.career_target || 'Frontend Engineer');
+    const [careerTargets, setCareerTargets] = useState<string[]>(Array.isArray(profile?.career_target) ? profile.career_target : [profile?.career_target].filter(Boolean) || []);
+    const [activeTarget, setActiveTarget] = useState(careerTargets[0] || 'Frontend Engineer');
     const [showForm, setShowForm] = useState(!profile?.cv_raw_text);
     const [inputMode, setInputMode] = useState<'upload' | 'text'>('upload');
     const [cvFile, setCvFile] = useState<File | null>(null);
@@ -35,7 +36,11 @@ export default function Analysis({ profile, marketSkills, trendingSkills, market
         setLoading(true);
 
         const formData = new FormData();
-        formData.append('career_target', careerTarget);
+        formData.append('career_target[]', activeTarget); // Send as array for consistency
+        // Note: Analysis usually focuses on one target context per run, 
+        // but we'll send it as activeTarget or the whole list.
+        // Let's send the whole list to keep profile updated.
+        careerTargets.forEach(t => formData.append('career_target[]', t));
 
         if (inputMode === 'upload' && cvFile) {
             formData.append('cv_file', cvFile);
@@ -137,7 +142,7 @@ export default function Analysis({ profile, marketSkills, trendingSkills, market
                                  <p className="text-navy-300 text-sm font-bold uppercase tracking-wider mb-2">Peluang Kerja</p>
                                  <div className="flex items-baseline gap-2">
                                      <span className="text-4xl font-black">{marketStats.total_jobs.toLocaleString()}</span>
-                                     <span className="text-teal-400 text-sm font-bold">Baru di {careerTarget}</span>
+                                     <span className="text-teal-400 text-sm font-bold">Baru di {activeTarget}</span>
                                  </div>
                              </div>
 
@@ -190,18 +195,24 @@ export default function Analysis({ profile, marketSkills, trendingSkills, market
 
                             <form onSubmit={handleAnalysis}>
                                 <div className="mb-6">
-                                    <label className="block text-sm font-bold text-navy-900 mb-3">Target Karir</label>
+                                    <label className="block text-sm font-bold text-navy-900 mb-3">Target Karir Utama (Fokus Analisis)</label>
                                     <select 
-                                        value={careerTarget}
-                                        onChange={(e) => setCareerTarget(e.target.value)}
+                                        value={activeTarget}
+                                        onChange={(e) => setActiveTarget(e.target.value)}
                                         className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-teal-500 font-bold text-navy-900"
                                     >
-                                        <option>Frontend Engineer</option>
-                                        <option>Backend Engineer</option>
-                                        <option>Data Scientist</option>
-                                        <option>UI/UX Designer</option>
-                                        <option>DevOps Engineer</option>
-                                        <option>Mobile Developer</option>
+                                        {careerTargets.length > 0 ? (
+                                            careerTargets.map(t => <option key={t}>{t}</option>)
+                                        ) : (
+                                            <>
+                                                <option>Frontend Engineer</option>
+                                                <option>Backend Engineer</option>
+                                                <option>Data Scientist</option>
+                                                <option>UI/UX Designer</option>
+                                                <option>DevOps Engineer</option>
+                                                <option>Mobile Developer</option>
+                                            </>
+                                        )}
                                     </select>
                                 </div>
 
@@ -332,7 +343,7 @@ export default function Analysis({ profile, marketSkills, trendingSkills, market
                                 <div className="flex items-center justify-between mb-8">
                                     <div>
                                         <h2 className="text-2xl font-black text-navy-900">Skill Radar Chart</h2>
-                                        <p className="text-sm text-slate-500">Kemampuanmu vs Standar {careerTarget} Indonesia</p>
+                                        <p className="text-sm text-slate-500">Kemampuanmu vs Standar {activeTarget} Indonesia</p>
                                     </div>
                                     <button 
                                         onClick={() => setShowForm(true)}

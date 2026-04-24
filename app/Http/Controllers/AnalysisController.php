@@ -22,7 +22,8 @@ class AnalysisController extends Controller
         
         $marketSkills = [];
         if ($profile && $profile->career_target) {
-            $marketSkills = JobMarketData::getSkillsForRole($profile->career_target);
+            $target = is_array($profile->career_target) ? ($profile->career_target[0] ?? '') : $profile->career_target;
+            $marketSkills = JobMarketData::getSkillsForRole($target);
         }
 
         return Inertia::render('Analysis', [
@@ -38,7 +39,7 @@ class AnalysisController extends Controller
         $request->validate([
             'cv_text' => 'nullable|string',
             'cv_file' => 'nullable|file|mimes:pdf,doc,docx,txt|max:5120', // max 5MB
-            'career_target' => 'required|string'
+            'career_target' => 'required|array'
         ]);
 
         try {
@@ -63,11 +64,28 @@ class AnalysisController extends Controller
                 return back()->with('error', 'Gagal menganalisis CV. AI tidak memberikan data yang valid.');
             }
 
+            // Merge skills with existing ones to avoid losing manually entered skills
+            $currentProfile = UserProfile::where('user_id', auth()->id())->first();
+            $existingSkills = $currentProfile->skills ?? [];
+            $newSkills = $analysis['skills'] ?? [];
+            
+            // Deduplicate skills by name
+            $mergedSkills = $existingSkills;
+            $existingNames = array_map(fn($s) => strtolower($s['name']), $existingSkills);
+            $newSkillsAdded = 0;
+            
+            foreach ($newSkills as $skill) {
+                if (!in_array(strtolower($skill['name']), $existingNames)) {
+                    $mergedSkills[] = $skill;
+                    $newSkillsAdded++;
+                }
+            }
+
             $profile = UserProfile::updateOrCreate(
                 ['user_id' => auth()->id()],
                 [
                     'career_target' => $request->career_target,
-                    'skills' => $analysis['skills'] ?? [],
+                    'skills' => $mergedSkills,
                     'experiences' => $analysis['experiences'] ?? [],
                     'education' => $analysis['education'] ?? [],
                     'cv_raw_text' => $cvText,
@@ -75,7 +93,10 @@ class AnalysisController extends Controller
                 ]
             );
 
-            return redirect()->route('analysis')->with('success', 'CV berhasil dianalisis!');
+            return redirect()->route('analysis')->with([
+                'success' => 'CV berhasil dianalisis!',
+                'new_skill_count' => $newSkillsAdded
+            ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Error: ' . $e->getMessage());
         }

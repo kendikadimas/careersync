@@ -18,10 +18,35 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('Profile/Edit', [
+        return Inertia::render('Profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'profile' => $request->user()->profile,
+            'roles' => [
+                'Frontend Engineer', 'Backend Engineer', 'Data Scientist', 'Mobile Developer',
+                'UI/UX Designer', 'Graphic Designer', 'Social Media Specialist', 'Content Writer',
+                'Project Manager', 'HR Specialist', 'Accountant', 'Financial Analyst',
+                'English Teacher', 'Chef / Cook', 'Barista'
+            ]
         ]);
+    }
+
+    /**
+     * Update the user's career profile.
+     */
+    public function updateCareer(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'career_target' => 'required|array',
+            'skills' => 'array',
+        ]);
+
+        $request->user()->profile()->update([
+            'career_target' => $request->career_target,
+            'skills' => $request->skills,
+        ]);
+
+        return Redirect::route('profile.edit')->with('success', 'Profil karir berhasil diperbarui!');
     }
 
     /**

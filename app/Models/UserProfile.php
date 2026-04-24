@@ -21,6 +21,7 @@ class UserProfile extends Model
     ];
 
     protected $casts = [
+        'career_target' => 'array',
         'skills' => 'array',
         'experiences' => 'array',
         'education' => 'array',

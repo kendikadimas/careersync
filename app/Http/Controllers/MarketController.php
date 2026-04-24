@@ -19,10 +19,10 @@ class MarketController extends Controller
     public function index(Request $request)
     {
         $profile = UserProfile::where('user_id', auth()->id())->first();
-        $careerTarget = $profile?->career_target ?? '';
+        $careerTargets = $profile?->career_target ?? 'software engineer'; // Default fallback
 
         // Try fetching real jobs from API, fallback to static data
-        $jobs = $this->jobApi->fetchMarketJobs($careerTarget);
+        $jobs = $this->jobApi->fetchMarketJobs($careerTargets);
         $isLiveData = !empty($jobs);
 
         if (empty($jobs)) {
@@ -42,15 +42,29 @@ class MarketController extends Controller
             ? $this->jobApi->getMarketStats($jobs)
             : JobMarketData::getMarketStats();
 
-        $trendingSkills = JobMarketData::getTrendingSkills();
+        // Trending Skills: Fetch from DB (Scraped data), fallback to static
+        $trendingSkills = \App\Models\TrendingSkill::where('week_start_date', '>=', now()->startOfWeek())
+            ->orderBy('frequency', 'desc')
+            ->get()
+            ->map(fn($s) => [
+                'skill' => $s->skill_name,
+                'demand' => min($s->frequency * 10, 100), // Normalize for display
+                'change' => rand(1, 10), // Mock change for UI polish
+                'trend' => 'rising'
+            ])
+            ->toArray();
+
+        if (empty($trendingSkills)) {
+            $trendingSkills = JobMarketData::getTrendingSkills();
+        }
 
         // Build debug info (only when ?debug=1)
         $debugInfo = null;
         if ($request->has('debug')) {
             $apiStatus = $this->jobApi->getDebugStatus();
             $apiStatus['jobs_fetched'] = count($jobs);
-            $apiStatus['data_source'] = $isLiveData ? 'JSearch API (Live)' : 'Static Mock Data';
-            $apiStatus['career_target'] = $careerTarget ?: '(not set)';
+            $apiStatus['data_source'] = $isLiveData ? 'API (Live)' : 'Static Mock Data';
+            $apiStatus['career_target'] = $careerTargets ?: '(not set)';
             $debugInfo = $apiStatus;
         }
 

@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite';
 import inertia from '@inertiajs/vite';
 
 export default defineConfig({
+    server: {
+        cors: true,
+    },
     build: {
         rollupOptions: {
             input: 'resources/js/app.tsx',

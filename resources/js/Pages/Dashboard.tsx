@@ -1,6 +1,6 @@
 import React from 'react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { 
     RadialBarChart, 
     RadialBar, 
@@ -19,10 +19,17 @@ import {
     Zap
 } from 'lucide-react';
 
-const StatCard = ({ label, value, icon: Icon, color }: any) => (
+const StatCard = ({ label, value, icon: Icon, color, badge }: any) => (
     <div className="bg-white p-6 rounded-4xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-teal-500/50 transition-all">
         <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+            <div className="flex items-center gap-2 mb-1">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+                {badge && (
+                    <span className="px-2 py-0.5 bg-teal-50 text-teal-600 text-[8px] font-black rounded-full animate-bounce">
+                        {badge}
+                    </span>
+                )}
+            </div>
             <h4 className="text-2xl font-black text-navy-900 group-hover:text-teal-600 transition-colors">{value}</h4>
         </div>
         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${color}`}>
@@ -31,7 +38,8 @@ const StatCard = ({ label, value, icon: Icon, color }: any) => (
     </div>
 );
 
-export default function Dashboard({ profile, roadmap, score, marketStats, trendingSkills }: any) {
+export default function Dashboard({ profile, roadmap, score, marketStats, trendingSkills, gapCount }: any) {
+    const { flash }: any = usePage().props;
     const currentScore = score?.score || 0;
     const scoreCategory = score?.category || 'Masih Awal';
     const scoreColor = currentScore >= 80 ? '#0d9488' : currentScore >= 60 ? '#f59e0b' : '#334155';
@@ -96,12 +104,13 @@ export default function Dashboard({ profile, roadmap, score, marketStats, trendi
                         <StatCard 
                             label="Skill Dimiliki" 
                             value={profile?.skills?.length || 0} 
+                            badge={flash?.new_skill_count ? `+${flash.new_skill_count} DARI CV` : null}
                             icon={CheckCircle2} 
                             color="bg-teal-50 text-teal-600" 
                         />
                         <StatCard 
                             label="Target Karir" 
-                            value={profile?.career_target || 'N/A'} 
+                            value={Array.isArray(profile?.career_target) ? profile.career_target.join(', ') : (profile?.career_target || 'N/A')} 
                             icon={Target} 
                             color="bg-navy-50 text-navy-600" 
                         />
@@ -112,10 +121,10 @@ export default function Dashboard({ profile, roadmap, score, marketStats, trendi
                             color="bg-indigo-50 text-indigo-600" 
                         />
                          <StatCard 
-                            label="Pasar Aktif" 
-                            value={marketStats.total_jobs} 
-                            icon={Flame} 
-                            color="bg-orange-50 text-orange-600" 
+                            label="Gap Kompetensi" 
+                            value={gapCount || 0} 
+                            icon={AlertCircle} 
+                            color="bg-red-50 text-red-600" 
                         />
                     </div>
                 </div>

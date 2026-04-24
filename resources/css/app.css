@@ -12,3 +12,11 @@
   --color-teal-600: oklch(0.50 0.15 185);
   --font-sans: "Inter", ui-sans-serif, system-ui;
 }
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

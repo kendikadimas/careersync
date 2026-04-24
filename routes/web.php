@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Roadmap
         Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap');
         Route::post('/roadmap/generate', [RoadmapController::class, 'generate'])->name('roadmap.generate');
+        Route::get('/roadmap/{roadmapId}/milestone/{milestoneId}/details', [RoadmapController::class, 'getMilestoneDetails'])->name('roadmap.milestone.details');
         Route::patch('/roadmap/milestone/{id}/complete', [RoadmapController::class, 'complete'])->name('roadmap.complete');
 
         // Market
@@ -44,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Default Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/career', [ProfileController::class, 'updateCareer'])->name('profile.career.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

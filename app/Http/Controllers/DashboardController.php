@@ -18,14 +18,39 @@ class DashboardController extends Controller
         $roadmap = UserRoadmap::where('user_id', $user->id)->latest()->first();
         $score = WorkReadinessScore::where('user_id', $user->id)->latest()->first();
 
-        // If no profile, we might want to redirect to onboarding in middleware
-        // But for now let's just pass data
+        $marketStats = JobMarketData::getMarketStats();
+        
+        // Calculate Skill Gap Count
+        $gapCount = 0;
+        if ($profile && $profile->career_target) {
+            $targets = is_array($profile->career_target) ? $profile->career_target : [$profile->career_target];
+            $allRequiredSkills = [];
+            foreach ($targets as $target) {
+                $roleSkills = JobMarketData::getSkillsForRole($target);
+                foreach ($roleSkills as $rs) {
+                    $allRequiredSkills[strtolower($rs['skill'])] = $rs['skill'];
+                }
+            }
+            
+            $userSkills = array_map(fn($s) => strtolower($s['name']), $profile->skills ?? []);
+            foreach ($allRequiredSkills as $lowerName => $fullName) {
+                $found = false;
+                foreach ($userSkills as $userSkill) {
+                    if (str_contains($userSkill, $lowerName) || str_contains($lowerName, $userSkill)) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) $gapCount++;
+            }
+        }
 
         return Inertia::render('Dashboard', [
             'profile' => $profile,
             'roadmap' => $roadmap,
             'score' => $score,
-            'marketStats' => JobMarketData::getMarketStats(),
+            'marketStats' => $marketStats,
+            'gapCount' => $gapCount,
             'trendingSkills' => array_slice(JobMarketData::getTrendingSkills(), 0, 5),
         ]);
     }

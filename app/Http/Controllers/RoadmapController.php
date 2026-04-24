@@ -19,32 +19,39 @@ class RoadmapController extends Controller
         $roadmap = UserRoadmap::where('user_id', auth()->id())->latest()->first();
         $profile = UserProfile::where('user_id', auth()->id())->first();
 
-        // Auto-unlock first milestone if it is a new roadmap
-        if ($roadmap && !empty($roadmap->roadmap_data['milestones'])) {
-            $data = $roadmap->roadmap_data;
-            if ($data['milestones'][0]['status'] === 'locked') {
-                $data['milestones'][0]['status'] = 'current';
-                $roadmap->roadmap_data = $data;
-                $roadmap->save();
-            }
-        }
-
         return Inertia::render('Roadmap', [
             'roadmap' => $roadmap,
             'profile' => $profile
         ]);
     }
 
+    /**
+     * PHASE 1: Generate high-level structure.
+     */
     public function generate(Request $request)
     {
+        set_time_limit(40); // Cukup 40 detik karena hanya struktur
         $user = auth()->user();
         $profile = UserProfile::where('user_id', $user->id)->first();
+        $existingRoadmap = UserRoadmap::where('user_id', $user->id)->latest()->first();
 
         if (!$profile) {
             return redirect()->route('analysis')->with('error', 'Analisis CV dulu untuk membuat roadmap.');
         }
 
-        $marketSkills = JobMarketData::getSkillsForRole($profile->career_target);
+        $targets = is_array($profile->career_target) ? $profile->career_target : [$profile->career_target];
+        $marketSkills = [];
+        $seenMarketSkills = [];
+        
+        foreach ($targets as $target) {
+            $roleSkills = JobMarketData::getSkillsForRole($target);
+            foreach ($roleSkills as $rs) {
+                if (!isset($seenMarketSkills[strtolower($rs['skill'])])) {
+                    $marketSkills[] = $rs;
+                    $seenMarketSkills[strtolower($rs['skill'])] = true;
+                }
+            }
+        }
         
         // Find skill gaps
         $userSkillNames = array_map('strtolower', array_column($profile->skills ?? [], 'name'));
@@ -57,52 +64,75 @@ class RoadmapController extends Controller
                     break;
                 }
             }
-            if (!$found) {
-                $skillGaps[] = $ms;
-            }
+            if (!$found) $skillGaps[] = $ms;
         }
 
         try {
-            // Force refresh if it was empty before
-            $cacheKey = "roadmap_generation_{$user->id}";
-            
-            $roadmapData = $this->gemini->generateRoadmap([
+            $roadmapData = $this->gemini->generateRoadmapStructure([
                 'career_target' => $profile->career_target,
                 'existing_skills' => $profile->skills,
-                'skill_gaps' => $skillGaps,
-                'market_skills' => array_slice($marketSkills, 0, 5),
+                'skill_gaps' => array_slice($skillGaps, 0, 10), // Limit factors for speed
                 'hours_per_day' => 4 
-            ]);
+            ], $existingRoadmap ? true : false);
 
             if (empty($roadmapData)) {
-                return back()->with('error', 'Gagal memicu AI untuk membuat roadmap. AI memberikan jawaban kosong.');
-            }
-
-            // Set first milestone to current if not already set
-            if (!empty($roadmapData['milestones'])) {
-                $roadmapData['milestones'][0]['status'] = 'current';
+                return back()->with('error', 'Gagal memicu AI. Coba lagi.');
             }
 
             $roadmap = UserRoadmap::create([
                 'user_id' => $user->id,
-                'career_target' => $profile->career_target,
+                'career_target' => is_array($profile->career_target) ? implode(', ', $profile->career_target) : $profile->career_target,
                 'roadmap_data' => $roadmapData,
                 'total_milestones' => count($roadmapData['milestones'] ?? []),
                 'milestones_completed' => 0
             ]);
 
-            Cache::forget($cacheKey); // Clear cache if success to avoid old data issues
-
-            return redirect()->route('roadmap')->with('success', 'Roadmap belajar berhasil dibuat!');
+            return redirect()->route('roadmap')->with('success', 'Struktur roadmap berhasil dibuat! Klik milestone untuk detailnya.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal membuat roadmap: ' . $e->getMessage());
         }
     }
 
+    /**
+     * PHASE 2: Generate details for a specific milestone. (AJAX/API)
+     */
+    public function getMilestoneDetails(Request $request, $roadmapId, $milestoneId)
+    {
+        $roadmap = UserRoadmap::findOrFail($roadmapId);
+        if ($roadmap->user_id !== auth()->id()) abort(403);
+
+        $data = $roadmap->roadmap_data;
+        $milestoneIndex = -1;
+        $milestone = null;
+
+        foreach ($data['milestones'] as $index => $ms) {
+            if ($ms['id'] == $milestoneId) {
+                $milestone = $ms;
+                $milestoneIndex = $index;
+                break;
+            }
+        }
+
+        if (!$milestone) return response()->json(['error' => 'Milestone tidak ditemukan'], 404);
+
+        // Jika detail belum ada, generate menggunakan AI
+        if (empty($milestone['resources']) || empty($milestone['why_important'])) {
+            $details = $this->gemini->generateMilestoneDetails($roadmap->career_target, $milestone);
+            
+            // Merge details into milestone
+            $data['milestones'][$milestoneIndex] = array_merge($milestone, $details);
+            $roadmap->roadmap_data = $data;
+            $roadmap->save();
+            
+            $milestone = $data['milestones'][$milestoneIndex];
+        }
+
+        return response()->json($milestone);
+    }
+
     public function complete(Request $request, $id)
     {
         $roadmap = UserRoadmap::where('user_id', auth()->id())->latest()->first();
-        
         if (!$roadmap) return back();
 
         $data = $roadmap->roadmap_data;
@@ -116,7 +146,7 @@ class RoadmapController extends Controller
 
         // Set next milestone to 'current' if locked
         foreach ($data['milestones'] as &$ms) {
-            if ($ms['status'] == 'locked' || !isset($ms['status'])) {
+            if (($ms['status'] ?? 'locked') == 'locked') {
                 $ms['status'] = 'current';
                 break;
             }
@@ -124,7 +154,6 @@ class RoadmapController extends Controller
 
         $roadmap->roadmap_data = $data;
         $roadmap->save();
-
         return back()->with('success', 'Milestone diselesaikan!');
     }
 }

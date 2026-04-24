@@ -27,6 +27,7 @@ export default function AppLayout({ children, header }: Props) {
         { name: 'Analisis Skill', href: route('analysis'), icon: BarChart3, active: route().current('analysis') },
         { name: 'Learning Roadmap', href: route('roadmap'), icon: MapIcon, active: route().current('roadmap') },
         { name: 'Market Intel', href: route('market'), icon: TrendingUp, active: route().current('market') },
+        { name: 'Profil Saya', href: route('profile.edit'), icon: User, active: route().current('profile.edit') },
     ];
 
     return (

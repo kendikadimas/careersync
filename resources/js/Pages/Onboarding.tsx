@@ -12,24 +12,47 @@ import {
     X,
     ChevronRight,
     ChevronLeft,
-    Check
+    Check,
+    Rocket,
+    Megaphone,
+    FileText,
+    Users,
+    Briefcase,
+    DollarSign,
+    Utensils,
+    Coffee,
+    GraduationCap,
+    Calculator
 } from 'lucide-react';
 
 const ROLES = [
+    // Tech
     { title: 'Frontend Engineer', icon: Monitor, color: 'text-blue-500', bg: 'bg-blue-50' },
     { title: 'Backend Engineer', icon: Database, color: 'text-emerald-500', bg: 'bg-emerald-50' },
     { title: 'Data Scientist', icon: Cpu, color: 'text-purple-500', bg: 'bg-purple-50' },
-    { title: 'UI/UX Designer', icon: Palette, color: 'text-pink-500', bg: 'bg-pink-50' },
-    { title: 'DevOps Engineer', icon: Shield, color: 'text-amber-500', bg: 'bg-amber-50' },
     { title: 'Mobile Developer', icon: Smartphone, color: 'text-indigo-500', bg: 'bg-indigo-50' },
-    { title: 'ML Engineer', icon: Rocket, color: 'text-red-500', bg: 'bg-red-50' }
+    
+    // Creative & Marketing
+    { title: 'UI/UX Designer', icon: Palette, color: 'text-pink-500', bg: 'bg-pink-50' },
+    { title: 'Graphic Designer', icon: Palette, color: 'text-rose-500', bg: 'bg-rose-50' },
+    { title: 'Social Media Specialist', icon: Megaphone, color: 'text-orange-500', bg: 'bg-orange-50' },
+    { title: 'Content Writer', icon: FileText, color: 'text-slate-600', bg: 'bg-slate-100' },
+    
+    // Business & Professional
+    { title: 'Project Manager', icon: Briefcase, color: 'text-cyan-600', bg: 'bg-cyan-50' },
+    { title: 'HR Specialist', icon: Users, color: 'text-violet-600', bg: 'bg-violet-50' },
+    { title: 'Accountant', icon: Calculator, color: 'text-green-600', bg: 'bg-green-50' },
+    { title: 'Financial Analyst', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    
+    // Education & Service
+    { title: 'English Teacher', icon: GraduationCap, color: 'text-sky-600', bg: 'bg-sky-50' },
+    { title: 'Chef / Cook', icon: Utensils, color: 'text-orange-600', bg: 'bg-orange-50' },
+    { title: 'Barista', icon: Coffee, color: 'text-amber-800', bg: 'bg-amber-50' },
 ];
-
-import { Rocket } from 'lucide-react'; // Fix missing import in constant
 
 export default function Onboarding() {
     const [step, setStep] = useState(1);
-    const [careerTarget, setCareerTarget] = useState('');
+    const [careerTargets, setCareerTargets] = useState<string[]>([]);
     const [skills, setSkills] = useState<string[]>([]);
     const [tempSkill, setTempSkill] = useState('');
     const [cvText, setCvText] = useState('');
@@ -48,7 +71,7 @@ export default function Onboarding() {
 
     const handleFinish = () => {
         router.post(route('onboarding.store'), {
-            career_target: careerTarget,
+            career_target: careerTargets,
             skills: skills.map(s => ({ name: s, level: 'intermediate' })), // Simplified initial level
             cv_text: cvText
         });
@@ -84,25 +107,39 @@ export default function Onboarding() {
                     {step === 1 && (
                         <div className="animate-in fade-in slide-in-from-right duration-500 flex-1">
                             <h2 className="text-3xl font-black text-navy-900 mb-2">Pilih Target Karirmu</h2>
-                            <p className="text-slate-500 mb-10">Pilih satu role yang ingin kamu capai atau kembangkan saat ini.</p>
+                            <p className="text-slate-500 mb-10">Pilih satu atau lebih role yang ingin kamu capai atau kembangkan saat ini.</p>
                             
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                {ROLES.map((role) => (
-                                    <button
-                                        key={role.title}
-                                        onClick={() => setCareerTarget(role.title)}
-                                        className={`p-6 rounded-2xl flex flex-col items-center gap-4 transition-all duration-300 border-2 ${
-                                            careerTarget === role.title 
-                                            ? 'border-teal-500 bg-teal-50 shadow-lg shadow-teal-500/10 scale-105' 
-                                            : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50'
-                                        }`}
-                                    >
-                                        <div className={`w-14 h-14 rounded-xl ${role.bg} ${role.color} flex items-center justify-center`}>
-                                            <role.icon className="w-8 h-8" />
-                                        </div>
-                                        <span className="text-sm font-bold text-navy-900 text-center">{role.title}</span>
-                                    </button>
-                                ))}
+                                {ROLES.map((role) => {
+                                    const isSelected = careerTargets.includes(role.title);
+                                    return (
+                                        <button
+                                            key={role.title}
+                                            onClick={() => {
+                                                if (isSelected) {
+                                                    setCareerTargets(careerTargets.filter(t => t !== role.title));
+                                                } else {
+                                                    setCareerTargets([...careerTargets, role.title]);
+                                                }
+                                            }}
+                                            className={`relative p-6 rounded-2xl flex flex-col items-center gap-4 transition-all duration-300 border-2 ${
+                                                isSelected 
+                                                ? 'border-teal-500 bg-teal-50 shadow-lg shadow-teal-500/10 scale-105' 
+                                                : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50'
+                                            }`}
+                                        >
+                                            {isSelected && (
+                                                <div className="absolute top-3 right-3 w-5 h-5 bg-teal-500 rounded-full flex items-center justify-center text-white scale-in duration-300">
+                                                    <Check className="w-3 h-3" />
+                                                </div>
+                                            )}
+                                            <div className={`w-14 h-14 rounded-xl ${role.bg} ${role.color} flex items-center justify-center`}>
+                                                <role.icon className="w-8 h-8" />
+                                            </div>
+                                            <span className="text-sm font-bold text-navy-900 text-center">{role.title}</span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
@@ -176,9 +213,9 @@ export default function Onboarding() {
                         {step < 3 ? (
                             <button 
                                 onClick={() => setStep(s => s + 1)}
-                                disabled={step === 1 && !careerTarget}
+                                disabled={step === 1 && careerTargets.length === 0}
                                 className={`flex items-center gap-2 px-8 py-3 rounded-xl font-bold transition-all shadow-lg ${
-                                    (step === 1 && !careerTarget) 
+                                    (step === 1 && careerTargets.length === 0) 
                                     ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
                                     : 'bg-navy-900 text-white shadow-navy-900/20 hover:scale-105'
                                 }`}

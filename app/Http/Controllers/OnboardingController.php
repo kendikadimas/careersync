@@ -21,7 +21,7 @@ class OnboardingController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'career_target' => 'required|string',
+            'career_target' => 'required|array',
             'skills' => 'array',
         ]);
 
