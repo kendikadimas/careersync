@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Data\JobMarketData;
+use App\Models\User;
 use App\Models\UserProfile;
 use App\Services\CvParserService;
 use App\Services\GeminiService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -18,7 +22,9 @@ class AnalysisController extends Controller
 
     public function index()
     {
-        $profile = UserProfile::where('user_id', auth()->id())->first();
+        $profile = UserProfile::where('user_id', Auth::id())->first();
+        $processingKey = 'analysis_processing_user_' . Auth::id();
+        $errorKey = 'analysis_processing_error_user_' . Auth::id();
         
         $marketSkills = [];
         if ($profile && $profile->career_target) {
@@ -31,6 +37,8 @@ class AnalysisController extends Controller
             'marketSkills' => $marketSkills,
             'trendingSkills' => array_slice(JobMarketData::getTrendingSkills(), 0, 3),
             'marketStats' => JobMarketData::getMarketStats(),
+            'analysisProcessing' => (bool) Cache::get($processingKey, false),
+            'analysisProcessingError' => Cache::pull($errorKey),
         ]);
     }
 
@@ -58,47 +66,185 @@ class AnalysisController extends Controller
                 return back()->with('error', 'Teks CV terlalu pendek. Minimal 50 karakter agar AI bisa menganalisis dengan akurat.');
             }
 
-            $analysis = $this->gemini->parseCV($cvText, $request->career_target);
+            $userId = Auth::id();
+            $careerTargets = (array) $request->career_target;
+            $processingKey = 'analysis_processing_user_' . $userId;
+            $errorKey = 'analysis_processing_error_user_' . $userId;
 
-            if (empty($analysis)) {
-                return back()->with('error', 'Gagal menganalisis CV. AI tidak memberikan data yang valid.');
-            }
-
-            // Merge skills with existing ones to avoid losing manually entered skills
-            $currentProfile = UserProfile::where('user_id', auth()->id())->first();
-            $existingSkills = $currentProfile->skills ?? [];
-            $newSkills = $analysis['skills'] ?? [];
-            
-            // Deduplicate skills by name
-            $mergedSkills = $existingSkills;
-            $existingNames = array_map(fn($s) => strtolower($s['name']), $existingSkills);
-            $newSkillsAdded = 0;
-            
-            foreach ($newSkills as $skill) {
-                if (!in_array(strtolower($skill['name']), $existingNames)) {
-                    $mergedSkills[] = $skill;
-                    $newSkillsAdded++;
-                }
-            }
-
-            $profile = UserProfile::updateOrCreate(
-                ['user_id' => auth()->id()],
+            UserProfile::updateOrCreate(
+                ['user_id' => Auth::id()],
                 [
-                    'career_target' => $request->career_target,
-                    'skills' => $mergedSkills,
-                    'experiences' => $analysis['experiences'] ?? [],
-                    'education' => $analysis['education'] ?? [],
+                    'career_target' => $careerTargets,
                     'cv_raw_text' => $cvText,
-                    'onboarding_completed' => true
+                    'onboarding_completed' => true,
+                    // Reset insights if CV changed so it regenerates.
+                    'ai_insights' => null, 
+                    'insights_generated_at' => null,
                 ]
             );
 
-            return redirect()->route('analysis')->with([
-                'success' => 'CV berhasil dianalisis!',
-                'new_skill_count' => $newSkillsAdded
-            ]);
+            Cache::forget($errorKey);
+            Cache::put($processingKey, true, now()->addMinutes(15));
+
+            app()->terminating(function () use ($userId, $cvText, $careerTargets, $processingKey, $errorKey) {
+                try {
+                    $this->runAnalysisForUser($userId, $cvText, $careerTargets);
+                } catch (\Throwable $e) {
+                    Log::error('Background CV analysis failed for user ' . $userId . ': ' . $e->getMessage());
+                    Cache::put($errorKey, 'Analisis AI gagal diproses. Coba submit ulang CV Anda.', now()->addMinutes(5));
+                } finally {
+                    Cache::forget($processingKey);
+                }
+            });
+
+            return redirect()->route('analysis')->with('success', 'CV diterima. AI sedang memproses analisis di background.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error: ' . $e->getMessage());
+            Log::error("CV Analysis Failed: " . $e->getMessage());
+            return back()->with('error', 'Gagal menganalisis CV. Error: ' . $e->getMessage())
+                         ->with('debug_error', $e->getMessage());
+        }
+    }
+
+    private function runAnalysisForUser(int $userId, string $cvText, array $careerTargets): void
+    {
+        set_time_limit(120);
+
+        $analysis = $this->gemini->parseCV($cvText, $careerTargets);
+        if (empty($analysis)) {
+            throw new \RuntimeException('AI tidak memberikan data analisis yang valid.');
+        }
+
+        // Merge skills with existing ones to avoid losing manually entered skills.
+        $currentProfile = UserProfile::where('user_id', $userId)->first();
+        $existingSkills = $currentProfile->skills ?? [];
+        $newSkills = $analysis['skills'] ?? [];
+
+        $mergedSkills = $existingSkills;
+        $existingNames = array_map(fn($s) => strtolower($s['name'] ?? 'unknown'), $existingSkills);
+
+        foreach ($newSkills as $skill) {
+            if (isset($skill['name']) && !in_array(strtolower($skill['name']), $existingNames, true)) {
+                $mergedSkills[] = $skill;
+            }
+        }
+
+        // Hitung dan simpan skill gap.
+        $marketSkillsTarget = is_array($careerTargets) ? ($careerTargets[0] ?? '') : $careerTargets;
+        $marketSkills = JobMarketData::getSkillsForRole($marketSkillsTarget);
+        $userSkillNames = array_column($mergedSkills, 'name');
+
+        $normalizeSkill = function (string $value): string {
+            $value = strtolower($value);
+            $value = preg_replace('/[^a-z0-9\s]/', ' ', $value);
+            $value = preg_replace('/\s+/', ' ', $value);
+            return trim($value);
+        };
+
+        $skillsMatch = function (string $userSkill, string $marketSkill) use ($normalizeSkill): bool {
+            $normalizedUser = $normalizeSkill($userSkill);
+            $normalizedMarket = $normalizeSkill($marketSkill);
+
+            if ($normalizedUser === '' || $normalizedMarket === '') {
+                return false;
+            }
+
+            if (str_contains($normalizedUser, $normalizedMarket) || str_contains($normalizedMarket, $normalizedUser)) {
+                return true;
+            }
+
+            $userTokens = array_filter(explode(' ', $normalizedUser));
+            $marketTokens = array_filter(explode(' ', $normalizedMarket));
+
+            foreach ($userTokens as $token) {
+                if (strlen($token) < 3) {
+                    continue;
+                }
+                if (in_array($token, $marketTokens, true)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        $levelToScore = function (?string $level): int {
+            $normalized = strtolower(trim((string) $level));
+
+            return match ($normalized) {
+                'expert', 'advanced', 'proficient', 'senior' => 90,
+                'intermediate', 'menengah', 'medium' => 60,
+                'beginner', 'junior', 'pemula', 'basic' => 30,
+                default => 0,
+            };
+        };
+
+        $skillGaps = [];
+        foreach ($marketSkills as $ms) {
+            $userLevel = 'missing';
+            $userScore = 0;
+
+            foreach ($userSkillNames as $userSkill) {
+                if ($skillsMatch((string) $userSkill, (string) $ms['skill'])) {
+                    foreach ($mergedSkills as $s) {
+                        if (isset($s['name']) && $skillsMatch((string) $s['name'], (string) $ms['skill'])) {
+                            $userLevel = $s['level'] ?? 'beginner';
+                            $userScore = $levelToScore($userLevel);
+                            break;
+                        }
+                    }
+                    if ($userScore > 0) {
+                        break;
+                    }
+                }
+            }
+
+            $gap = max(0, $ms['demand'] - $userScore);
+
+            $status = match (true) {
+                $gap <= 0 => 'strong',
+                $gap <= 25 => 'developing',
+                default => 'missing',
+            };
+
+            $statusLabel = match (true) {
+                $gap <= 0 => 'SIAP INDUSTRI',
+                $gap <= 10 => 'HAMPIR STANDAR',
+                $gap <= 25 => 'PERLU PENINGKATAN',
+                default => 'PRIORITAS BELAJAR',
+            };
+
+            $skillGaps[] = [
+                'skill' => $ms['skill'],
+                'market_demand' => $ms['demand'],
+                'trend' => $ms['trend'] ?? 'stable',
+                'user_score' => $userScore,
+                'user_level' => $userLevel,
+                'status' => $status,
+                'status_label' => $statusLabel,
+                'gap' => $gap,
+            ];
+        }
+
+        UserProfile::updateOrCreate(
+            ['user_id' => $userId],
+            [
+                'career_target' => $careerTargets,
+                'skills' => $mergedSkills,
+                'skill_gaps' => $skillGaps,
+                'experiences' => $analysis['experiences'] ?? [],
+                'education' => $analysis['education'] ?? [],
+                'cv_raw_text' => $cvText,
+                'onboarding_completed' => true,
+                'ai_insights' => null,
+                'career_paths' => $this->gemini->generateCareerPaths($mergedSkills),
+                'cv_optimization_tips' => $this->gemini->generateCvOptimization($cvText, $skillGaps),
+                'insights_generated_at' => null,
+            ]
+        );
+
+        $user = User::find($userId);
+        if ($user) {
+            app(\App\Services\BadgeService::class)->checkAndAwardBadges($user->fresh());
         }
     }
 }

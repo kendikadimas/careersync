@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { 
     LayoutDashboard, 
@@ -10,7 +10,11 @@ import {
     Menu, 
     X, 
     Bell,
-    CheckCircle2
+    CheckCircle2,
+    Lightbulb,
+    Trophy,
+    Award,
+    Sparkles
 } from 'lucide-react';
 
 interface Props {
@@ -21,14 +25,49 @@ interface Props {
 export default function AppLayout({ children, header }: Props) {
     const { auth, flash } = usePage<any>().props;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [showBadgeToast, setShowBadgeToast] = useState(false);
+    const [activeBadges, setActiveBadges] = useState<any[]>([]);
 
-    const navigation = [
-        { name: 'Dashboard', href: route('dashboard'), icon: LayoutDashboard, active: route().current('dashboard') },
-        { name: 'Analisis Skill', href: route('analysis'), icon: BarChart3, active: route().current('analysis') },
-        { name: 'Learning Roadmap', href: route('roadmap'), icon: MapIcon, active: route().current('roadmap') },
-        { name: 'Market Intel', href: route('market'), icon: TrendingUp, active: route().current('market') },
-        { name: 'Profil Saya', href: route('profile.edit'), icon: User, active: route().current('profile.edit') },
+    useEffect(() => {
+        if (flash.new_badges && flash.new_badges.length > 0) {
+            setActiveBadges(flash.new_badges);
+            setShowBadgeToast(true);
+            const timer = setTimeout(() => setShowBadgeToast(false), 8000);
+            return () => clearTimeout(timer);
+        }
+    }, [flash.new_badges]);
+
+    const navGroups = [
+        {
+            title: 'Academy',
+            items: [
+                { name: 'Dashboard', href: route('dashboard'), icon: LayoutDashboard, active: route().current('dashboard') },
+                { name: 'Analisis Skill', href: route('analysis'), icon: BarChart3, active: route().current('analysis') },
+                { name: 'Learning Roadmap', href: route('roadmap'), icon: MapIcon, active: route().current('roadmap') },
+            ]
+        },
+        {
+            title: 'Growth',
+            items: [
+                { name: 'Leaderboard', href: route('leaderboard'), icon: Trophy, active: route().current('leaderboard') },
+                { name: 'Portfolio', href: route('portfolio.index'), icon: Award, active: route().current('portfolio.index') },
+            ]
+        },
+        {
+            title: 'Intelligence',
+            items: [
+                { name: 'Market Intel', href: route('market'), icon: TrendingUp, active: route().current('market') },
+            ]
+        },
+        {
+            title: 'System',
+            items: [
+                { name: 'Profil Saya', href: route('profile.edit'), icon: User, active: route().current('profile.edit') },
+            ]
+        }
     ];
+
+    const allNavItems = navGroups.flatMap(group => group.items);
 
     return (
         <div className="min-h-screen bg-slate-50 flex">
@@ -41,20 +80,27 @@ export default function AppLayout({ children, header }: Props) {
                     <span className="font-bold text-xl tracking-tight">CareerSync</span>
                 </div>
 
-                <nav className="flex-1 px-4 mt-6 space-y-2">
-                    {navigation.map((item) => (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                                item.active 
-                                ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/20' 
-                                : 'text-navy-100 hover:bg-navy-800 hover:text-white'
-                            }`}
-                        >
-                            <item.icon className="w-5 h-5" />
-                            <span className="font-medium text-sm">{item.name}</span>
-                        </Link>
+                <nav className="flex-1 px-4 mt-6 space-y-8 overflow-y-auto pb-8">
+                    {navGroups.map((group) => (
+                        <div key={group.title} className="space-y-1">
+                            <h3 className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-navy-400 mb-3">
+                                {group.title}
+                            </h3>
+                            {group.items.map((item) => (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group ${
+                                        item.active 
+                                        ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/20' 
+                                        : 'text-navy-100 hover:bg-navy-800 hover:text-white'
+                                    }`}
+                                >
+                                    <item.icon className={`w-4.5 h-4.5 ${item.active ? 'text-white' : 'text-teal-500 group-hover:text-white'} transition-colors`} />
+                                    <span className="font-medium text-sm">{item.name}</span>
+                                </Link>
+                            ))}
+                        </div>
                     ))}
                 </nav>
 
@@ -65,7 +111,7 @@ export default function AppLayout({ children, header }: Props) {
                         </div>
                         <div className="overflow-hidden">
                             <p className="font-medium text-sm truncate">{auth?.user?.name || 'Guest'}</p>
-                            <p className="text-xs text-navy-400 truncate">{auth?.user?.email || ''}</p>
+                            <p className="text-xs text-navy-400 truncate tracking-tight">{auth?.user?.rank || 'Newbie'}</p>
                         </div>
                     </div>
                     <Link
@@ -92,11 +138,16 @@ export default function AppLayout({ children, header }: Props) {
                             <Menu className="w-6 h-6" />
                         </button>
                         <h1 className="font-bold text-lg text-navy-900 max-md:hidden">
-                            {header || navigation.find(n => n.active)?.name || 'Career-Sync'}
+                            {header || allNavItems.find(n => n.active)?.name || 'Career-Sync'}
                         </h1>
                     </div>
 
                     <div className="flex items-center gap-4">
+                         {/* Points Display */}
+                         <div className="hidden sm:flex items-center gap-2 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-100">
+                            <Sparkles className="w-4 h-4 text-amber-500" />
+                            <span className="text-sm font-bold text-amber-700">{auth?.user?.total_points || 0} pts</span>
+                        </div>
                         <button className="p-2 text-slate-400 hover:text-navy-600 transition-colors relative">
                             <Bell className="w-5 h-5" />
                             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -105,7 +156,26 @@ export default function AppLayout({ children, header }: Props) {
                 </header>
 
                 {/* Content */}
-                <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
+                <div className="p-4 md:p-8 max-w-7xl mx-auto w-full relative">
+                    {/* Badge Notifications Toast */}
+                    {showBadgeToast && (
+                        <div className="fixed bottom-8 right-8 z-100 flex flex-col gap-3 max-w-sm animate-in slide-in-from-right duration-500">
+                            {activeBadges.map((badge, idx) => (
+                                <div key={idx} className="bg-navy-900 border-2 border-teal-500 shadow-2xl shadow-teal-500/20 p-5 rounded-2xl text-white flex gap-4">
+                                    <div className="text-4xl animate-bounce">{badge.emoji}</div>
+                                    <div>
+                                        <h4 className="font-black text-teal-400 uppercase tracking-widest text-xs mb-1">New Badge Earned!</h4>
+                                        <p className="font-bold text-lg leading-tight">{badge.name}</p>
+                                        <p className="text-sm text-navy-200 mt-1">{badge.description}</p>
+                                    </div>
+                                    <button onClick={() => setShowBadgeToast(false)} className="absolute top-3 right-3 text-white/40 hover:text-white">
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     {flash.success && (
                         <div className="mb-6 p-4 bg-teal-50 border border-teal-200 text-teal-700 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top duration-300">
                             <CheckCircle2 className="w-5 h-5 text-teal-500" />
@@ -136,19 +206,26 @@ export default function AppLayout({ children, header }: Props) {
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
-                        <nav className="flex-1 space-y-2">
-                             {navigation.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    href={item.href}
-                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium ${
-                                        item.active ? 'bg-teal-500 text-white' : 'text-navy-100'
-                                    }`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    <item.icon className="w-5 h-5" />
-                                    {item.name}
-                                </Link>
+                        <nav className="flex-1 space-y-6">
+                             {navGroups.map((group) => (
+                                <div key={group.title} className="space-y-1">
+                                    <h4 className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-navy-500 mb-2">
+                                        {group.title}
+                                    </h4>
+                                    {group.items.map((item) => (
+                                        <Link
+                                            key={item.name}
+                                            href={item.href}
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium ${
+                                                item.active ? 'bg-teal-500 text-white' : 'text-navy-100'
+                                            }`}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            <item.icon className="w-5 h-5" />
+                                            {item.name}
+                                        </Link>
+                                    ))}
+                                </div>
                             ))}
                         </nav>
                     </aside>

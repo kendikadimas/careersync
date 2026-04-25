@@ -316,42 +316,40 @@ export default function Roadmap({ roadmap, profile }: any) {
                                                     </div>
                                                     <h6 className="font-black text-navy-800 mb-2">{selectedMilestone.capstone_project.title}</h6>
                                                     <p className="text-xs text-slate-500 leading-relaxed mb-4">{selectedMilestone.capstone_project.description}</p>
-                                                    <div className="flex flex-wrap gap-2">
+                                                    <div className="flex flex-wrap gap-2 mb-6">
                                                         {selectedMilestone.capstone_project.tech_used?.map((tech: string) => (
                                                             <span key={tech} className="px-2 py-1 bg-white border border-slate-200 text-[10px] font-bold rounded-md uppercase">{tech}</span>
                                                         ))}
                                                     </div>
+
+                                                    {/* Tombol submit — hanya aktif jika milestone status === 'current' atau 'completed' */}
+                                                    {(selectedMilestone.status === 'current' || selectedMilestone.status === 'completed') && (
+                                                        <a
+                                                            href={`/roadmap/${roadmap.id}/capstone/${selectedMilestone.id}`}
+                                                            className={`flex items-center justify-center font-bold py-3 px-4 rounded-xl transition-all ${
+                                                                selectedMilestone.status === 'completed'
+                                                                    ? 'bg-teal-100 text-teal-700 border border-teal-200 hover:bg-teal-200'
+                                                                    : 'bg-teal-500 text-white shadow-lg shadow-teal-500/20 hover:scale-[1.02]'
+                                                            }`}
+                                                        >
+                                                            {selectedMilestone.status === 'completed'
+                                                                ? '✓ View Submission Score'
+                                                                : 'Tantangan: Submit Capstone Project'}
+                                                        </a>
+                                                    )}
+
+                                                    {selectedMilestone.status === 'locked' && (
+                                                        <p className="text-xs font-bold text-slate-400 text-center py-2 bg-slate-100 rounded-xl">
+                                                            🔒 Selesaikan milestone sebelumnya untuk unlock
+                                                        </p>
+                                                    )}
                                                 </div>
                                             )}
                                         </>
                                     )}
                                 </div>
 
-                                <div className="p-8 border-t border-slate-100">
-                                    <button 
-                                        disabled={loadingDetails || selectedMilestone.status === 'completed' || selectedMilestone.status === 'locked'}
-                                        onClick={() => handleComplete(selectedMilestone.id)}
-                                        className={`w-full p-4 rounded-xl font-black flex items-center justify-center gap-3 transition-all ${
-                                            selectedMilestone.status === 'completed' 
-                                            ? 'bg-teal-100 text-teal-600 cursor-default' 
-                                            : selectedMilestone.status === 'locked'
-                                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                            : 'bg-teal-500 text-white shadow-xl shadow-teal-500/20 hover:scale-[1.02] active:scale-95'
-                                        }`}
-                                    >
-                                        {selectedMilestone.status === 'completed' ? (
-                                            <>
-                                                <CheckCircle2 className="w-6 h-6" />
-                                                Sudah Selesai
-                                            </>
-                                        ) : (
-                                            <>
-                                                Tandai Selesai & Lulus
-                                                <ArrowRight className="w-6 h-6" />
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
+                                {/* Manual Complete Button Removed in favor of Capstone Submission */}
                             </>
                         )}
                     </div>

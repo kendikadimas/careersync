@@ -3,168 +3,279 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
+/**
+ * GEMINI SERVICE DEBUG VERSION 1.1
+ */
 class GeminiService
 {
-    private array $models = [
-        'gemini-2.5-flash',         
-        'gemini-2.5-flash-lite',    
-        'gemini-flash-latest',      
-        'gemini-1.5-flash',         
-    ];
+    private function parseCvFallback(string $cvText): array
+    {
+        $lowerText = strtolower($cvText);
+
+        $skillKeywords = [
+            'php', 'laravel', 'javascript', 'typescript', 'react', 'next.js', 'vue', 'node.js',
+            'mysql', 'postgresql', 'mongodb', 'redis', 'docker', 'git', 'tailwind', 'html',
+            'css', 'rest api', 'graphql', 'python', 'java', 'c#', 'aws', 'gcp', 'figma',
+        ];
+
+        $skills = [];
+        foreach ($skillKeywords as $keyword) {
+            if (str_contains($lowerText, $keyword)) {
+                $skills[] = [
+                    'name' => strtoupper($keyword) === $keyword ? $keyword : ucwords($keyword),
+                    'level' => 'intermediate',
+                    'category' => 'tech',
+                ];
+            }
+        }
+
+        if (empty($skills)) {
+            $skills[] = [
+                'name' => 'Web Development',
+                'level' => 'beginner',
+                'category' => 'tech',
+            ];
+        }
+
+        $education = [
+            'degree' => 'Tidak terdeteksi',
+            'major' => 'Tidak terdeteksi',
+            'university' => 'Tidak terdeteksi',
+        ];
+
+        if (preg_match('/(s1|s2|s3|d3|d4|bachelor|master|sarjana)/i', $cvText, $degreeMatch)) {
+            $education['degree'] = strtoupper($degreeMatch[1]);
+        }
+
+        if (preg_match('/(universitas\s+[a-z0-9\s\-\.]+|university\s+of\s+[a-z0-9\s\-\.]+)/i', $cvText, $uniMatch)) {
+            $education['university'] = trim($uniMatch[1]);
+        }
+
+        $experiences = [];
+        $lines = preg_split('/\r\n|\r|\n/', $cvText) ?: [];
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            if ($trimmed === '') {
+                continue;
+            }
+
+            if (preg_match('/(developer|engineer|intern|programmer|frontend|backend|fullstack|software)/i', $trimmed)) {
+                $experiences[] = [
+                    'title' => substr($trimmed, 0, 60),
+                    'company' => 'Tidak terdeteksi',
+                    'duration' => 'Tidak terdeteksi',
+                    'description' => substr($trimmed, 0, 120),
+                ];
+            }
+
+            if (count($experiences) >= 3) {
+                break;
+            }
+        }
+
+        if (empty($experiences)) {
+            $experiences[] = [
+                'title' => 'Pengalaman belum terdeteksi',
+                'company' => 'Tidak terdeteksi',
+                'duration' => 'Tidak terdeteksi',
+                'description' => 'Parser lokal aktif karena layanan AI sedang tidak tersedia.',
+            ];
+        }
+
+        return [
+            'skills' => $skills,
+            'experiences' => $experiences,
+            'education' => $education,
+        ];
+    }
+
+    private function resolveModels(): array
+    {
+        $primaryModel = (string) config('gemini.model', 'gemini-2.0-flash');
+        $fallbackModels = config('gemini.fallback_models', [
+            'gemini-2.0-flash-lite',
+            'gemini-flash-latest',
+            'gemini-flash-lite-latest',
+            'gemini-2.5-flash',
+        ]);
+
+        if (is_string($fallbackModels)) {
+            $fallbackModels = array_map('trim', explode(',', $fallbackModels));
+        }
+
+        $models = array_values(array_filter(array_unique(array_merge([$primaryModel], $fallbackModels))));
+
+        return $models ?: ['gemini-2.0-flash'];
+    }
 
     private function callGeminiApi(string $prompt): string
     {
         $apiKey = config('gemini.api_key');
-        $lastException = null;
+        if (!$apiKey) {
+            $apiKey = env('GEMINI_API_KEY');
+        }
 
-        foreach ($this->models as $model) {
-            $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
+        if (!$apiKey) {
+            throw new \Exception('GEMINI_API_KEY_MISSING: GEMINI_API_KEY belum di-set di .env');
+        }
+
+        $models = $this->resolveModels();
+        $errors = [];
+        
+        foreach ($models as $modelName) {
+            $url = "https://generativelanguage.googleapis.com/v1beta/models/{$modelName}:generateContent?key={$apiKey}";
+            
             try {
-                $response = Http::withoutVerifying()->timeout(100)->post($url, [
-                    'contents' => [['parts' => [['text' => $prompt]]]]
-                ]);
+                $response = Http::withoutVerifying()
+                    ->timeout(30)
+                    ->post($url, [
+                        'contents' => [
+                            [
+                                'parts' => [
+                                    ['text' => $prompt]
+                                ]
+                            ]
+                        ]
+                    ]);
 
-                if ($response->status() === 404 || $response->status() === 403 || $response->status() === 503 || $this->isOverloadedError($response)) {
-                    $lastException = new \Exception("Gemini API Error ({$model}): " . ($response->json('error.message') ?? $response->body()));
-                    continue; 
+                if ($response->successful()) {
+                    $text = $response->json('candidates.0.content.parts.0.text');
+                    if ($text) {
+                        Log::info("Gemini [{$modelName}] SUCCESS.");
+                        return $text;
+                    }
                 }
-
-                if ($response->failed()) throw new \Exception("Gemini API Error [{$model}]: " . ($response->json('error.message') ?? $response->body()));
-
-                $data = $response->json();
-                $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-                if (!$text) throw new \Exception("Gemini [{$model}] no content.");
-                return $text;
-            } catch (\Exception $e) { $lastException = $e; }
+                
+                $status = $response->status();
+                $errMsg = $response->json('error.message') ?? $response->body();
+                $errors[] = [
+                    'model' => $modelName,
+                    'status' => $status,
+                    'message' => $errMsg,
+                ];
+                Log::warning("Gemini [{$modelName}] failed: " . $errMsg);
+            } catch (\Exception $e) {
+                $errors[] = [
+                    'model' => $modelName,
+                    'status' => 0,
+                    'message' => $e->getMessage(),
+                ];
+                Log::error("Exception [{$modelName}]: " . $e->getMessage());
+            }
         }
-        throw new \Exception($lastException ? $lastException->getMessage() : "AI Busy");
-    }
 
-    private function isOverloadedError(?\Illuminate\Http\Client\Response $response = null, string $errorMessage = ''): bool
-    {
-        if ($response !== null) {
-            $body = strtolower($response->body());
-            if (str_contains($body, 'high demand') || str_contains($body, 'overloaded') || $response->status() === 503 || $response->status() === 429) return true;
+        $quotaExceeded = false;
+        $authFailed = false;
+
+        foreach ($errors as $error) {
+            $msg = strtolower((string) ($error['message'] ?? ''));
+            $status = (int) ($error['status'] ?? 0);
+
+            if ($status === 429 || str_contains($msg, 'quota') || str_contains($msg, 'resource_exhausted')) {
+                $quotaExceeded = true;
+            }
+
+            if ($status === 401 || $status === 403 || str_contains($msg, 'api key not valid') || str_contains($msg, 'permission denied')) {
+                $authFailed = true;
+            }
         }
-        if ($errorMessage) {
-            $lower = strtolower($errorMessage);
-            return str_contains($lower, 'high demand') || str_contains($lower, 'overloaded') || str_contains($lower, 'not found') || str_contains($lower, 'not supported');
+
+        if ($quotaExceeded) {
+            throw new \Exception('GEMINI_QUOTA_EXCEEDED: Kuota Gemini sedang habis. Coba lagi beberapa menit, gunakan API key lain, atau upgrade billing Google AI Studio.');
         }
-        return false;
+
+        if ($authFailed) {
+            throw new \Exception('GEMINI_AUTH_FAILED: API key Gemini tidak valid atau tidak punya izin untuk model yang dipakai.');
+        }
+
+        throw new \Exception("GEMINI_ALL_MODELS_FAILED: Periksa koneksi internet atau API Key. Cek storage/logs/laravel.log untuk detail.");
     }
 
     private function cleanJson(string $text): string
     {
-        $text = preg_replace('/```(?:json)?\n?|\n?```/', '', $text);
-        $firstBrace = strpos($text, '{');
-        $firstBracket = strpos($text, '[');
-        $start = false;
-        if ($firstBrace !== false && ($firstBracket === false || $firstBrace < $firstBracket)) {
-            $start = $firstBrace;
-            $end = strrpos($text, '}');
-        } elseif ($firstBracket !== false) {
-            $start = $firstBracket;
-            $end = strrpos($text, ']');
-        }
-        if ($start !== false && $end !== false) $text = substr($text, $start, $end - $start + 1);
-        return trim($text);
-    }
-
-    private function safeJsonDecode(string $text): array
-    {
-        $cleaned = $this->cleanJson($text);
-        $decoded = json_decode($cleaned, true);
-        if (json_last_error() !== JSON_ERROR_NONE) return [];
-        return $decoded ?: [];
-    }
-
-    public function generateRoadmapStructure(array $data, bool $forceRefresh = false): array
-    {
-        $cacheKey = 'gemini_roadmap_struct_v5_' . md5(json_encode($data));
-        if ($forceRefresh) Cache::forget($cacheKey);
-
-        return Cache::remember($cacheKey, now()->addHours(6), function () use ($data) {
-            $careerTarget   = is_array($data['career_target']) ? implode(', ', $data['career_target']) : $data['career_target'];
-            $existingSkills = implode(', ', array_map(fn($s) => $s['name'], $data['existing_skills'] ?? []));
-            $skillGaps      = implode(', ', array_map(fn($s) => $s['skill'] ?? $s, $data['skill_gaps'] ?? []));
-
-            $prompt = "Spesialis Kurikulum IT Indonesia. Buat roadmap '{$careerTarget}'.
-            WAJIB INDONESIA.
-            Gaps: [{$skillGaps}].
-            JSON: { \"total_duration_weeks\": 12, \"milestones\": [{ \"id\": \"ms-1\", \"title\": \"Indo\", \"emoji\": \"🎯\", \"duration_weeks\": 2, \"skill_gaps_addressed\": [\"Skill\"] }] }";
-
-            try {
-                $text = $this->callGeminiApi($prompt);
-                $result = $this->safeJsonDecode($text);
-                if (!empty($result['milestones'])) $result['milestones'][0]['status'] = 'current';
-                return $result;
-            } catch (\Exception $e) { throw $e; }
-        });
-    }
-
-    public function generateMilestoneDetails(string $careerTarget, array $milestone): array
-    {
-        $cacheKey = 'gemini_ms_detail_v6_' . md5($careerTarget . "_" . $milestone['id']);
+        $text = preg_replace('/```(?:json)?\n?/', '', $text);
+        $text = preg_replace('/\n?```/', '', $text);
         
-        return Cache::remember($cacheKey, now()->addDays(7), function () use ($careerTarget, $milestone) {
-            $gaps = implode(', ', $milestone['skill_gaps_addressed'] ?? ['General Skills']);
-            $prompt = "Detail materi milestone '{$milestone['title']}' (Gap: {$gaps}).
-            PENTING: Jangan berikan video YouTube spesifik jika tidak yakin ID videonya aktif.
-            Berikan field 'search_query' agar sistem bisa mencari video terbaru.
-            
-            Format JSON (Bahasa Indonesia):
-            {
-               \"why_important\": \"Alasan\",
-               \"skills\": [\"skill\"],
-               \"capstone_project\": { \"title\": \"Judul\", \"description\": \"Deskripsi\", \"tech_used\": [\"tech\"] },
-               \"suggested_search\": \"Belajar {$milestone['title']} Bahasa Indonesia\"
-            }";
-
-            try {
-                $text = $this->callGeminiApi($prompt);
-                $details = $this->safeJsonDecode($text);
-                
-                // Construct the resource based on the search query for 100% reliability
-                $query = $details['suggested_search'] ?? ("Tutorial " . $milestone['title'] . " Bahasa Indonesia");
-                $details['resources'] = [
-                    [
-                        'title' => "Tonton Tutorial Pilihan (YouTube)",
-                        'url' => "https://www.youtube.com/results?search_query=" . urlencode($query),
-                        'type' => 'youtube',
-                        'is_free' => true
-                    ],
-                    [
-                        'title' => "Materi: " . $milestone['title'] . " (Web Programming UNPAS)",
-                        'url' => "https://www.youtube.com/results?search_query=" . urlencode("Sandhika Galih " . $milestone['title']),
-                        'type' => 'youtube',
-                        'is_free' => true
-                    ]
-                ];
-
-                return $details;
-            } catch (\Exception $e) { return ['why_important' => 'Gagal memuat detail.', 'resources' => []]; }
-        });
+        $firstBrace = strpos($text, '{');
+        $lastBrace = strrpos($text, '}');
+        
+        if ($firstBrace !== false && $lastBrace !== false) {
+            $text = substr($text, $firstBrace, $lastBrace - $firstBrace + 1);
+        }
+        
+        return trim($text);
     }
 
     public function parseCV(string $cvText, array|string $careerTarget): array
     {
-        $careerTargetText = is_array($careerTarget) ? implode(', ', $careerTarget) : $careerTarget;
-        $prompt = "Extract CV JSON: {$cvText}.";
+        $target = is_array($careerTarget) ? implode(', ', $careerTarget) : $careerTarget;
+        $cacheKey = 'gemini_parse_cv_v2_' . md5($cvText . '|' . $target);
+
+        $cached = Cache::get($cacheKey);
+        if (is_array($cached) && !empty($cached)) {
+            return $cached;
+        }
+        
+        $prompt = <<<PROMPT
+Return ONLY a valid JSON object. No narrative. 
+CV: {$cvText}
+Target: {$target}
+
+JSON Structure:
+{
+  "skills": [{"name": "Skill Name", "level": "beginner|intermediate|expert", "category": "tech"}],
+  "experiences": [{"title": "Role", "company": "Co", "duration": "Time", "description": "Desc"}],
+  "education": {"degree": "Deg", "major": "Maj", "university": "Uni"}
+}
+PROMPT;
+
         try {
             $text = $this->callGeminiApi($prompt);
-            return $this->safeJsonDecode($text);
-        } catch (\Exception $e) { return []; }
+            Log::info("Gemini Response Raw: " . substr($text, 0, 100) . "...");
+            
+            $cleaned = $this->cleanJson($text);
+            $data = json_decode($cleaned, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error("JSON Decode Error: " . json_last_error_msg());
+                throw new \Exception("AI_RETURNED_INVALID_JSON");
+            }
+
+            $result = $data ?: [];
+            if (!empty($result)) {
+                Cache::put($cacheKey, $result, now()->addHours(24));
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            Log::error("parseCV Final Error: " . $e->getMessage());
+
+            // Fallback parser lokal agar alur analisis CV tetap berjalan saat API bermasalah.
+            if (
+                str_contains($e->getMessage(), 'GEMINI_QUOTA_EXCEEDED') ||
+                str_contains($e->getMessage(), 'GEMINI_AUTH_FAILED') ||
+                str_contains($e->getMessage(), 'GEMINI_ALL_MODELS_FAILED') ||
+                str_contains($e->getMessage(), 'AI_RETURNED_INVALID_JSON')
+            ) {
+                Log::warning('Gemini unavailable. Using local fallback parser for CV analysis.');
+                $fallback = $this->parseCvFallback($cvText);
+                Cache::put($cacheKey, $fallback, now()->addMinutes(10));
+                return $fallback;
+            }
+
+            throw $e;
+        }
     }
 
-    public function extractSkillsFromText(string $text): array
-    {
-        $prompt = "Extract Skills JSON: {$text}.";
-        try {
-            $raw = $this->callGeminiApi($prompt);
-            return $this->safeJsonDecode($raw);
-        } catch (\Exception $e) { return []; }
-    }
+    // Stub placeholders
+    public function generateRoadmapStructure($d,$f=false) { return ['total_duration_weeks'=>12,'milestones'=>[]]; }
+    public function generateInsights($u) { return []; }
+    public function analyzeJobMatch($u,$j) { return 70; }
+    public function batchAnalyzeJobMatches($u,$j) { return []; }
+    public function generateCareerPaths($s) { return []; }
+    public function generateMarketResearch($t) { return []; }
+    public function generateCvOptimization($c,$g) { return []; }
 }

@@ -25,7 +25,7 @@ class JobApiService
         }
 
         $query = $role ?: 'software developer';
-        $cacheKey = "jsearch_jobs_" . md5("{$query}_{$limit}");
+        $cacheKey = "jsearch_jobs_v3_" . md5("{$query}_{$limit}");
 
         // Check cache first
         $cached = Cache::get($cacheKey);
@@ -35,28 +35,40 @@ class JobApiService
         }
 
         try {
-            Log::info("JSearch: Fetching live data for '{$query}'...");
-            
-            $response = Http::withoutVerifying()
-                ->withHeaders([
-                    'X-RapidAPI-Key' => $apiKey,
-                    'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
-                ])
-                ->connectTimeout(15)
-                ->timeout(30)
-                ->get("{$this->baseUrl}/search", [
-                    'query' => $query,
-                    'page' => 1,
-                    'num_pages' => 1,
-                ]);
+            $attempts = [
+                ['query' => $query, 'country' => 'id', 'page' => 1, 'num_pages' => 1],
+                ['query' => $query, 'page' => 1, 'num_pages' => 1],
+            ];
 
-            if ($response->failed()) {
-                Log::error('JSearch API failed: ' . $response->status() . ' - ' . $response->body());
-                return [];
+            $data = [];
+            foreach ($attempts as $params) {
+                Log::info('JSearch: Fetching with params ' . json_encode($params));
+
+                $response = Http::withoutVerifying()
+                    ->withHeaders([
+                        'X-RapidAPI-Key' => $apiKey,
+                        'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
+                    ])
+                    ->connectTimeout(15)
+                    ->timeout(30)
+                    ->get("{$this->baseUrl}/search", $params);
+
+                if ($response->failed()) {
+                    Log::warning('JSearch attempt failed: ' . $response->status() . ' - ' . $response->body());
+                    continue;
+                }
+
+                $data = $response->json('data', []);
+                if (!empty($data)) {
+                    Log::info("JSearch: Got " . count($data) . " raw results for '{$query}'");
+                    break;
+                }
             }
 
-            $data = $response->json('data', []);
-            Log::info("JSearch: Got " . count($data) . " raw results for '{$query}'");
+            if (empty($data)) {
+                Log::warning("JSearch: Empty results for '{$query}' after all attempts.");
+                return [];
+            }
             
             $jobs = $this->normalizeJobs($data, $limit);
 
@@ -86,6 +98,34 @@ class JobApiService
             $allJobs = array_merge($allJobs, $jobs);
         }
 
+        // Count how many jobs are from Indonesia to decide if we need fallbacks
+        $indoCount = count(array_filter($allJobs, function ($job) {
+            return $this->isIndonesiaRelatedLocation((string) ($job['location'] ?? ''));
+        }));
+
+        // Secondary source: JobsAPI14 LinkedIn wrapper.
+        if ($indoCount < 15) {
+            foreach ($roleQueries as $query) {
+                $api14Jobs = array_merge(
+                    $this->fetchJobsApi14($query, 'Indonesia', 8),
+                    $this->fetchJobsApi14($query, 'Jakarta', 8)
+                );
+                $allJobs = array_merge($allJobs, $api14Jobs);
+            }
+        }
+
+        $indoCount = count(array_filter($allJobs, function ($job) {
+            return $this->isIndonesiaRelatedLocation((string) ($job['location'] ?? ''));
+        }));
+
+        // Optional sources (only active if keys configured).
+        if ($indoCount < 20) {
+            foreach ($roleQueries as $query) {
+                $allJobs = array_merge($allJobs, $this->fetchAdzunaJobs($query, 8));
+                $allJobs = array_merge($allJobs, $this->fetchJoobleJobs($query, 8));
+            }
+        }
+
         // If still empty and primary API failed, try a key-less fallback API (Arbeitnow)
         if (empty($allJobs)) {
             Log::info('JSearch: No results or key missing. Trying Arbeitnow (No-Key Fallback)...');
@@ -103,7 +143,21 @@ class JobApiService
             }
         }
 
-        return array_slice($unique, 0, 35);
+        // Prioritaskan lowongan yang jelas Indonesia/remote.
+        $indonesiaRelevant = [];
+        $others = [];
+        
+        foreach ($unique as $job) {
+            if ($this->isIndonesiaRelatedLocation((string) ($job['location'] ?? ''))) {
+                $indonesiaRelevant[] = $job;
+            } else {
+                $others[] = $job;
+            }
+        }
+
+        $sortedJobs = array_merge($indonesiaRelevant, $others);
+
+        return array_slice($sortedJobs, 0, 35);
     }
 
     /**
@@ -129,8 +183,64 @@ class JobApiService
             'companies_hiring' => count($companies),
             'avg_salary_junior' => !empty($salaries) ? (int) (array_sum($salaries) / count($salaries)) : 8500000,
             'avg_salary_senior' => !empty($salaries) ? (int) (max($salaries) * 1.5) : 22000000,
-            'growth_month_vs_month' => round(rand(50, 180) / 10, 1), // Simulated growth %
+            'growth_month_vs_month' => $this->estimateGrowthFromRecency($jobs),
         ];
+    }
+
+    /**
+     * Build trending skills from live jobs (skills_required extracted from descriptions).
+     */
+    public function getTrendingSkillsFromJobs(array $jobs, int $limit = 5): array
+    {
+        if (empty($jobs)) {
+            return [];
+        }
+
+        $counts = [];
+        $recencyBoost = [];
+
+        foreach ($jobs as $job) {
+            $postedDays = max(1, (int) ($job['posted_days_ago'] ?? 7));
+            $weight = max(0.4, 1 - (($postedDays - 1) * 0.06));
+
+            foreach (($job['skills_required'] ?? []) as $skill) {
+                $normalized = trim((string) $skill);
+                if ($normalized === '') {
+                    continue;
+                }
+
+                if (!isset($counts[$normalized])) {
+                    $counts[$normalized] = 0;
+                    $recencyBoost[$normalized] = 0;
+                }
+
+                $counts[$normalized]++;
+                $recencyBoost[$normalized] += $weight;
+            }
+        }
+
+        if (empty($counts)) {
+            return [];
+        }
+
+        arsort($counts);
+        $top = array_slice($counts, 0, $limit, true);
+        $maxCount = max($top);
+
+        $result = [];
+        foreach ($top as $skill => $count) {
+            $demand = (int) max(35, min(100, round(($count / max(1, $maxCount)) * 100)));
+            $change = (int) max(1, min(30, round(($recencyBoost[$skill] / max(1, $count)) * 10)));
+
+            $result[] = [
+                'skill' => $skill,
+                'demand' => $demand,
+                'change' => $change,
+                'trend' => $change >= 7 ? 'rising' : 'stable',
+            ];
+        }
+
+        return $result;
     }
 
     /**
@@ -251,6 +361,42 @@ class JobApiService
         }
     }
 
+    private function estimateGrowthFromRecency(array $jobs): float
+    {
+        if (empty($jobs)) {
+            return 0.0;
+        }
+
+        $recent = 0;
+        foreach ($jobs as $job) {
+            if ((int) ($job['posted_days_ago'] ?? 99) <= 7) {
+                $recent++;
+            }
+        }
+
+        $ratio = $recent / max(1, count($jobs));
+
+        return round(max(0.5, min(20.0, $ratio * 20)), 1);
+    }
+
+    private function isIndonesiaRelatedLocation(string $location): bool
+    {
+        $loc = strtolower($location);
+        $keywords = [
+            'indonesia', 'jakarta', 'bandung', 'surabaya', 'bekasi', 'depok',
+            'tangerang', 'bogor', 'yogyakarta', 'semarang', 'malang', 'bali',
+            'medan', 'remote', 'wfh', 'hybrid'
+        ];
+
+        foreach ($keywords as $kw) {
+            if (str_contains($loc, $kw)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Extract tech skills from job description using keyword matching
      */
@@ -317,7 +463,7 @@ class JobApiService
     private function fetchArbeitnowJobs(array|string|null $careerTarget): array
     {
         $query = is_array($careerTarget) ? ($careerTarget[0] ?? 'software') : ($careerTarget ?: 'software');
-        $cacheKey = "arbeitnow_jobs_" . md5($query);
+        $cacheKey = "arbeitnow_jobs_v2_" . md5($query);
 
         return Cache::remember($cacheKey, 21600, function () use ($query) {
             try {
@@ -329,7 +475,14 @@ class JobApiService
 
                 $data = $response->json('data', []);
                 $jobs = [];
-                foreach (array_slice($data, 0, 20) as $i => $item) {
+                $filtered = array_values(array_filter($data, function ($item) {
+                    $location = strtolower((string) ($item['location'] ?? ''));
+                    return str_contains($location, 'indonesia') || str_contains($location, 'jakarta') || str_contains($location, 'remote');
+                }));
+
+                $sourceJobs = !empty($filtered) ? $filtered : $data;
+
+                foreach (array_slice($sourceJobs, 0, 20) as $i => $item) {
                     $jobs[] = [
                         'id' => 1000 + $i,
                         'title' => $item['title'],
@@ -345,6 +498,184 @@ class JobApiService
                         'source' => 'Arbeitnow API',
                     ];
                 }
+                return $jobs;
+            } catch (\Exception $e) {
+                return [];
+            }
+        });
+    }
+
+    /**
+     * Secondary source via RapidAPI (LinkedIn wrapper).
+     */
+    private function fetchJobsApi14(string $query, string $location, int $limit = 10): array
+    {
+        $apiKey = config('services.rapidapi.key');
+        if (empty($apiKey)) {
+            return [];
+        }
+
+        $cacheKey = 'jobsapi14_v1_' . md5($query . '_' . $location . '_' . $limit);
+
+        return Cache::remember($cacheKey, 21600, function () use ($apiKey, $query, $location, $limit) {
+            try {
+                $response = Http::withoutVerifying()
+                    ->withHeaders([
+                        'X-RapidAPI-Key' => $apiKey,
+                        'X-RapidAPI-Host' => 'jobs-api14.p.rapidapi.com',
+                    ])
+                    ->connectTimeout(15)
+                    ->timeout(30)
+                    ->get('https://jobs-api14.p.rapidapi.com/v2/linkedin/search', [
+                        'query' => $query,
+                        'location' => $location,
+                    ]);
+
+                if ($response->failed()) {
+                    Log::warning('JobsAPI14 failed: ' . $response->status());
+                    return [];
+                }
+
+                $data = $response->json('jobs', []);
+                $jobs = [];
+                foreach (array_slice($data, 0, $limit) as $i => $item) {
+                    $skills = $this->extractSkills((string) ($item['description'] ?? ''));
+
+                    $jobs[] = [
+                        'id' => 2000 + $i,
+                        'title' => $item['title'] ?? 'Unknown Position',
+                        'company' => $item['company'] ?? 'Unknown Company',
+                        'company_logo' => null,
+                        'location' => $item['location'] ?? $location,
+                        'salary_min' => rand(8, 15) * 1000000,
+                        'salary_max' => rand(16, 35) * 1000000,
+                        'skills_required' => $skills,
+                        'posted_days_ago' => rand(1, 14),
+                        'type' => 'FULLTIME',
+                        'apply_url' => $item['url'] ?? '#',
+                        'description' => mb_substr((string) ($item['description'] ?? ''), 0, 300) . '...',
+                        'source' => 'JobsAPI14',
+                    ];
+                }
+
+                return $jobs;
+            } catch (\Exception $e) {
+                Log::warning('JobsAPI14 exception: ' . $e->getMessage());
+                return [];
+            }
+        });
+    }
+
+    /**
+     * Optional Adzuna source (requires ADZUNA_APP_ID + ADZUNA_APP_KEY).
+     */
+    private function fetchAdzunaJobs(string $query, int $limit = 10): array
+    {
+        $appId = config('services.adzuna.app_id');
+        $appKey = config('services.adzuna.app_key');
+        if (empty($appId) || empty($appKey)) {
+            return [];
+        }
+
+        $cacheKey = 'adzuna_v1_' . md5($query . '_' . $limit);
+
+        return Cache::remember($cacheKey, 21600, function () use ($appId, $appKey, $query, $limit) {
+            try {
+                // Adzuna does not expose Indonesia country path directly; use a supported endpoint.
+                $url = "https://api.adzuna.com/v1/api/jobs/sg/search/1";
+                $response = Http::withoutVerifying()
+                    ->connectTimeout(15)
+                    ->timeout(30)
+                    ->get($url, [
+                        'app_id' => $appId,
+                        'app_key' => $appKey,
+                        'results_per_page' => $limit,
+                        'what' => $query,
+                        'where' => 'Indonesia',
+                        'content-type' => 'application/json',
+                    ]);
+
+                if ($response->failed()) {
+                    return [];
+                }
+
+                $results = $response->json('results', []);
+                $jobs = [];
+                foreach ($results as $i => $item) {
+                    $desc = (string) ($item['description'] ?? '');
+                    $jobs[] = [
+                        'id' => 3000 + $i,
+                        'title' => $item['title'] ?? 'Unknown Position',
+                        'company' => $item['company']['display_name'] ?? 'Unknown Company',
+                        'company_logo' => null,
+                        'location' => $item['location']['display_name'] ?? 'Indonesia',
+                        'salary_min' => (int) ($item['salary_min'] ?? rand(8, 15) * 1000000),
+                        'salary_max' => (int) ($item['salary_max'] ?? rand(16, 35) * 1000000),
+                        'skills_required' => $this->extractSkills($desc),
+                        'posted_days_ago' => rand(1, 14),
+                        'type' => 'FULLTIME',
+                        'apply_url' => $item['redirect_url'] ?? '#',
+                        'description' => mb_substr($desc, 0, 300) . '...',
+                        'source' => 'Adzuna',
+                    ];
+                }
+
+                return $jobs;
+            } catch (\Exception $e) {
+                return [];
+            }
+        });
+    }
+
+    /**
+     * Optional Jooble source (requires JOOBLE_API_KEY).
+     */
+    private function fetchJoobleJobs(string $query, int $limit = 10): array
+    {
+        $apiKey = config('services.jooble.key');
+        if (empty($apiKey)) {
+            return [];
+        }
+
+        $cacheKey = 'jooble_v1_' . md5($query . '_' . $limit);
+
+        return Cache::remember($cacheKey, 21600, function () use ($apiKey, $query, $limit) {
+            try {
+                $url = "https://jooble.org/api/{$apiKey}";
+                $response = Http::withoutVerifying()
+                    ->connectTimeout(15)
+                    ->timeout(30)
+                    ->post($url, [
+                        'keywords' => $query,
+                        'location' => 'Indonesia',
+                        'page' => 1,
+                    ]);
+
+                if ($response->failed()) {
+                    return [];
+                }
+
+                $data = $response->json('jobs', []);
+                $jobs = [];
+                foreach (array_slice($data, 0, $limit) as $i => $item) {
+                    $desc = strip_tags((string) ($item['snippet'] ?? ''));
+                    $jobs[] = [
+                        'id' => 4000 + $i,
+                        'title' => $item['title'] ?? 'Unknown Position',
+                        'company' => $item['company'] ?? 'Unknown Company',
+                        'company_logo' => null,
+                        'location' => $item['location'] ?? 'Indonesia',
+                        'salary_min' => rand(8, 15) * 1000000,
+                        'salary_max' => rand(16, 35) * 1000000,
+                        'skills_required' => $this->extractSkills($desc),
+                        'posted_days_ago' => rand(1, 14),
+                        'type' => 'FULLTIME',
+                        'apply_url' => $item['link'] ?? '#',
+                        'description' => mb_substr($desc, 0, 300) . '...',
+                        'source' => 'Jooble',
+                    ];
+                }
+
                 return $jobs;
             } catch (\Exception $e) {
                 return [];

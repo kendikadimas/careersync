@@ -33,6 +33,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Cek dan beri badge saat login
+        app(\App\Services\BadgeService::class)->checkAndAwardBadges(auth()->user());
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

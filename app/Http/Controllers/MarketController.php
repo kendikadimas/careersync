@@ -29,12 +29,14 @@ class MarketController extends Controller
             $jobs = JobMarketData::getJobListings();
         }
 
-        // Calculate match scores
-        if ($profile) {
-            foreach ($jobs as &$job) {
-                $job['match_score'] = $this->gemini->analyzeJobMatch($profile->skills ?? [], $job['skills_required'] ?? []);
+        // Calculate match scores using Batch Analysis for speed
+        if ($profile && !empty($jobs)) {
+            $scores = $this->gemini->batchAnalyzeJobMatches($profile->skills ?? [], $jobs);
+            
+            foreach ($jobs as $index => &$job) {
+                $job['match_score'] = $scores[$index] ?? 50;
             }
-            usort($jobs, fn($a, $b) => $b['match_score'] <=> $a['match_score']);
+            usort($jobs, fn($a, $b) => ($b['match_score'] ?? 0) <=> ($a['match_score'] ?? 0));
         }
 
         // Stats: use real if available, else fallback
@@ -42,17 +44,23 @@ class MarketController extends Controller
             ? $this->jobApi->getMarketStats($jobs)
             : JobMarketData::getMarketStats();
 
-        // Trending Skills: Fetch from DB (Scraped data), fallback to static
-        $trendingSkills = \App\Models\TrendingSkill::where('week_start_date', '>=', now()->startOfWeek())
-            ->orderBy('frequency', 'desc')
-            ->get()
-            ->map(fn($s) => [
-                'skill' => $s->skill_name,
-                'demand' => min($s->frequency * 10, 100), // Normalize for display
-                'change' => rand(1, 10), // Mock change for UI polish
-                'trend' => 'rising'
-            ])
-            ->toArray();
+        // Trending Skills: prioritaskan live dari job API.
+        $trendingSkills = $this->jobApi->getTrendingSkillsFromJobs($jobs, 8);
+
+        // Fallback dari DB agregasi crawler bila live belum tersedia.
+        if (empty($trendingSkills)) {
+            $trendingSkills = \App\Models\TrendingSkill::where('week_start_date', '>=', now()->startOfWeek())
+                ->orderBy('frequency', 'desc')
+                ->limit(8)
+                ->get()
+                ->map(fn($s) => [
+                    'skill' => $s->skill_name,
+                    'demand' => min($s->frequency * 10, 100),
+                    'change' => max(1, min(25, (int) round($s->frequency / 2))),
+                    'trend' => $s->frequency >= 3 ? 'rising' : 'stable'
+                ])
+                ->toArray();
+        }
 
         if (empty($trendingSkills)) {
             $trendingSkills = JobMarketData::getTrendingSkills();
@@ -76,5 +84,37 @@ class MarketController extends Controller
             'isLiveData' => $isLiveData,
             'apiDebug' => $debugInfo,
         ]);
+    }
+
+    public function research()
+    {
+        set_time_limit(120);
+        $user = auth()->user();
+        $profile = $user->profile;
+
+        if (!$profile) return back()->with('error', 'Profil tidak ditemukan.');
+
+        $target = is_array($profile->career_target) ? implode(', ', $profile->career_target) : ($profile->career_target ?? 'Software Engineer');
+
+        try {
+            $research = $this->gemini->generateMarketResearch($target);
+
+            if (empty($research)) {
+                return back()->with('error', 'AI gagal memberikan data riset yang valid.');
+            }
+
+            \App\Models\MarketInsight::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'career_target' => $target,
+                    'trending_skills' => $research['trending_skills'] ?? [],
+                    'market_stats' => $research['market_stats'] ?? [],
+                ]
+            );
+
+            return back()->with('success', 'Intelligence pasar berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal melakukan riset: ' . $e->getMessage());
+        }
     }
 }

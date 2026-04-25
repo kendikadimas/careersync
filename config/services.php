@@ -39,4 +39,26 @@ return [
         'key' => env('RAPIDAPI_KEY'),
     ],
 
+    'youtube' => [
+        'key' => env('YOUTUBE_API_KEY'),
+    ],
+
+    'google_search' => [
+        'key' => env('GOOGLE_SEARCH_API_KEY'),
+        'cx'  => env('GOOGLE_SEARCH_CX'),
+    ],
+
+    'github' => [
+        'token' => env('GITHUB_TOKEN', null),
+    ],
+
+    'adzuna' => [
+        'app_id' => env('ADZUNA_APP_ID'),
+        'app_key' => env('ADZUNA_APP_KEY'),
+    ],
+
+    'jooble' => [
+        'key' => env('JOOBLE_API_KEY'),
+    ],
+
 ];

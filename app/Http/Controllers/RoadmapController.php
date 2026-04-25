@@ -39,40 +39,40 @@ class RoadmapController extends Controller
             return redirect()->route('analysis')->with('error', 'Analisis CV dulu untuk membuat roadmap.');
         }
 
-        $targets = is_array($profile->career_target) ? $profile->career_target : [$profile->career_target];
-        $marketSkills = [];
-        $seenMarketSkills = [];
-        
-        foreach ($targets as $target) {
-            $roleSkills = JobMarketData::getSkillsForRole($target);
-            foreach ($roleSkills as $rs) {
-                if (!isset($seenMarketSkills[strtolower($rs['skill'])])) {
-                    $marketSkills[] = $rs;
-                    $seenMarketSkills[strtolower($rs['skill'])] = true;
-                }
+        $careerTarget = is_array($profile->career_target) ? ($profile->career_target[0] ?? '') : $profile->career_target;
+        $skillGapData = is_string($profile->skill_gaps) ? json_decode($profile->skill_gaps, true) : ($profile->skill_gaps ?? []);
+
+        $priorityGaps = [];
+        $minorGaps = [];
+
+        foreach ($skillGapData as $gap) {
+            $marketDemand = $gap['market_demand'] ?? 0;
+            $status = $gap['status'] ?? 'missing';
+            
+            if ($status === 'missing' && $marketDemand >= 60) {
+                $priorityGaps[] = [
+                    'skill' => $gap['skill'],
+                    'market_demand' => $marketDemand,
+                    'reason' => "Dibutuhkan di {$marketDemand}% lowongan {$careerTarget} tapi belum dimiliki",
+                ];
+            } elseif ($status === 'developing' || ($status === 'missing' && $marketDemand < 60)) {
+                $minorGaps[] = [
+                    'skill' => $gap['skill'],
+                    'market_demand' => $marketDemand,
+                ];
             }
         }
-        
-        // Find skill gaps
-        $userSkillNames = array_map('strtolower', array_column($profile->skills ?? [], 'name'));
-        $skillGaps = [];
-        foreach ($marketSkills as $ms) {
-            $found = false;
-            foreach ($userSkillNames as $us) {
-                if (str_contains($us, strtolower($ms['skill'])) || str_contains(strtolower($ms['skill']), $us)) {
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) $skillGaps[] = $ms;
-        }
+
+        usort($priorityGaps, fn($a, $b) => $b['market_demand'] <=> $a['market_demand']);
 
         try {
             $roadmapData = $this->gemini->generateRoadmapStructure([
-                'career_target' => $profile->career_target,
+                'career_target' => $careerTarget,
                 'existing_skills' => $profile->skills,
-                'skill_gaps' => array_slice($skillGaps, 0, 10), // Limit factors for speed
-                'hours_per_day' => 4 
+                'priority_gaps' => $priorityGaps,
+                'minor_gaps' => $minorGaps,
+                'hours_per_day' => 4,
+                'market_skills' => JobMarketData::getSkillsForRole($careerTarget)
             ], $existingRoadmap ? true : false);
 
             if (empty($roadmapData)) {
@@ -87,7 +87,12 @@ class RoadmapController extends Controller
                 'milestones_completed' => 0
             ]);
 
-            return redirect()->route('roadmap')->with('success', 'Struktur roadmap berhasil dibuat! Klik milestone untuk detailnya.');
+            $newBadges = app(\App\Services\BadgeService::class)->checkAndAwardBadges($user->fresh());
+
+            return redirect()->route('roadmap')->with([
+                'success' => 'Struktur roadmap berhasil dibuat! Klik milestone untuk detailnya.',
+                'new_badges' => $newBadges,
+            ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal membuat roadmap: ' . $e->getMessage());
         }
@@ -154,6 +159,12 @@ class RoadmapController extends Controller
 
         $roadmap->roadmap_data = $data;
         $roadmap->save();
-        return back()->with('success', 'Milestone diselesaikan!');
+        
+        $newBadges = app(\App\Services\BadgeService::class)->checkAndAwardBadges(auth()->user()->fresh());
+        
+        return back()->with([
+            'success' => 'Milestone diselesaikan!',
+            'new_badges' => $newBadges,
+        ]);
     }
 }

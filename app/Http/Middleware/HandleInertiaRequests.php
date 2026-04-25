@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
                 'new_skill_count' => $request->session()->get('new_skill_count'),
+                'new_badges' => $request->session()->get('new_badges'),
             ],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),

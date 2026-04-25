@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'rank', 'total_points', 'leaderboard_opt_in'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -43,5 +43,30 @@ class User extends Authenticatable
     public function workReadinessScores()
     {
         return $this->hasMany(WorkReadinessScore::class);
+    }
+
+    public function workReadinessScore()
+    {
+        return $this->hasOne(WorkReadinessScore::class)->latest();
+    }
+
+    public function badges() 
+    { 
+        return $this->belongsToMany(Badge::class, 'user_badges')->withPivot('earned_at', 'context'); 
+    }
+    
+    public function userBadges() 
+    { 
+        return $this->hasMany(UserBadge::class); 
+    }
+    
+    public function portfolioProjects() 
+    { 
+        return $this->hasMany(PortfolioProject::class); 
+    }
+
+    public function capstoneSubmissions()
+    {
+        return $this->hasMany(CapstoneSubmission::class);
     }
 }

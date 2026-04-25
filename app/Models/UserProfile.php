@@ -11,9 +11,11 @@ class UserProfile extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'career_target',
-        'skills',
+        'skill_gaps',
+        'ai_insights',
+        'career_paths',
+        'smart_tips',
+        'insights_generated_at',
         'experiences',
         'education',
         'cv_raw_text',
@@ -23,9 +25,14 @@ class UserProfile extends Model
     protected $casts = [
         'career_target' => 'array',
         'skills' => 'array',
+        'skill_gaps' => 'array',
+        'ai_insights' => 'array',
+        'career_paths' => 'array',
+        'smart_tips' => 'array',
         'experiences' => 'array',
         'education' => 'array',
         'onboarding_completed' => 'boolean',
+        'insights_generated_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

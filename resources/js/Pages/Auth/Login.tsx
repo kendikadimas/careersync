@@ -1,11 +1,9 @@
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { LogIn, Mail, Lock, ArrowRight } from 'lucide-react';
 
 export default function Login({
     status,
@@ -30,80 +28,102 @@ export default function Login({
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title="Masuk Akun" />
 
             {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+                <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-sm font-bold text-emerald-600 rounded-xl">
                     {status}
                 </div>
             )}
 
-            <form onSubmit={submit}>
+            <div className="mb-8">
+                <h2 className="text-3xl font-black text-navy-900 mb-2">Selamat Datang 👋</h2>
+                <p className="text-slate-500 font-medium tracking-tight">Masuk untuk melanjutkan karir dan progress belajarmu.</p>
+            </div>
+
+            <form onSubmit={submit} className="space-y-6">
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
+                    <label htmlFor="email" className="block text-sm font-bold text-navy-900 mb-2">Alamat Email</label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                            <Mail className="w-5 h-5" />
+                        </div>
+                        <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={data.email}
+                            className="bg-slate-50 border border-slate-200 text-navy-900 text-sm rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full pl-11 p-3.5 transition-colors"
+                            autoComplete="username"
+                            onChange={(e) => setData('email', e.target.value)}
+                            placeholder="nama@email.com"
+                            required
+                        />
+                    </div>
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
+                <div>
+                    <label htmlFor="password" className="block text-sm font-bold text-navy-900 mb-2">Password</label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                            <Lock className="w-5 h-5" />
+                        </div>
+                        <input
+                            id="password"
+                            type="password"
+                            name="password"
+                            value={data.password}
+                            className="bg-slate-50 border border-slate-200 text-navy-900 text-sm rounded-xl focus:ring-teal-500 focus:border-teal-500 block w-full pl-11 p-3.5 transition-colors"
+                            autoComplete="current-password"
+                            onChange={(e) => setData('password', e.target.value)}
+                            placeholder="••••••••"
+                            required
+                        />
+                    </div>
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="mt-4 block">
-                    <label className="flex items-center">
+                <div className="flex items-center justify-between">
+                    <label className="flex items-center cursor-pointer group">
                         <Checkbox
                             name="remember"
                             checked={data.remember}
-                            onChange={(e) =>
-                                setData(
-                                    'remember',
-                                    (e.target.checked || false) as false,
-                                )
-                            }
+                            onChange={(e) => setData('remember', e.target.checked)}
+                            className="rounded border-slate-300 text-teal-600 focus:ring-teal-600 w-5 h-5"
                         />
-                        <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                            Remember me
+                        <span className="ms-3 text-sm font-bold text-slate-600 group-hover:text-navy-900 transition-colors">
+                            Ingat sesi saya
                         </span>
                     </label>
-                </div>
 
-                <div className="mt-4 flex items-center justify-end">
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                            className="text-sm font-bold text-teal-600 hover:text-teal-700 underline-offset-4 hover:underline transition-all"
                         >
-                            Forgot your password?
+                            Lupa Password?
                         </Link>
                     )}
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
                 </div>
+
+                <div className="pt-2">
+                    <button 
+                        disabled={processing}
+                        className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-navy-900 text-white rounded-xl font-black shadow-lg shadow-navy-900/20 hover:bg-navy-800 hover:shadow-xl hover:shadow-navy-900/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                    >
+                        <LogIn className="w-5 h-5" />
+                        Masuk Sekarang
+                        <ArrowRight className="w-5 h-5 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                    </button>
+                </div>
+                
+                <p className="text-center text-sm font-medium text-slate-500 pt-4">
+                    Belum punya akun?{' '}
+                    <Link href={route('register')} className="font-bold text-teal-600 hover:text-teal-700 hover:underline underline-offset-4 transition-all">
+                        Daftar Gratis
+                    </Link>
+                </p>
             </form>
         </GuestLayout>
     );
