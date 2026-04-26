@@ -42,6 +42,9 @@ class HandleInertiaRequests extends Middleware
                 'new_skill_count' => $request->session()->get('new_skill_count'),
                 'new_badges' => $request->session()->get('new_badges'),
             ],
+            'notifications' => $request->user()
+                ? $request->user()->notifications()->latest()->take(5)->get()
+                : [],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

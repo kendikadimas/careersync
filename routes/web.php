@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{PublicController, DemoController, DashboardController, AnalysisController, RoadmapController, MarketController, OnboardingController, WorkReadinessController, ProfileController};
+use App\Http\Controllers\{PublicController, DemoController, DashboardController, AnalysisController, RoadmapController, MarketController, OnboardingController, WorkReadinessController, ProfileController, SettingsController, NotificationController, ProfileDetailController, HelpCenterController};
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Foundation\Application;
@@ -38,6 +38,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Market
         Route::get('/market', [MarketController::class, 'index'])->name('market');
 
+        // Help Center
+        Route::get('/app-faq', [HelpCenterController::class, 'faq'])->name('app.faq');
+        Route::get('/help', [HelpCenterController::class, 'help'])->name('help');
+
         // Score
         Route::post('/score/calculate', [WorkReadinessController::class, 'calculate'])->name('score.calculate');
     });
@@ -51,6 +55,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/career', [ProfileController::class, 'updateCareer'])->name('profile.career.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Settings
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+
+    // Profile Details
+    Route::get('/profile/details', [ProfileDetailController::class, 'index'])->name('profile.details');
+    Route::put('/profile/details', [ProfileDetailController::class, 'update'])->name('profile.details.update');
 
     // Insights
     Route::get('/insights', [\App\Http\Controllers\InsightController::class, 'index'])->name('insights.index');

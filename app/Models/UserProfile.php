@@ -11,6 +11,15 @@ class UserProfile extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
+        'career_target',
+        'headline',
+        'bio',
+        'location',
+        'phone',
+        'linkedin',
+        'github',
+        'skills',
         'skill_gaps',
         'ai_insights',
         'career_paths',

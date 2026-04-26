@@ -49,8 +49,8 @@ class JobApiService
                         'X-RapidAPI-Key' => $apiKey,
                         'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
                     ])
-                    ->connectTimeout(15)
-                    ->timeout(30)
+                    ->connectTimeout(5)
+                    ->timeout(8)
                     ->get("{$this->baseUrl}/search", $params);
 
                 if ($response->failed()) {

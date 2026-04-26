@@ -29,7 +29,8 @@ class DashboardController extends Controller
         // NOTE: Auto-generate insights disabled as per user request to use manual trigger
 
         $careerTargets = $profile?->career_target ?? 'software engineer';
-        $liveJobs = $this->jobApi->fetchMarketJobs($careerTargets);
+        $primaryTarget = is_array($careerTargets) ? ($careerTargets[0] ?? 'software engineer') : $careerTargets;
+        $liveJobs = $this->jobApi->fetchJobs((string) $primaryTarget, 12);
         $hasLiveJobs = !empty($liveJobs);
 
         $marketStats = $hasLiveJobs

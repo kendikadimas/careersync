@@ -1,16 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --color-navy-50: oklch(0.97 0.01 264);
-  --color-navy-100: oklch(0.93 0.03 264);
-  --color-navy-400: oklch(0.55 0.12 264);
-  --color-navy-600: oklch(0.38 0.12 264);
-  --color-navy-800: oklch(0.26 0.12 264);
-  --color-navy-900: oklch(0.17 0.09 264);
-  --color-teal-400: oklch(0.72 0.16 185);
-  --color-teal-500: oklch(0.60 0.16 185);
-  --color-teal-600: oklch(0.50 0.15 185);
+  --color-primary: #2D3A8C;
+  --color-primary-dark: #1A2460;
+  --color-accent: #4F6FE8;
+  --color-navy-50: #F5F7FF;
+  --color-navy-100: #E6EAFF;
+  --color-navy-400: #5B6BD6;
+  --color-navy-600: #2D3A8C;
+  --color-navy-800: #1A2460;
+  --color-navy-900: #121848;
+  --color-teal-400: #6F86F0;
+  --color-teal-500: #4F6FE8;
+  --color-teal-600: #3D5DD6;
   --font-sans: "Inter", ui-sans-serif, system-ui;
+  --font-heading: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui;
 }
 
 @utility scrollbar-hide {

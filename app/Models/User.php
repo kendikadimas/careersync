@@ -35,6 +35,16 @@ class User extends Authenticatable
         return $this->hasOne(UserProfile::class);
     }
 
+    public function settings()
+    {
+        return $this->hasOne(UserSetting::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(UserNotification::class);
+    }
+
     public function roadmaps()
     {
         return $this->hasMany(UserRoadmap::class);
