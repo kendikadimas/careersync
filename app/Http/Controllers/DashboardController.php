@@ -7,6 +7,7 @@ use App\Models\UserProfile;
 use App\Models\UserRoadmap;
 use App\Models\WorkReadinessScore;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 use App\Services\GeminiService;
@@ -21,10 +22,21 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $profile = UserProfile::where('user_id', $user->id)->first();
         $roadmap = UserRoadmap::where('user_id', $user->id)->latest()->first();
         $score = WorkReadinessScore::where('user_id', $user->id)->latest()->first();
+        $scoreHistory = WorkReadinessScore::where('user_id', $user->id)
+            ->latest()
+            ->get(['score', 'created_at'])
+            ->groupBy(fn ($row) => $row->created_at->format('Y-m-d'))
+            ->map(fn ($group) => [
+                'score' => (int) $group->max('score'),
+                'label' => $group->first()->created_at->locale('id')->translatedFormat('d M'),
+            ])
+            ->take(12)
+            ->reverse()
+            ->values();
         
         // NOTE: Auto-generate insights disabled as per user request to use manual trigger
 
@@ -39,6 +51,8 @@ class DashboardController extends Controller
         
         // Calculate Skill Gap Count
         $gapCount = 0;
+        $totalRequired = 0;
+        $masteredCount = 0;
         if ($profile && $profile->career_target) {
             $targets = is_array($profile->career_target) ? $profile->career_target : [$profile->career_target];
             $allRequiredSkills = [];
@@ -49,6 +63,7 @@ class DashboardController extends Controller
                 }
             }
             
+            $totalRequired = count($allRequiredSkills);
             $userSkills = array_map(fn($s) => strtolower($s['name']), $profile->skills ?? []);
             foreach ($allRequiredSkills as $lowerName => $fullName) {
                 $found = false;
@@ -58,7 +73,11 @@ class DashboardController extends Controller
                         break;
                     }
                 }
-                if (!$found) $gapCount++;
+                if (!$found) {
+                    $gapCount++;
+                } else {
+                    $masteredCount++;
+                }
             }
         }
 
@@ -117,14 +136,38 @@ class DashboardController extends Controller
             $marketStats = $marketInsight->market_stats;
         }
 
+        $roadmapCompleted = (int) ($roadmap?->milestones_completed ?? 0);
+        $roadmapTotal = (int) ($roadmap?->total_milestones ?? 0);
+        $isScoreStale = $score && $roadmap && $roadmap->updated_at && $roadmap->updated_at->gt($score->created_at);
+
         return Inertia::render('Dashboard', [
+            'user' => [
+                'name' => $user->name,
+                'rank' => $user->rank ?? 'Apprentice',
+                'points' => $user->total_points ?? 0,
+            ],
+            'badges' => $user->badges()->latest('earned_at')->take(4)->get(),
             'profile' => $profile,
             'roadmap' => $roadmap,
             'score' => $score,
+            'scoreHistory' => $scoreHistory,
             'marketStats' => $marketStats,
             'gapCount' => $gapCount,
             'recommendedJobs' => array_slice($recommendedJobs, 0, 5),
             'trendingSkills' => $trendingSkills,
+            'skillStats' => [
+                'mastered' => $masteredCount,
+                'total' => $totalRequired,
+            ],
+            'roadmapStats' => [
+                'completed' => $roadmapCompleted,
+                'remaining' => max($roadmapTotal - $roadmapCompleted, 0),
+                'total' => $roadmapTotal,
+            ],
+            'scoreMeta' => [
+                'isStale' => (bool) $isScoreStale,
+                'lastCalculatedAt' => $score?->created_at?->toDateTimeString(),
+            ],
         ]);
     }
 

@@ -96,7 +96,7 @@ export default function Settings({ settings }: SettingsProps) {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="bg-[#2563EB] text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-blue-700 transition-colors"
+                            className="bg-indigo-900 text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-indigo-900 transition-colors"
                         >
                             Simpan Settings
                         </button>
@@ -106,3 +106,5 @@ export default function Settings({ settings }: SettingsProps) {
         </AppLayout>
     );
 }
+
+

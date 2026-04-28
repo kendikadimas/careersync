@@ -177,7 +177,7 @@ function Features() {
         <section id="features" className="bg-[#F8F9FA] py-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
-                    <span className="text-xs font-semibold text-[#4F6FE8] uppercase">Fitur Utama</span>
+                    {/* <span className="text-xs font-semibold text-[#4F6FE8] uppercase">Fitur Utama</span> */}
                     <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-[#2D3A8C] font-[family:var(--font-heading)]">Fitur Utama</h2>
                 </div>
                 <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -353,7 +353,7 @@ export default function Landing({ stats }: Props) {
         <div className="min-h-screen bg-white text-[#1A1A2E]">
             <Navbar />
             <Hero />
-            <StatsBar stats={stats} />
+            {/* <StatsBar stats={stats} /> */}
             <Features />
             <HowItWorks />
             <CTABanner />

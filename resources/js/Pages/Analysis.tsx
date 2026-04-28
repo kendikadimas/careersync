@@ -1,6 +1,6 @@
 import AppLayout from '@/Layouts/AppLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { useState, useRef, useCallback } from 'react';
+import { Head, Link, usePage, useForm, router } from '@inertiajs/react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface User {
@@ -9,26 +9,28 @@ interface User {
 }
 
 interface SkillGapItem {
-    name: string;
-    userScore: number;
-    industryScore: number;
+    skill: string;
+    user_score: number;
+    market_demand: number;
+    status: string;
+    status_label: string;
+    user_level: string;
 }
 
-interface AlternativePosition {
+interface CareerPath {
     title: string;
-    skills: string;
-    match: number;
-}
-
-interface AnalysisResult {
-    radarSkills: { label: string; userVal: number; industryVal: number }[];
-    skillGaps: SkillGapItem[];
-    aiRecommendation: string;
-    alternativePositions: AlternativePosition[];
+    description: string;
+    match_percentage: number;
+    required_skills: string[];
 }
 
 interface Props {
-    user?: User;
+    profile: any;
+    marketSkills: any[];
+    trendingSkills: any[];
+    marketStats: any;
+    analysisProcessing: boolean;
+    analysisProcessingError: string | null;
 }
 
 // ─── Mock data returned after "analysis" ─────────────────────────────────────
@@ -64,11 +66,11 @@ const CAREER_TARGETS = [
 ];
 
 // ─── Radar Chart SVG ─────────────────────────────────────────────────────────
-function RadarChart({ data }: { data: AnalysisResult['radarSkills'] }) {
+function RadarChart({ data }: { data: { label: string; userVal: number; industryVal: number }[] }) {
     const cx = 160;
     const cy = 160;
     const r = 110;
-    const n = data.length;
+    const n = data.length || 3; // Fallback to 3 if empty
 
     function point(val: number, idx: number) {
         const angle = (Math.PI * 2 * idx) / n - Math.PI / 2;
@@ -150,8 +152,8 @@ function RadarChart({ data }: { data: AnalysisResult['radarSkills'] }) {
 }
 
 const skillBadgeMap: Record<string, { label: string; bg: string; text: string }> = {
-    react: { label: 'R', bg: 'bg-blue-100', text: 'text-blue-600' },
-    'react.js': { label: 'R', bg: 'bg-blue-100', text: 'text-blue-600' },
+    react: { label: 'R', bg: 'bg-indigo-100', text: 'text-indigo-700' },
+    'react.js': { label: 'R', bg: 'bg-indigo-100', text: 'text-indigo-700' },
     git: { label: 'G', bg: 'bg-orange-100', text: 'text-orange-600' },
     'rest api': { label: 'API', bg: 'bg-slate-100', text: 'text-slate-600' },
     typescript: { label: 'TS', bg: 'bg-sky-100', text: 'text-sky-700' },
@@ -164,9 +166,9 @@ function getSkillBadge(skillName: string) {
 
 // ─── Skill Gap Bar ────────────────────────────────────────────────────────────
 function SkillGapBar({ item }: { item: SkillGapItem }) {
-    const userPct = (item.userScore / 100) * 100;
-    const industryPct = (item.industryScore / 100) * 100;
-    const badge = getSkillBadge(item.name);
+    const userPct = (item.user_score / 100) * 100;
+    const industryPct = (item.market_demand / 100) * 100;
+    const badge = getSkillBadge(item.skill);
 
     return (
         <div className="flex items-center gap-3">
@@ -175,15 +177,22 @@ function SkillGapBar({ item }: { item: SkillGapItem }) {
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-center mb-1">
-                    <span className="text-[12px] font-semibold text-[#1A1A2E]">{item.name}</span>
-                    <span className="text-[11px] text-slate-400 font-medium">
-                        {item.userScore}/{item.industryScore}
-                        <span className="text-[9px]">pts</span>
-                    </span>
+                    <span className="text-[12px] font-semibold text-[#1A1A2E]">{item.skill}</span>
+                    <div className="flex items-center gap-2">
+                        <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${
+                            item.status === 'strong' ? 'bg-emerald-50 text-emerald-600' : 
+                            item.status === 'developing' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
+                        }`}>
+                            {item.status_label}
+                        </span>
+                        <span className="text-[11px] text-slate-400 font-medium">
+                            {item.user_score}/{item.market_demand}
+                        </span>
+                    </div>
                 </div>
                 <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden">
                     <div
-                        className="absolute top-0 left-0 h-full bg-[#2563EB] rounded-full"
+                        className="absolute top-0 left-0 h-full bg-indigo-900 rounded-full transition-all duration-1000"
                         style={{ width: `${userPct}%` }}
                     />
                     <div
@@ -227,6 +236,9 @@ function UploadForm({
     onAnalyze: () => void;
     loading: boolean;
     fileInputRef: React.RefObject<HTMLInputElement>;
+    file: File | null;
+    onRemoveFile: () => void;
+    previewUrl: string | null;
 }) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
@@ -253,37 +265,70 @@ function UploadForm({
                 <div className="flex rounded-full border border-slate-200 overflow-hidden mb-5 p-0.5 bg-slate-50">
                     <button
                         onClick={() => setMode('upload')}
-                        className={`flex-1 py-2.5 rounded-full text-[13px] font-semibold transition-all ${mode === 'upload' ? 'bg-[#2563EB] text-white shadow-md' : 'text-slate-500 hover:text-[#2563EB]'}`}
+                        className={`flex-1 py-2.5 rounded-full text-[13px] font-semibold transition-all ${mode === 'upload' ? 'bg-indigo-900 text-white shadow-md' : 'text-slate-500 hover:text-[#2563EB]'}`}
                     >
                         Upload File
                     </button>
                     <button
                         onClick={() => setMode('paste')}
-                        className={`flex-1 py-2.5 rounded-full text-[13px] font-semibold transition-all ${mode === 'paste' ? 'bg-[#2563EB] text-white shadow-md' : 'text-slate-500 hover:text-[#2563EB]'}`}
+                        className={`flex-1 py-2.5 rounded-full text-[13px] font-semibold transition-all ${mode === 'paste' ? 'bg-indigo-900 text-white shadow-md' : 'text-slate-500 hover:text-[#2563EB]'}`}
                     >
                         Paste Text
                     </button>
                 </div>
 
                 {mode === 'upload' ? (
-                    <div
-                        onDragOver={onDragOver}
-                        onDragLeave={onDragLeave}
-                        onDrop={onDrop}
-                        onClick={() => fileInputRef.current?.click()}
-                        className={`border-2 border-dashed rounded-2xl flex flex-col items-center justify-center py-10 cursor-pointer transition-all ${
-                            dragging ? 'border-[#2563EB] bg-blue-50' : 'border-slate-200 hover:border-[#2563EB] hover:bg-blue-50/40'
-                        }`}
-                    >
-                        <svg className="text-slate-400 mb-3" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="17 8 12 3 7 8" />
-                            <line x1="12" y1="3" x2="12" y2="15" />
-                        </svg>
-                        <p className="text-[13px] font-semibold text-slate-600">Klik atau drag cv ke sini.</p>
-                        <p className="text-[11px] text-slate-400 mt-1">PDF, DOCS, TXT</p>
-                        <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.txt" onChange={onFileChange} />
-                    </div>
+                    file ? (
+                        <div className="border-2 border-slate-100 rounded-2xl p-4 bg-slate-50 relative group">
+                            <button 
+                                onClick={onRemoveFile}
+                                className="absolute -top-2 -right-2 w-8 h-8 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-rose-600 transition-colors z-10"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                            <div className="flex items-center gap-4 mb-4 p-3 bg-white rounded-xl border border-slate-100">
+                                <div className="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-[13px] font-bold text-slate-700 truncate">{file.name}</p>
+                                    <p className="text-[11px] text-slate-400">{(file.size / 1024).toFixed(1)} KB • PDF Document</p>
+                                </div>
+                            </div>
+                            {file.type === 'application/pdf' && previewUrl ? (
+                                <div className="aspect-[4/3] w-full rounded-lg overflow-hidden border border-slate-200 bg-white">
+                                    <iframe 
+                                        src={`${previewUrl}#toolbar=0&navpanes=0&scrollbar=0`} 
+                                        className="w-full h-full border-none"
+                                        title="CV Preview"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="py-10 flex flex-col items-center justify-center bg-white rounded-lg border border-slate-200 border-dashed">
+                                    <p className="text-[12px] text-slate-400 italic">Preview tidak tersedia untuk format ini</p>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div
+                            onDragOver={onDragOver}
+                            onDragLeave={onDragLeave}
+                            onDrop={onDrop}
+                            onClick={() => fileInputRef.current?.click()}
+                            className={`border-2 border-dashed rounded-2xl flex flex-col items-center justify-center py-10 cursor-pointer transition-all ${
+                                dragging ? 'border-[#2563EB] bg-indigo-900' : 'border-slate-200 hover:border-[#2563EB] hover:bg-indigo-900/40'
+                            }`}
+                        >
+                            <svg className={`mb-3 ${dragging ? 'text-white' : 'text-slate-400'}`} width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                            <p className={`text-[13px] font-semibold ${dragging ? 'text-white' : 'text-slate-600'}`}>Klik atau drag cv ke sini.</p>
+                            <p className={`text-[11px] mt-1 ${dragging ? 'text-indigo-100' : 'text-slate-400'}`}>PDF, DOCS, TXT</p>
+                            <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.txt" onChange={onFileChange} />
+                        </div>
+                    )
                 ) : (
                     <textarea
                         value={pasteText}
@@ -297,7 +342,7 @@ function UploadForm({
                 <button
                     onClick={onAnalyze}
                     disabled={loading}
-                    className="mt-5 w-full bg-[#2563EB] text-white py-3 rounded-full text-[13px] font-bold hover:bg-blue-700 transition-colors shadow-md shadow-blue-200 disabled:opacity-60 flex items-center justify-center gap-2"
+                    className="mt-5 w-full bg-indigo-900 text-white py-3 rounded-full text-[13px] font-bold hover:bg-indigo-900 transition-colors shadow-md shadow-blue-200 disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                     {loading ? (
                         <>
@@ -322,7 +367,7 @@ function UploadForm({
                     <h2 className="text-[18px] font-black text-[#1A1A2E] mb-1">Rekomendasi dari AI</h2>
                     <p className="text-[13px] text-slate-400">Upload dan analisis CV anda untuk mendapatkan rekomendasi.</p>
                 </div>
-                <button className="bg-[#2563EB] text-white px-6 py-2.5 rounded-full text-[13px] font-bold shadow-md hover:bg-blue-700 transition-colors flex-shrink-0">
+                <button className="bg-indigo-900 text-white px-6 py-2.5 rounded-full text-[13px] font-bold shadow-md hover:bg-indigo-900 transition-colors flex-shrink-0">
                     Roadmap
                 </button>
             </div>
@@ -332,99 +377,102 @@ function UploadForm({
 
 // ─── Result State ─────────────────────────────────────────────────────────────
 function AnalysisResults({
-    result,
+    profile,
     onReset,
 }: {
-    result: AnalysisResult;
+    profile: any;
     onReset: () => void;
 }) {
+    const radarData = (profile?.skill_gaps || []).slice(0, 6).map((g: any) => ({
+        label: g.skill,
+        userVal: (g.user_score || 10) / 100,
+        industryVal: (g.market_demand || 80) / 100
+    }));
+
     return (
         <div className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
                 <div className="md:col-span-3 bg-white rounded-3xl p-7 shadow-sm border border-slate-100">
                     <div className="flex items-start justify-between mb-2">
                         <div>
-                            <h2 className="text-[18px] font-black text-[#1A1A2E]">Analisis CV</h2>
-                            <p className="text-[13px] text-slate-400">Upload file atau paste text CV kamu.</p>
+                            <h2 className="text-[18px] font-black text-[#1A1A2E]">Analisis Kompetensi</h2>
+                            <p className="text-[13px] text-slate-400">Perbandingan skill kamu dengan standar industri.</p>
                         </div>
                         <button
                             onClick={onReset}
-                            className="text-[12px] text-[#2563EB] font-semibold border border-[#2563EB] px-4 py-1.5 rounded-full hover:bg-blue-50 transition-colors flex-shrink-0"
+                            className="text-[12px] text-indigo-900 font-semibold border border-indigo-900 px-4 py-1.5 rounded-full hover:bg-indigo-900 hover:text-white transition-colors flex-shrink-0"
                         >
-                            Upload Ulang
+                            Update CV
                         </button>
                     </div>
-                    <RadarChart data={result.radarSkills} />
+                    <div className="py-4">
+                        <RadarChart data={radarData} />
+                    </div>
                     <div className="flex items-center justify-center gap-6 mt-2">
                         <div className="flex items-center gap-2">
-                            <div className="w-5 h-2.5 rounded-full bg-[#2563EB]" />
+                            <div className="w-5 h-2.5 rounded-full bg-indigo-900" />
                             <span className="text-[11px] text-slate-500 font-medium">Skill Kamu</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="w-5 h-2.5 rounded-full bg-green-500" />
-                            <span className="text-[11px] text-slate-500 font-medium">Industri</span>
+                            <div className="w-5 h-2.5 rounded-full bg-slate-300" />
+                            <span className="text-[11px] text-slate-500 font-medium">Standar Industri</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="md:col-span-2 bg-white rounded-3xl p-7 shadow-sm border border-slate-100">
-                    <h2 className="text-[18px] font-black text-[#1A1A2E] mb-1">Hasil Analisis CV</h2>
-                    <p className="text-[12px] text-slate-400 font-semibold mb-5">Skill Gap</p>
-                    <div className="space-y-4">
-                        {result.skillGaps.map((item) => (
-                            <SkillGapBar key={item.name} item={item} />
+                <div className="md:col-span-2 bg-white rounded-3xl p-7 shadow-sm border border-slate-100 flex flex-col">
+                    <h2 className="text-[18px] font-black text-[#1A1A2E] mb-1">Skill Gap Analysis</h2>
+                    <p className="text-[12px] text-slate-400 font-semibold mb-5 uppercase tracking-wider">Kebutuhan Pasar</p>
+                    <div className="space-y-5 flex-1 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+                        {(profile?.skill_gaps || []).map((item: any, idx: number) => (
+                            <SkillGapBar key={idx} item={item} />
                         ))}
                     </div>
-                    <button className="mt-6 w-full bg-[#2563EB] text-white py-2.5 rounded-full text-[13px] font-bold hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">
-                        Lihat Selengkapnya
-                    </button>
+                    <Link href={route('roadmap')} className="mt-6 w-full bg-indigo-900 text-white py-3 rounded-full text-[13px] font-bold hover:bg-indigo-800 transition-all text-center shadow-lg shadow-indigo-100">
+                        Buka Roadmap Belajar
+                    </Link>
                 </div>
             </div>
 
-            <div className="bg-white rounded-3xl px-8 py-6 shadow-sm border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-5">
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="#2563EB">
-                        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
-                    </svg>
+            <div className="bg-white rounded-3xl px-8 py-7 shadow-sm border border-slate-100 flex flex-col sm:flex-row items-center gap-6">
+                <div className="w-16 h-16 rounded-2xl bg-indigo-900 flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-100">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                 </div>
-                <div className="flex-1">
-                    <h2 className="text-[16px] font-black text-[#1A1A2E] mb-1">Rekomendasi dari AI</h2>
-                    <p className="text-[13px] text-slate-500 leading-relaxed">{result.aiRecommendation}</p>
-                </div>
-                <button className="bg-[#2563EB] text-white px-7 py-2.5 rounded-full text-[13px] font-bold shadow-md hover:bg-blue-700 transition-colors flex-shrink-0">
-                    Roadmap
-                </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
-                <div className="md:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                    <h2 className="text-[16px] font-black text-[#1A1A2E] mb-1">Hasil Analisis CV</h2>
-                    <p className="text-[11px] text-slate-400 font-semibold mb-4">Skill Gap</p>
-                    <div className="space-y-4">
-                        {result.skillGaps.map((item) => (
-                            <SkillGapBar key={item.name} item={item} />
-                        ))}
-                    </div>
-                    <button className="mt-5 w-full bg-[#2563EB] text-white py-2.5 rounded-full text-[13px] font-bold hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">
-                        Lihat Selengkapnya
-                    </button>
-                </div>
-
-                <div className="md:col-span-3 bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                    <h2 className="text-[18px] font-black text-[#1A1A2E] mb-1">Posisi Alternatif</h2>
-                    <p className="text-[13px] text-slate-400 mb-6">
-                        Berdasarkan analisis CV kamu, kami telah memetakan alternatif posisi lain yang cocok
+                <div className="flex-1 text-center sm:text-left">
+                    <h2 className="text-[18px] font-black text-[#1A1A2E] mb-1">Optimasi CV dari AI</h2>
+                    <p className="text-[13px] text-slate-500 leading-relaxed italic">
+                        "{profile?.smart_tips || 'AI sedang menyiapkan tips optimasi khusus untuk CV-mu...'}"
                     </p>
-                    <div className="space-y-5">
-                        {result.alternativePositions.map((pos) => (
-                            <div key={pos.title} className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-[16px] font-black text-[#1A1A2E]">{pos.title}</p>
-                                    <p className="text-[12px] text-slate-400 mt-0.5">Skill yang kamu punya: {pos.skills}</p>
+                </div>
+                <div className="flex flex-col gap-2 w-full sm:w-auto">
+                    <Link href={route('profile.edit')} className="bg-white text-indigo-900 border border-slate-200 px-6 py-2.5 rounded-full text-[13px] font-bold hover:bg-slate-50 transition-all text-center">
+                        Edit Profil
+                    </Link>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+                <div className="md:col-span-12 bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+                    <h2 className="text-[20px] font-black text-[#1A1A2E] mb-2">Posisi Alternatif & Karir Path</h2>
+                    <p className="text-[13px] text-slate-400 mb-8 max-w-2xl">
+                        Berdasarkan kombinasi skill-mu, AI menemukan beberapa jalur karir alternatif yang memiliki kecocokan tinggi dengan profilmu saat ini.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {(profile?.career_paths || []).map((pos: any, idx: number) => (
+                            <div key={idx} className="p-5 rounded-2xl border border-slate-50 bg-slate-50/50 hover:bg-white hover:border-indigo-100 hover:shadow-md transition-all group">
+                                <div className="flex justify-between items-start mb-4">
+                                    <h3 className="text-[16px] font-black text-[#1A1A2E] group-hover:text-indigo-900 transition-colors">{pos.title}</h3>
+                                    <span className="text-[18px] font-black text-indigo-900">{pos.match_percentage}%</span>
                                 </div>
-                                <div className="text-right flex-shrink-0 ml-4">
-                                    <p className="text-[28px] font-black text-[#1A1A2E] leading-none">{pos.match}%</p>
-                                    <p className="text-[11px] text-slate-400 font-semibold">cocok</p>
+                                <p className="text-[11px] text-slate-500 line-clamp-2 mb-4 leading-relaxed">
+                                    {pos.description}
+                                </p>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {(pos.required_skills || []).slice(0, 3).map((s: string, i: number) => (
+                                        <span key={i} className="text-[9px] font-bold bg-white px-2 py-1 rounded-lg border border-slate-100 text-slate-400">
+                                            {s}
+                                        </span>
+                                    ))}
                                 </div>
                             </div>
                         ))}
@@ -436,18 +484,32 @@ function AnalysisResults({
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-const DEFAULT_USER: User = { name: 'Paijo Safitrti', email: 'paijo123@gmail.com' };
+export default function SkillGapAnalysis({ 
+    profile, 
+    analysisProcessing, 
+    analysisProcessingError 
+}: Props) {
+    const { data, setData, post, processing } = useForm({
+        cv_text: '',
+        cv_file: null as File | null,
+        career_target: profile?.career_target || ['Fullstack Developer']
+    });
 
-export default function SkillGapAnalysis({ user = DEFAULT_USER }: Props) {
-    const { auth }: any = usePage().props;
-    const resolvedUser: User = auth?.user ? { name: auth.user.name, email: auth.user.email } : user;
-    const [target, setTarget] = useState('Fullstack Developer');
     const [mode, setMode] = useState<'upload' | 'paste'>('upload');
-    const [pasteText, setPasteText] = useState('');
     const [dragging, setDragging] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState<AnalysisResult | null>(null);
+    const [showUpload, setShowUpload] = useState(!profile?.skill_gaps);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (data.cv_file) {
+            const url = URL.createObjectURL(data.cv_file);
+            setPreviewUrl(url);
+            return () => URL.revokeObjectURL(url);
+        } else {
+            setPreviewUrl(null);
+        }
+    }, [data.cv_file]);
 
     const handleDragOver = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -460,60 +522,90 @@ export default function SkillGapAnalysis({ user = DEFAULT_USER }: Props) {
         e.preventDefault();
         setDragging(false);
         if (e.dataTransfer.files.length > 0) {
-            simulateAnalysis();
+            setData('cv_file', e.dataTransfer.files[0]);
         }
     }, []);
 
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
-            simulateAnalysis();
+            setData('cv_file', e.target.files[0]);
         }
     }, []);
 
-    function simulateAnalysis() {
-        setLoading(true);
-        setTimeout(() => {
-            setResult(MOCK_RESULT);
-            setLoading(false);
-        }, 1800);
-    }
+    const handleAnalyze = () => {
+        post(route('analysis.store'), {
+            forceFormData: true,
+            onSuccess: () => {
+                setShowUpload(false);
+            }
+        });
+    };
 
-    function handleAnalyze() {
-        if (mode === 'paste' && !pasteText.trim()) return;
-        simulateAnalysis();
-    }
-
-    function handleReset() {
-        setResult(null);
-        setPasteText('');
-        if (fileInputRef.current) fileInputRef.current.value = '';
+    if (analysisProcessing) {
+        return (
+            <AppLayout header="Skill Gap Analysis">
+                <Head title="Menganalisis CV... | CareerSync" />
+                <div className="max-w-5xl mx-auto pt-20 text-center">
+                    <div className="relative inline-block mb-8">
+                        <div className="w-24 h-24 rounded-3xl bg-indigo-900 animate-pulse flex items-center justify-center shadow-xl shadow-indigo-100">
+                            <svg className="animate-spin text-white" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>
+                        </div>
+                        <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center border-4 border-white">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+                        </div>
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-900 mb-2">AI Sedang Menganalisis CV-mu</h2>
+                    <p className="text-slate-500 max-w-md mx-auto leading-relaxed">
+                        Mohon tunggu sebentar, kami sedang memetakan skill kamu dengan standar industri terbaru untuk jalur <span className="text-indigo-900 font-bold">{data.career_target[0]}</span>.
+                    </p>
+                    <div className="mt-10 flex flex-col gap-4 max-w-xs mx-auto">
+                        <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-indigo-900 w-1/2 animate-shimmer" style={{ backgroundSize: '200% 100%', backgroundImage: 'linear-gradient(90deg, #312e81 25%, #4338ca 50%, #312e81 75%)' }} />
+                        </div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Processing Market Data & Skill Gaps</p>
+                    </div>
+                </div>
+            </AppLayout>
+        );
     }
 
     return (
         <AppLayout header="Skill Gap Analysis">
             <Head title="Skill Gap Analysis | CareerSync" />
             <div className="max-w-5xl mx-auto pt-4">
-                {result ? (
-                    <AnalysisResults result={result} onReset={handleReset} />
+                {analysisProcessingError && (
+                    <div className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-4 text-rose-600">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <p className="text-[13px] font-bold">{analysisProcessingError}</p>
+                    </div>
+                )}
+
+                {profile?.skill_gaps && !showUpload ? (
+                    <AnalysisResults profile={profile} onReset={() => setShowUpload(true)} />
                 ) : (
                     <UploadForm
-                        target={target}
-                        setTarget={setTarget}
+                        target={data.career_target[0]}
+                        setTarget={(v) => setData('career_target', [v])}
                         mode={mode}
                         setMode={setMode}
-                        pasteText={pasteText}
-                        setPasteText={setPasteText}
+                        pasteText={data.cv_text}
+                        setPasteText={(v) => setData('cv_text', v)}
                         dragging={dragging}
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
                         onFileChange={handleFileChange}
                         onAnalyze={handleAnalyze}
-                        loading={loading}
+                        loading={processing}
                         fileInputRef={fileInputRef}
+                        file={data.cv_file}
+                        onRemoveFile={() => setData('cv_file', null)}
+                        previewUrl={previewUrl}
                     />
                 )}
             </div>
         </AppLayout>
     );
 }
+
+

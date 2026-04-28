@@ -237,8 +237,8 @@ class AnalysisController extends Controller
                 'onboarding_completed' => true,
                 'ai_insights' => null,
                 'career_paths' => $this->gemini->generateCareerPaths($mergedSkills),
-                'cv_optimization_tips' => $this->gemini->generateCvOptimization($cvText, $skillGaps),
-                'insights_generated_at' => null,
+                'smart_tips' => $this->gemini->generateCvOptimization($cvText, $skillGaps),
+                'insights_generated_at' => now(),
             ]
         );
 

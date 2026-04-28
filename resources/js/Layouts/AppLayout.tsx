@@ -5,15 +5,14 @@ import {
     BarChart3, 
     Map as MapIcon, 
     TrendingUp, 
-    User, 
     LogOut, 
     Menu, 
     X, 
     Bell,
     CheckCircle2,
-    Lightbulb,
     Settings,
-    Award,
+    ChevronDown,
+    CircleHelp,
 } from 'lucide-react';
 
 interface Props {
@@ -47,7 +46,7 @@ export default function AppLayout({ children, header }: Props) {
     const activeItem = navItems.find((item) => item.active);
 
     return (
-        <div className="min-h-screen bg-[#F3F6FF] flex text-[#1A1A2E]">
+        <div className="min-h-screen bg-[#F3F6FF] flex text-[#1A1A2E] font-(--font-heading)">
             {/* Sidebar Desktop */}
             <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-72'} bg-[#F3F6FF] fixed h-full z-20 border-r border-slate-200 transition-all duration-200`}>
                 <div className="p-6 flex items-center gap-3">
@@ -63,10 +62,10 @@ export default function AppLayout({ children, header }: Props) {
                     </button>
                 </div>
 
-                <div className={`px-6 mt-4 ${isSidebarCollapsed ? 'hidden' : ''}`}>
+                <div className={`px-6 mt-10 ${isSidebarCollapsed ? 'hidden' : ''}`}>
                     <p className="text-2xl font-bold">Welcome</p>
                     <p className="text-2xl font-bold">
-                        Back, <span className="text-[#4F6FE8]">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
+                        Back, <span className="text-indigo-900">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
                     </p>
                     <p className="text-sm text-slate-400">ready to upgrade your skills?</p>
                 </div>
@@ -76,39 +75,45 @@ export default function AppLayout({ children, header }: Props) {
                         <Link
                             key={item.name}
                             href={item.href}
-                            className={`w-full ${isSidebarCollapsed ? 'px-0' : 'px-3'} py-2 rounded-full text-[13px] font-semibold inline-flex items-center justify-center border transition-all ${
+                            className={`w-full h-12 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-between'} rounded-full text-[13px] font-semibold inline-flex items-center transition-all ${
                                 item.active
-                                    ? 'bg-[#1E66FF] text-white border-[#1E66FF]'
-                                    : 'bg-white text-[#1A1A2E] border-slate-200 hover:border-[#4F6FE8]'
+                                    ? 'bg-[#111111] text-white shadow-sm'
+                                    : 'text-slate-500 hover:bg-white/70 hover:text-slate-700'
                             }`}
                         >
-                            {isSidebarCollapsed ? item.name.charAt(0) : item.name}
+                            <span className={`inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'}`}>
+                                <item.icon className="w-4 h-4" />
+                                {!isSidebarCollapsed && <span>{item.name}</span>}
+                            </span>
+                            {!isSidebarCollapsed && item.active && <ChevronDown className="w-4 h-4 text-white/80" />}
                         </Link>
                     ))}
                 </nav>
 
                 <div className={`p-6 mt-auto space-y-2 ${isSidebarCollapsed ? 'px-3' : ''}`}>
-                    <Link
+                    {/* <Link
                         href={route('app.faq')}
-                        className={`w-full ${isSidebarCollapsed ? 'px-0' : 'px-3'} py-2 rounded-full text-[13px] font-semibold border border-slate-200 bg-white inline-flex items-center justify-center`}
+                        className={`w-full h-11 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-start'} rounded-full text-[13px] font-semibold text-slate-500 hover:bg-white/70 hover:text-slate-700 inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'} transition-colors`}
                     >
-                        {isSidebarCollapsed ? '?' : 'FAQ'}
+                        <CircleHelp className="w-4 h-4" />
+                        {!isSidebarCollapsed && 'FAQ'}
                     </Link>
                     <Link
                         href={route('help')}
-                        className={`w-full ${isSidebarCollapsed ? 'px-0' : 'px-3'} py-2 rounded-full text-[13px] font-semibold border border-slate-200 bg-white inline-flex items-center justify-center`}
+                        className={`w-full h-11 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-start'} rounded-full text-[13px] font-semibold text-slate-500 hover:bg-white/70 hover:text-slate-700 inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'} transition-colors`}
                     >
-                        {isSidebarCollapsed ? 'i' : 'Help'}
-                    </Link>
-                    <Link
+                        <CircleHelp className="w-4 h-4" />
+                        {!isSidebarCollapsed && 'Help'}
+                    </Link> */}
+                    {/* <Link
                         href={route('logout')}
                         method="post"
                         as="button"
-                        className={`w-full ${isSidebarCollapsed ? 'px-0' : 'px-3'} py-2 rounded-full text-[13px] font-semibold bg-[#2D3A8C] text-white inline-flex items-center justify-center gap-2`}
+                        className={`w-full h-11 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-start'} rounded-full text-[13px] font-semibold bg-[#2D3A8C] text-white inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'} transition-colors hover:bg-[#1f2963]`}
                     >
                         <LogOut className="w-4 h-4" />
                         {!isSidebarCollapsed && 'Log Out'}
-                    </Link>
+                    </Link> */}
                 </div>
             </aside>
 
@@ -140,7 +145,7 @@ export default function AppLayout({ children, header }: Props) {
 
                     <div className="flex items-center gap-3 relative">
                         <button
-                            className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-[#2563EB] hover:bg-blue-100 transition-colors"
+                            className="w-9 h-9 rounded-full bg-indigo-900 flex items-center justify-center text-white hover:bg-indigo-800 transition-colors"
                             onClick={() => setOpenPanel(openPanel === 'settings' ? null : 'settings')}
                             aria-label="Settings"
                             type="button"
@@ -148,7 +153,7 @@ export default function AppLayout({ children, header }: Props) {
                             <Settings className="w-4 h-4" />
                         </button>
                         <button
-                            className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-[#2563EB] hover:bg-blue-100 transition-colors"
+                            className="w-9 h-9 rounded-full bg-indigo-900 flex items-center justify-center text-white hover:bg-indigo-800 transition-colors"
                             onClick={() => setOpenPanel(openPanel === 'notifications' ? null : 'notifications')}
                             aria-label="Notifications"
                             type="button"
@@ -161,7 +166,7 @@ export default function AppLayout({ children, header }: Props) {
                             onClick={() => setOpenPanel(openPanel === 'profile' ? null : 'profile')}
                             type="button"
                         >
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-300 to-pink-400 overflow-hidden border-2 border-white shadow-sm flex items-center justify-center text-white font-bold text-xs">
+                            <div className="w-9 h-9 rounded-full bg-linear-to-br from-orange-300 to-pink-400 overflow-hidden border-2 border-white shadow-sm flex items-center justify-center text-white font-bold text-xs">
                                 {auth?.user?.name?.charAt(0) || 'U'}
                             </div>
                             <div className="leading-tight hidden sm:block text-left">
@@ -218,7 +223,7 @@ export default function AppLayout({ children, header }: Props) {
                         {openPanel === 'profile' && (
                             <div className="absolute right-0 top-12 w-64 bg-white border border-slate-200 shadow-lg rounded-2xl p-4 z-20">
                                 <div className="flex items-center gap-3 mb-3">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-300 to-pink-400 flex items-center justify-center text-white font-bold">
+                                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-orange-300 to-pink-400 flex items-center justify-center text-white font-bold">
                                         {auth?.user?.name?.charAt(0) || 'U'}
                                     </div>
                                     <div>
@@ -259,7 +264,7 @@ export default function AppLayout({ children, header }: Props) {
 
                     {flash.success && (
                         <div className="mb-6 p-4 bg-[#EAF0FF] border border-[#D9E4FF] text-[#2D3A8C] rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top duration-300">
-                            <CheckCircle2 className="w-5 h-5 text-[#4F6FE8]" />
+                            <CheckCircle2 className="w-5 h-5 text-indigo-900" />
                             <p className="text-sm font-medium">{flash.success}</p>
                         </div>
                     )}
@@ -291,7 +296,7 @@ export default function AppLayout({ children, header }: Props) {
                         <div className="mb-6">
                             <p className="text-2xl font-bold">Welcome</p>
                             <p className="text-2xl font-bold">
-                                Back, <span className="text-[#4F6FE8]">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
+                                Back, <span className="text-indigo-900">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
                             </p>
                             <p className="text-sm text-slate-400">ready to upgrade your skills?</p>
                         </div>
@@ -301,26 +306,34 @@ export default function AppLayout({ children, header }: Props) {
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className={`w-full px-3 py-2 rounded-full text-[13px] font-semibold inline-flex items-center justify-center border transition-all ${
+                                    className={`w-full h-12 px-4 rounded-full text-[13px] font-semibold inline-flex items-center justify-between transition-all ${
                                         item.active
-                                            ? 'bg-[#1E66FF] text-white border-[#1E66FF]'
-                                            : 'bg-white text-[#1A1A2E] border-slate-200 hover:border-[#4F6FE8]'
+                                            ? 'bg-[#111111] text-white'
+                                            : 'text-slate-500 hover:bg-white/70 hover:text-slate-700'
                                     }`}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
-                                    {item.name}
+                                    <span className="inline-flex items-center gap-3">
+                                        <item.icon className="w-4 h-4" />
+                                        {item.name}
+                                    </span>
+                                    {item.active && <ChevronDown className="w-4 h-4 text-white/80" />}
                                 </Link>
                             ))}
                         </nav>
 
                         <div className="mt-6 space-y-2">
-                            <button className="w-full px-3 py-2 rounded-full text-[13px] font-semibold border border-slate-200 bg-white">FAQ</button>
-                            <button className="w-full px-3 py-2 rounded-full text-[13px] font-semibold border border-slate-200 bg-white">Help</button>
+                            {/* <button className="w-full h-11 px-4 rounded-full text-[13px] font-semibold inline-flex items-center gap-3 text-slate-500 hover:bg-white/70 hover:text-slate-700 transition-colors">
+                                <CircleHelp className="w-4 h-4" /> FAQ
+                            </button>
+                            <button className="w-full h-11 px-4 rounded-full text-[13px] font-semibold inline-flex items-center gap-3 text-slate-500 hover:bg-white/70 hover:text-slate-700 transition-colors">
+                                <CircleHelp className="w-4 h-4" /> Help
+                            </button> */}
                             <Link
                                 href={route('logout')}
                                 method="post"
                                 as="button"
-                                className="w-full px-3 py-2 rounded-full text-[13px] font-semibold bg-[#2D3A8C] text-white inline-flex items-center justify-center gap-2"
+                                className="w-full h-11 px-4 rounded-full text-[13px] font-semibold bg-[#2D3A8C] text-white inline-flex items-center gap-3 transition-colors hover:bg-[#1f2963]"
                             >
                                 <LogOut className="w-4 h-4" />
                                 Log Out
@@ -332,3 +345,5 @@ export default function AppLayout({ children, header }: Props) {
         </div>
     );
 }
+
+

@@ -1,21 +1,35 @@
 import AppLayout from '@/Layouts/AppLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-interface User {
-    name: string;
-    email: string;
-    avatar?: string;
-}
+import { Head, Link } from '@inertiajs/react';
+import { useState, useRef } from 'react';
 
 interface DashboardProps {
+    user: {
+        name: string;
+        rank: string;
+        points: number;
+    };
+    badges: any[];
     profile: any;
     score: any;
+    scoreHistory?: Array<{ score: number; label: string }>;
     marketStats: any;
     trendingSkills: any[];
     recommendedJobs: any[];
     gapCount: number;
+    skillStats?: {
+        mastered: number;
+        total: number;
+    };
+    roadmap?: any;
+    roadmapStats?: {
+        completed: number;
+        remaining: number;
+        total: number;
+    };
+    scoreMeta?: {
+        isStale?: boolean;
+        lastCalculatedAt?: string | null;
+    };
 }
 
 interface CareerItem {
@@ -32,29 +46,11 @@ interface TrendingSkill {
     label: string;
 }
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-const defaultUser: User = { name: 'Paijo Safitrti', email: 'paijo123@gmail.com' };
-
-const defaultGrowthData = [30, 45, 35, 55, 40, 60, 50, 65, 55, 70, 62, 80];
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+const emptyGrowthData = Array(12).fill(0);
 
-const defaultCareers: CareerItem[] = [
-    { title: 'Frontend Developer', company: 'GOJEK TOKOPEDIA', salary: 'IDR 12-18JT', match: 91 },
-    { title: 'React Spesialisr', company: 'TRAVELOKA', salary: 'IDR 10-15JT', match: 88 },
-    { title: 'Web Interface Engineer', company: 'DANA INDONESIA', salary: 'IDR 9-13JT', match: 84 },
-];
-
-const defaultTrending: TrendingSkill[] = [
-    { rank: 1, name: 'Generative AI API', growth: '12 %', label: 'RISING' },
-    { rank: 2, name: 'Next.js 15', growth: '12 %', label: 'RISING' },
-    { rank: 3, name: 'TypeScript 5.8', growth: '12 %', label: 'RISING' },
-    { rank: 4, name: 'Tailwind v4', growth: '12 %', label: 'RISING' },
-    { rank: 5, name: 'Rust (Backend)', growth: '12 %', label: 'RISING' },
-];
-
-// ─── Gauge SVG ────────────────────────────────────────────────────────────────
-function GaugeChart({ percent }: { percent: number }) {
-    const r = 70;
+function GaugeChart({ percent, dark = false }: { percent: number; dark?: boolean }) {
+    const r = 75;
     const cx = 100;
     const cy = 100;
     const startAngle = -210;
@@ -75,114 +71,91 @@ function GaugeChart({ percent }: { percent: number }) {
     const fillEnd = startAngle + (sweepAngle * percent) / 100;
 
     return (
-        <svg viewBox="0 0 200 140" className="w-full max-w-[220px] mx-auto">
-            <path
-                d={describeArc(startAngle, startAngle + sweepAngle)}
-                fill="none"
-                stroke="#dde4f5"
-                strokeWidth="14"
-                strokeLinecap="round"
-            />
-            <path
-                d={describeArc(startAngle, fillEnd)}
-                fill="none"
-                stroke="#2563EB"
-                strokeWidth="14"
-                strokeLinecap="round"
-            />
-            <text x="100" y="105" textAnchor="middle" fontSize="30" fontWeight="800" fill="#1e40af" fontFamily="'Plus Jakarta Sans', sans-serif">
+        <svg viewBox="0 0 200 150" className="w-full max-w-[220px] mx-auto">
+            <defs>
+                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#4F46E5" />
+                    <stop offset="100%" stopColor="#818CF8" />
+                </linearGradient>
+            </defs>
+            <path d={describeArc(startAngle, startAngle + sweepAngle)} fill="none" stroke="#F1F5F9" strokeWidth="12" strokeLinecap="round" />
+            <path d={describeArc(startAngle, fillEnd)} fill="none" stroke="url(#gaugeGrad)" strokeWidth="12" strokeLinecap="round" strokeDasharray="0" />
+            <text x="100" y="105" textAnchor="middle" className={`text-3xl font-black ${dark ? 'fill-white' : 'fill-slate-800'}`} style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
                 {percent}%
+            </text>
+            <text x="100" y="130" textAnchor="middle" className={`text-[10px] font-bold ${dark ? 'fill-indigo-200' : 'fill-slate-400'} tracking-widest`}>
+                Readiness
             </text>
         </svg>
     );
 }
 
-// ─── Growth Chart ─────────────────────────────────────────────────────────────
-function GrowthChart({ data }: { data: number[] }) {
+function GrowthChart({ data, labels }: { data: number[]; labels: string[] }) {
     const w = 440;
-    const h = 160;
-    const padX = 10;
-    const padY = 16;
-    const maxVal = Math.max(...data);
-    const minVal = Math.min(...data);
+    const h = 180;
+    const padX = 20;
+    const padY = 30;
+    const maxVal = Math.max(...data, 100);
+    const minVal = 0;
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     const pts = data.map((v, i) => ({
-        x: padX + (i / (data.length - 1)) * (w - padX * 2),
-        y: padY + ((maxVal - v) / (maxVal - minVal || 1)) * (h - padY * 2),
+        x: padX + (i / (data.length - 1 || 1)) * (w - padX * 2),
+        y: h - padY - ((v - minVal) / (maxVal - minVal)) * (h - padY * 2),
     }));
 
     const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-    const areaPath = `${linePath} L ${pts[pts.length - 1].x} ${h} L ${pts[0].x} ${h} Z`;
-
-    const gridLines = [0.25, 0.5, 0.75].map((f) => padY + f * (h - padY * 2));
+    const areaPath = `${linePath} L ${pts[pts.length - 1].x} ${h - padY} L ${pts[0].x} ${h - padY} Z`;
 
     const handleMove = (event: React.MouseEvent<SVGSVGElement>) => {
         const rect = event.currentTarget.getBoundingClientRect();
         const x = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
-        const ratio = rect.width ? x / rect.width : 0;
+        const ratio = x / rect.width;
         const idx = Math.round(ratio * (data.length - 1));
         setActiveIndex(Math.min(Math.max(idx, 0), data.length - 1));
     };
 
-    const handleLeave = () => setActiveIndex(null);
-
-    const activePoint = activeIndex !== null ? pts[activeIndex] : null;
-    const activeValue = activeIndex !== null ? data[activeIndex] : null;
-
     return (
         <svg
-            viewBox={`0 0 ${w} ${h + 24}`}
-            className="w-full"
-            preserveAspectRatio="xMidYMid meet"
+            viewBox={`0 0 ${w} ${h}`}
+            className="w-full h-auto"
             onMouseMove={handleMove}
-            onMouseLeave={handleLeave}
+            onMouseLeave={() => setActiveIndex(null)}
         >
-            {gridLines.map((y, i) => (
-                <line key={i} x1={padX} y1={y} x2={w - padX} y2={y} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="4 4" />
-            ))}
             <defs>
-                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.15" />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#4F46E5" stopOpacity="0.2" />
+                    <stop offset="100%" stopColor="#4F46E5" stopOpacity="0" />
                 </linearGradient>
             </defs>
-            <path d={areaPath} fill="url(#areaGrad)" />
-            <path d={linePath} fill="none" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            {activePoint && (
+
+            {/* Grid lines */}
+            {[0, 0.5, 1].map((f) => {
+                const y = h - padY - f * (h - padY * 2);
+                return <line key={f} x1={padX} y1={y} x2={w - padX} y2={y} stroke="#F1F5F9" strokeWidth="1" />;
+            })}
+
+            <path d={areaPath} fill="url(#chartGrad)" />
+            <path d={linePath} fill="none" stroke="#4F46E5" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+
+            {activeIndex !== null && (
                 <g>
-                    <circle cx={activePoint.x} cy={activePoint.y} r="5" fill="#2563EB" />
-                    <circle cx={activePoint.x} cy={activePoint.y} r="9" fill="#2563EB" fillOpacity="0.15" />
-                    <rect
-                        x={Math.min(Math.max(activePoint.x - 26, 6), w - 58)}
-                        y={Math.max(activePoint.y - 30, 4)}
-                        rx="6"
-                        ry="6"
-                        width="52"
-                        height="20"
-                        fill="#1e293b"
-                    />
-                    <text
-                        x={Math.min(Math.max(activePoint.x, 6 + 26), w - 32)}
-                        y={Math.max(activePoint.y - 16, 18)}
-                        textAnchor="middle"
-                        fontSize="11"
-                        fill="#ffffff"
-                        fontFamily="'Plus Jakarta Sans', sans-serif"
-                    >
-                        {activeValue}
+                    <line x1={pts[activeIndex].x} y1={padY} x2={pts[activeIndex].x} y2={h - padY} stroke="#4F46E5" strokeWidth="1" strokeDasharray="4 4" />
+                    <rect x={pts[activeIndex].x - 18} y={pts[activeIndex].y - 32} width="36" height="20" rx="6" fill="#1e293b" />
+                    <text x={pts[activeIndex].x} y={pts[activeIndex].y - 18} textAnchor="middle" className="text-[11px] font-black fill-white">
+                        {data[activeIndex]}
                     </text>
+                    <circle cx={pts[activeIndex].x} cy={pts[activeIndex].y} r="6" fill="#4F46E5" stroke="white" strokeWidth="2" />
                 </g>
             )}
-            {months.map((m, i) => (
+
+            {labels.map((m, i) => (
                 <text
-                    key={m}
-                    x={padX + (i / (data.length - 1)) * (w - padX * 2)}
-                    y={h + 18}
+                    key={i}
+                    x={padX + (i / (data.length - 1 || 1)) * (w - padX * 2)}
+                    y={h - 5}
                     textAnchor="middle"
-                    fontSize="11"
-                    fill="#94a3b8"
-                    fontFamily="'Plus Jakarta Sans', sans-serif"
+                    className="text-[10px] font-medium fill-slate-400"
                 >
                     {m}
                 </text>
@@ -191,167 +164,327 @@ function GrowthChart({ data }: { data: number[] }) {
     );
 }
 
-export default function Dashboard({ profile, score, trendingSkills, recommendedJobs, gapCount }: DashboardProps) {
-    const { auth }: any = usePage().props;
-    const user: User = auth?.user ? { name: auth.user.name, email: auth.user.email } : defaultUser;
+export default function Dashboard({
+    user,
+    badges = [],
+    profile,
+    score,
+    scoreHistory = [],
+    trendingSkills = [],
+    recommendedJobs = [],
+    gapCount,
+    skillStats,
+    roadmap,
+    roadmapStats,
+    scoreMeta,
+}: DashboardProps) {
+    const historyScores = scoreHistory.map((s) => Number(s.score)).filter((v) => Number.isFinite(v));
+    const historyLabels = scoreHistory.map((s) => s.label);
 
-    const workReadinessScore = score?.score ?? 60;
-    const skillCount = profile?.skills?.length ?? 24;
-    const skillGap = gapCount ?? 3;
-    const milestoneReached = 1;
-    const milestoneRemaining = 3;
+    const workReadinessScore = score?.score ?? historyScores[historyScores.length - 1] ?? 0;
+    const skillCount = profile?.skills?.length ?? 0;
+    const skillGap = gapCount ?? 0;
+    const milestoneReached = roadmapStats?.completed ?? roadmap?.milestones_completed ?? 0;
+    const milestoneRemaining = roadmapStats?.remaining ?? Math.max((roadmap?.total_milestones ?? 0) - (roadmap?.milestones_completed ?? 0), 0);
+    const totalMilestones = roadmapStats?.total ?? roadmap?.total_milestones ?? 0;
 
-    const careerRecommendations: CareerItem[] = (recommendedJobs || []).slice(0, 3).map((job) => ({
-        title: job.title,
-        company: job.company,
-        salary: job.salary_min && job.salary_max
-            ? `IDR ${(job.salary_min / 1000000).toFixed(0)}-${(job.salary_max / 1000000).toFixed(0)}JT`
-            : 'IDR 9-13JT',
-        match: job.match || 84,
-    }));
+    const growthData = historyScores.length >= 2 ? historyScores : [0, 0, 0, 0, 0];
+    const growthLabels = historyScores.length >= 2 ? historyLabels : ['-', '-', '-', '-', '-'];
 
-    const trendingSkillRows: TrendingSkill[] = (trendingSkills || []).slice(0, 5).map((skill, idx) => ({
-        rank: idx + 1,
-        name: skill.skill,
-        growth: `${skill.change || 12} %`,
-        label: (skill.trend || 'RISING').toUpperCase(),
-    }));
+    const careerTarget = Array.isArray(profile?.career_target)
+        ? profile.career_target[0] || 'Unset'
+        : profile?.career_target || 'Unset';
+
+    const hardSkills = (profile?.skills || []).filter((skill: any) => {
+        const name = (typeof skill === 'object' ? skill.name : skill).toLowerCase();
+        return !['communication', 'leadership', 'teamwork', 'public speaking', 'problem solving', 'time management', 'analytical thinking', 'presentation'].some(s => name.includes(s));
+    });
+
+    const softSkills = (profile?.skills || []).filter((skill: any) => {
+        const name = (typeof skill === 'object' ? skill.name : skill).toLowerCase();
+        return ['communication', 'leadership', 'teamwork', 'public speaking', 'problem solving', 'time management', 'analytical thinking', 'presentation'].some(s => name.includes(s));
+    });
+
+    const hardScrollRef = useRef<HTMLDivElement>(null);
+    const softScrollRef = useRef<HTMLDivElement>(null);
+
+    const scroll = (ref: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
+        if (ref.current) {
+            const scrollAmount = 200;
+            ref.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+        }
+    };
 
     return (
-        <AppLayout header="Dashboard">
+        <AppLayout>
             <Head title="Dashboard | CareerSync" />
 
-            <div className="max-w-5xl mx-auto space-y-5 pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
-                    <div className="md:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-slate-100 h-full">
-                        <h3 className="text-[15px] font-bold text-[#2563EB] mb-2">Work Readiness Score</h3>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang, {user.name}! 👋</h1>
+                        <p className="text-slate-500 text-sm mt-1">Pantau perkembangan karirmu dan raih target kerjamu hari ini.</p>
+                    </div>
+                    <div className="flex items-center gap-3 bg-white p-2 pr-4 rounded-lg shadow-sm border border-slate-100">
+                        <div className="w-10 h-10 rounded-lg bg-indigo-900 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-200">
+                            {user.rank.charAt(0)}
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-400 tracking-widest">Rank</p>
+                            <p className="text-sm font-bold text-slate-800">{user.rank}</p>
+                        </div>
+                        <div className="h-8 w-px bg-slate-100 mx-2" />
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-400 tracking-widest">Points</p>
+                            <p className="text-sm font-black text-indigo-900">{user.points.toLocaleString()}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Top Row: Readiness & Focus */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    {/* Readiness Gauge */}
+                    <div className="lg:col-span-4 bg-white rounded-lg p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center h-full">
+                        <h3 className="text-[24px] font-bold text-slate-900 mb-6">Work Readiness</h3>
                         <GaugeChart percent={workReadinessScore} />
-                        <div className="flex justify-center mt-2">
-                            <Link href={route('analysis')} className="bg-[#2563EB] text-white text-[12px] font-semibold px-5 py-2 rounded-full hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">
-                                Tingkatkan Skor
+                        <div className="mt-4">
+                            <span className="inline-block px-3 py-1 rounded-lg bg-indigo-50 text-indigo-900 text-[11px] font-bold tracking-wider mb-2">
+                                {score?.category || 'No Analysis Yet'}
+                            </span>
+                            {scoreMeta?.isStale && (
+                                <p className="text-[10px] text-amber-500 font-semibold italic mt-1">Progress terbaru terdeteksi. Update skor?</p>
+                            )}
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 w-full mt-auto pt-8">
+                            <Link href={route('analysis')} className="bg-slate-900 text-white text-xs font-bold py-3 rounded-lg hover:bg-slate-800 transition-all shadow-md active:scale-95 text-center">
+                                Analisis CV
+                            </Link>
+                            <Link href={route('score.calculate')} method="post" as="button" className="bg-slate-50 text-slate-600 text-xs font-bold py-3 rounded-lg hover:bg-slate-100 transition-all border border-slate-100 active:scale-95">
+                                Refresh
                             </Link>
                         </div>
                     </div>
 
-                    <div className="md:col-span-3 flex flex-col gap-4 h-full">
-                        <div className="bg-[#2563EB] rounded-3xl p-6 text-white shadow-md">
-                            <p className="text-[11px] text-blue-200 font-medium mb-1">
-                                Wow. 4 dari 6 skill persyaratan tercapai!
-                            </p>
-                            <h3 className="text-[24px] font-black tracking-tight">
-                                {Array.isArray(profile?.career_target) ? profile.career_target[0] || 'Fullstack Developer' : profile?.career_target || 'Fullstack Developer'}
-                            </h3>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
-                            <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 relative h-full">
-                                <div className="absolute top-4 right-4 w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M7 17L17 7M17 7H7M17 7v10" />
-                                    </svg>
+                    {/* Career Focus & Stats */}
+                    <div className="lg:col-span-8 flex flex-col gap-6 h-full">
+                        {/* Target Banner */}
+                        <div className="bg-indigo-900 rounded-lg py-8 px-10 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex-1 flex flex-col justify-end min-h-[180px]">
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="flex justify-between items-start">
+                                    <p className="text-white text-[14px] font-normal mb-2">Target Karir Utama</p>
+                                    <Link href={route('profile.edit')} className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white" title="Edit Target">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" /></svg>
+                                    </Link>
                                 </div>
-                                <p className="text-[12px] text-slate-500 font-semibold">Skill Dimiliki</p>
-                                <div className="flex items-baseline justify-start gap-1.5 mt-6">
-                                    <span className="text-[42px] font-black text-[#2563EB] leading-none">{skillCount}</span>
-                                    <span className="text-[12px] text-slate-400 font-semibold">Skill</span>
-                                </div>
-                            </div>
-
-                            <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 relative h-full">
-                                <div className="absolute top-4 right-4 w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M7 17L17 7M17 7H7M17 7v10" />
-                                    </svg>
-                                </div>
-                                <p className="text-[12px] text-slate-500 font-semibold">Skill Gap</p>
-                                <div className="flex items-baseline justify-start gap-1.5 mt-6">
-                                    <span className="text-[42px] font-black text-[#2563EB] leading-none">{skillGap}</span>
-                                    <span className="text-[12px] text-slate-400 font-semibold">Gap</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
-                    <div className="md:col-span-3 bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                        <h3 className="text-[15px] font-bold text-[#2563EB] mb-4">Grafik Pertumbuhan</h3>
-                        <GrowthChart data={defaultGrowthData} />
-                    </div>
-
-                    <div className="md:col-span-2 bg-[#2563EB] rounded-3xl p-6 text-white shadow-md flex flex-col justify-between">
-                        <div className="flex items-end gap-6 mb-4">
-                            <div>
-                                <p className="text-[52px] font-black leading-none">{milestoneReached}</p>
-                                <p className="text-[12px] text-blue-200 font-semibold mt-1">Tercapai</p>
-                            </div>
-                            <div>
-                                <p className="text-[52px] font-black leading-none">{milestoneRemaining}</p>
-                                <p className="text-[12px] text-blue-200 font-semibold mt-1">More to go!</p>
-                            </div>
-                        </div>
-                        <p className="text-[12px] text-blue-100 leading-relaxed mb-5">
-                            Selesaikan milestone berikutnya di roadmap belajarmu untuk meningkatkan skor kesiapan kerjamu.
-                        </p>
-                        <div className="flex items-center justify-between">
-                            <span className="text-[15px] font-bold">Learning Roadmap</span>
-                            <Link href={route('roadmap')} className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
-                                </svg>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
-                    <div className="md:col-span-3 space-y-3">
-                        <h3 className="text-[15px] font-bold text-[#2563EB]">Rekomendasi Karir</h3>
-                        {(careerRecommendations.length ? careerRecommendations : defaultCareers).map((job) => (
-                            <div key={job.title} className="bg-[#2563EB] rounded-2xl px-5 py-4 flex items-center gap-4 shadow-md hover:bg-blue-700 transition-colors cursor-pointer">
-                                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                                    </svg>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-[15px] font-black text-white leading-tight">{job.title}</p>
-                                    <div className="flex items-center gap-3 mt-0.5">
-                                        <span className="text-[11px] text-blue-200 font-semibold uppercase tracking-wide">{job.company}</span>
-                                        <span className="text-[11px] font-bold text-green-300">{job.salary}</span>
-                                    </div>
-                                </div>
-                                <div className="flex-shrink-0 bg-white/20 rounded-full px-3 py-1 text-[11px] font-bold text-white">
-                                    {job.match}% MATCH
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="md:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
-                        <h3 className="text-[13px] font-bold text-[#1A1A2E] mb-4 text-center">Trending Skill Now</h3>
-                        <div className="space-y-3.5">
-                            {(trendingSkillRows.length ? trendingSkillRows : defaultTrending).map((skill) => (
-                                <div key={skill.rank} className="flex items-center gap-3">
-                                    <span className="w-5 text-[13px] font-black text-[#1A1A2E] flex-shrink-0">{skill.rank}</span>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-[12px] font-bold text-[#1A1A2E] truncate">{skill.name}</p>
-                                        <p className="text-[10px] text-slate-400 font-semibold">{skill.label}</p>
-                                    </div>
-                                    <div className="text-right flex-shrink-0">
-                                        <div className="flex items-center gap-1 justify-end text-green-500">
-                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                                                <polyline points="17 6 23 6 23 12" />
-                                            </svg>
-                                            <span className="text-[12px] font-bold">{skill.growth}</span>
+                                <div className="mt-auto">
+                                    <h2 className="text-3xl font-black tracking-tight mb-4">{careerTarget}</h2>
+                                    <div className="flex items-center gap-3 mt-2">
+                                        <div className="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
+                                            <div className="flex gap-1">
+                                                {Array.from({ length: Math.min(skillStats?.total || 0, 5) }).map((_, i) => (
+                                                    <div key={i} className={`w-2 h-2 rounded-lg ${i < (skillStats?.mastered || 0) ? 'bg-emerald-400' : 'bg-white/30'}`} />
+                                                ))}
+                                                {(skillStats?.total || 0) > 5 && <span className="text-[8px] text-white/50">...</span>}
+                                            </div>
+                                            <span className="text-[13px] font-bold text-white">
+                                                {skillStats?.mastered || 0} dari {skillStats?.total || 0} skill dikuasai
+                                            </span>
                                         </div>
-                                        <p className="text-[9px] text-slate-400">Vs. Bulan Lalu</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Quick Stats Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1 min-h-[180px]">
+                            <div className="bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group">
+                                <div className="relative z-10">
+                                    <p className="text-black text-[18px] font-bold ">Total Skills</p>
+                                </div>
+                                <div className="relative z-10 mt-auto">
+                                    <p className="text-5xl font-black text-slate-900 tracking-tighter">{skillCount}</p>
+                                    <p className="text-[10px] font-bold text-black mt-1 italic">Terdata di sistem</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group">
+                                <div className="relative z-10">
+                                    <p className="text-black text-[18px] font-bold ">Skill Gap</p>
+                                </div>
+                                <div className="relative z-10 mt-auto">
+                                    <p className="text-5xl font-black text-slate-900 tracking-tighter">{skillGap}</p>
+                                    <p className="text-[10px] font-bold text-black mt-1 italic">Perlu dipelajari</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between text-white overflow-hidden relative h-full group">
+                                <div className="relative z-10">
+                                    <p className="text-black text-[18px] font-bold ">Milestones</p>
+                                </div>
+                                <div className="relative z-10 mt-auto">
+                                    <p className="text-5xl font-black text-slate-900 tracking-tighter">{milestoneReached}</p>
+                                    <p className="text-[10px] font-bold text-black mt-1 italic">Telah dicapai</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Middle Row: Progress & Badges */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Growth Chart */}
+                    <div className="lg:col-span-8 bg-white rounded-lg p-8 shadow-sm border border-slate-100">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-lg font-bold text-slate-900">Perkembangan Skor</h3>
+                            <div className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full bg-indigo-500" />
+                                <span className="text-[11px] font-bold text-slate-500 tracking-widest">Daily Progress</span>
+                            </div>
+                        </div>
+                        <GrowthChart data={growthData} labels={growthLabels} />
+                    </div>
+
+                    {/* Mastered Skills Row Carousel */}
+                    <div className="lg:col-span-4 bg-white rounded-lg p-8 shadow-sm border border-slate-100 flex flex-col h-full justify-between overflow-hidden">
+                        <div>
+                            <h3 className="text-xl font-black text-slate-900 mb-8 tracking-tight">Skill Dikuasai</h3>
+                            
+                            {/* Hard Skills Section */}
+                            <div className="mb-10">
+                                <div className="flex items-center justify-between mb-4 px-1">
+                                    <h4 className="text-[14px] font-[600] text-slate-800">Hard Skill</h4>
+                                    <div className="flex gap-1.5">
+                                        <button onClick={() => scroll(hardScrollRef, 'left')} className="p-1 rounded-lg bg-slate-50 text-slate-400 hover:bg-indigo-900 hover:text-white transition-all"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+                                        <button onClick={() => scroll(hardScrollRef, 'right')} className="p-1 rounded-lg bg-slate-50 text-slate-400 hover:bg-indigo-900 hover:text-white transition-all"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+                                    </div>
+                                </div>
+                                <div 
+                                    ref={hardScrollRef}
+                                    className="flex gap-2 overflow-x-auto custom-scrollbar-hide snap-x pb-2"
+                                >
+                                    {hardSkills.length > 0 ? hardSkills.map((skill: any, i: number) => (
+                                        <div key={i} className="snap-start shrink-0 px-4 py-2.5 bg-slate-50 border border-slate-100 text-[13px] font-bold text-slate-700 rounded-lg hover:border-indigo-200 hover:text-indigo-900 hover:bg-white transition-all shadow-sm">
+                                            {typeof skill === 'object' ? skill.name : skill}
+                                        </div>
+                                    )) : (
+                                        <p className="text-xs text-slate-400 italic px-1">Belum ada hard skill terdeteksi.</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Soft Skills Section */}
+                            <div>
+                                <div className="flex items-center justify-between mb-4 px-1">
+                                    <h4 className="text-[14px] font-[600] text-slate-700">Soft Skill</h4>
+                                    <div className="flex gap-1.5">
+                                        <button onClick={() => scroll(softScrollRef, 'left')} className="p-1 rounded-lg bg-slate-50 text-slate-400 hover:bg-indigo-900 hover:text-white transition-all"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+                                        <button onClick={() => scroll(softScrollRef, 'right')} className="p-1 rounded-lg bg-slate-50 text-slate-400 hover:bg-indigo-900 hover:text-white transition-all"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+                                    </div>
+                                </div>
+                                <div 
+                                    ref={softScrollRef}
+                                    className="flex gap-2 overflow-x-auto custom-scrollbar-hide snap-x pb-2"
+                                >
+                                    {softSkills.length > 0 ? softSkills.map((skill: any, i: number) => (
+                                        <div key={i} className="snap-start shrink-0 px-4 py-2.5 bg-indigo-50/50 border border-indigo-100 text-[13px] font-bold text-indigo-900 rounded-lg hover:border-indigo-300 hover:bg-white transition-all shadow-sm">
+                                            {typeof skill === 'object' ? skill.name : skill}
+                                        </div>
+                                    )) : (
+                                        <p className="text-xs text-slate-400 italic px-1">Belum ada soft skill terdeteksi.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 pt-4 border-t border-slate-50">
+                            {/* <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Geser untuk melihat lebih banyak keahlian</p> */}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bottom Row: Jobs & Trending */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Job Recommendations */}
+                    <div className="lg:col-span-7 space-y-6">
+                        <div className="flex items-center justify-between px-2 mb-2">
+                            <h3 className="text-lg font-bold text-slate-900">Peluang Karir Untukmu</h3>
+                            {/* <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-tlg">LIVE JOBS</span> */}
+                        </div>
+                        <div className="space-y-4">
+                            {recommendedJobs.slice(0, 4).map((job, i) => (
+                                <div key={i} className="group bg-white p-5 rounded-lg border border-slate-100 shadow-sm hover:border-indigo-200 hover:shadow-md transition-all cursor-pointer flex items-center gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="text-[15px] font-bold text-slate-900 truncate">{job.title}</h4>
+                                        <div className="flex items-center gap-2 mt-0.5">
+                                            <span className="text-[11px] font-bold text-slate-400 tracking-tight">{job.company}</span>
+                                            <span className="w-1 h-1 rounded-full bg-slate-200" />
+                                            <span className="text-[11px] font-bold text-indigo-900">IDR {(job.salary_min / 1000000).toFixed(0)}JT+</span>
+                                        </div>
+                                    </div>
+                                    <div className="shrink-0 text-right">
+                                        <div className="text-[11px] font-black text-emerald-600  px-3 py-1 rounded-lg">
+                                            {job.match}% Match
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {recommendedJobs.length === 0 && (
+                                <div className="p-12 text-center border-2 border-dashed border-slate-100 rounded-lg text-slate-400 text-sm">
+                                    Belum ada rekomendasi pekerjaan.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Trending Skills Professional List */}
+                    <div className="lg:col-span-5 bg-white rounded-lg p-8 shadow-sm border border-slate-100 flex flex-col">
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <h3 className="text-xl font-black text-slate-900 tracking-tight">Trending Skills</h3>
+                                {/* <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Market Demand Analysis</p> */}
+                            </div>
+                            {/* <div className="px-3 py-1 bg-indigo-50 text-indigo-900 rounded-lg text-[10px] font-black border border-indigo-100 uppercase tracking-tight">
+                                Data Terkini
+                            </div> */}
+                        </div>
+                        
+                        <div className="space-y-3 flex-1">
+                            {trendingSkills.slice(0, 5).map((skill: any, i: number) => (
+                                <div key={i} className="group flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-50 hover:bg-white hover:border-indigo-100 hover:shadow-md transition-all cursor-default">
+                                    <div className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center font-bold  text-indigo-900 group-hover:text-indigo-900 group-hover:border-indigo-900/20 transition-all shrink-0">
+                                        {String(i + 1).padStart(2, '0')}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-[14px] font-bold text-slate-700 group-hover:text-slate-900 transition-colors truncate">
+                                            {skill.skill || skill.name}
+                                        </p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
+                                                <div 
+                                                    className="h-full bg-indigo-900 rounded-full transition-all duration-700" 
+                                                    style={{ width: `${Math.min(100, 30 + (i * -5) + (skill.change || 0))}%` }} 
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="text-right shrink-0">
+                                        <div className="flex items-center gap-1 text-emerald-600 mb-0.5">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                                            <span className="text-[12px] font-black">+{skill.change || 0}%</span>
+                                        </div>
+                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Rising</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
+
+                        {/* <div className="mt-8 pt-6 border-t border-slate-50">
+                            <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <span>Diperbarui berdasarkan tren lowongan kerja regional.</span>
+                            </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

@@ -6,13 +6,17 @@ use App\Data\JobMarketData;
 use App\Models\UserProfile;
 use App\Models\UserRoadmap;
 use App\Services\GeminiService;
+use App\Services\WorkReadinessScoreService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Cache;
 
 class RoadmapController extends Controller
 {
-    public function __construct(protected GeminiService $gemini) {}
+    public function __construct(
+        protected GeminiService $gemini,
+        protected WorkReadinessScoreService $scoreService
+    ) {}
 
     public function index()
     {
@@ -137,17 +141,27 @@ class RoadmapController extends Controller
 
     public function complete(Request $request, $id)
     {
+        $user = auth()->user();
         $roadmap = UserRoadmap::where('user_id', auth()->id())->latest()->first();
         if (!$roadmap) return back();
 
         $data = $roadmap->roadmap_data;
+        $wasCompleted = false;
         foreach ($data['milestones'] as &$ms) {
             if ($ms['id'] == $id) {
+                $wasCompleted = ($ms['status'] ?? null) === 'completed';
                 $ms['status'] = 'completed';
-                $roadmap->milestones_completed += 1;
                 break;
             }
         }
+
+        $completedCount = 0;
+        foreach ($data['milestones'] as $ms) {
+            if (($ms['status'] ?? null) === 'completed') {
+                $completedCount++;
+            }
+        }
+        $roadmap->milestones_completed = $completedCount;
 
         // Set next milestone to 'current' if locked
         foreach ($data['milestones'] as &$ms) {
@@ -159,6 +173,10 @@ class RoadmapController extends Controller
 
         $roadmap->roadmap_data = $data;
         $roadmap->save();
+
+        if (!$wasCompleted) {
+            $this->scoreService->calculateForUser($user);
+        }
         
         $newBadges = app(\App\Services\BadgeService::class)->checkAndAwardBadges(auth()->user()->fresh());
         

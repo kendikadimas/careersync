@@ -275,7 +275,34 @@ PROMPT;
     public function generateInsights($u) { return []; }
     public function analyzeJobMatch($u,$j) { return 70; }
     public function batchAnalyzeJobMatches($u,$j) { return []; }
-    public function generateCareerPaths($s) { return []; }
+    public function generateCareerPaths(array $skills): array 
+    {
+        $skillList = implode(', ', array_column($skills, 'name'));
+        $prompt = "Berdasarkan skill ini: [{$skillList}], rekomendasikan 3 jalur karir alternatif. Kembalikan HANYA JSON array dari objek: [{\"title\":\"...\", \"description\":\"...\", \"match_percentage\":85, \"required_skills\":[\"...\", \"...\"]}]";
+        
+        try {
+            $text = $this->callGeminiApi($prompt);
+            $cleaned = $this->cleanJson($text);
+            return json_decode($cleaned, true) ?: [];
+        } catch (\Exception $e) {
+            return [
+                ['title' => 'Software Engineer', 'description' => 'Membangun aplikasi web dan mobile.', 'match_percentage' => 85, 'required_skills' => ['Logic', 'Problem Solving']],
+                ['title' => 'System Analyst', 'description' => 'Menganalisis sistem dan workflow bisnis.', 'match_percentage' => 75, 'required_skills' => ['Analytical', 'Communication']]
+            ];
+        }
+    }
+
+    public function generateCvOptimization(string $cvText, array $skillGaps): string 
+    {
+        $gaps = implode(', ', array_column($skillGaps, 'skill'));
+        $prompt = "CV Text: " . substr($cvText, 0, 2000) . "\nGap Skills: {$gaps}. Berikan SATU kalimat saran optimasi CV yang sangat kuat dan spesifik agar lebih menonjol di mata rekruter untuk skill gap tersebut. Kembalikan teks saja.";
+        
+        try {
+            return $this->callGeminiApi($prompt);
+        } catch (\Exception $e) {
+            return "Tambahkan proyek nyata yang menggunakan skill {$gaps} untuk menunjukkan bukti penguasaan teknismu kepada rekruter.";
+        }
+    }
+
     public function generateMarketResearch($t) { return []; }
-    public function generateCvOptimization($c,$g) { return []; }
 }

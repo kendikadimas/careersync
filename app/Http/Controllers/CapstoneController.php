@@ -6,6 +6,7 @@ use App\Models\CapstoneSubmission;
 use App\Models\UserRoadmap;
 use App\Services\GitHubVerificationService;
 use App\Services\BadgeService;
+use App\Services\WorkReadinessScoreService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +14,8 @@ class CapstoneController extends Controller
 {
     public function __construct(
         private GitHubVerificationService $github,
-        private BadgeService $badgeService
+        private BadgeService $badgeService,
+        private WorkReadinessScoreService $scoreService
     ) {}
 
     public function show(string $roadmapId, string $milestoneId)
@@ -75,6 +77,7 @@ class CapstoneController extends Controller
         if ($score >= 60) {
             $this->completeMilestone($roadmap, $milestoneId);
             $submission->update(['status' => 'completed']);
+            $this->scoreService->calculateForUser(auth()->user());
         }
 
         // Check badges setelah submit

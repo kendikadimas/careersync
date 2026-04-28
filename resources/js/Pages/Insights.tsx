@@ -105,7 +105,7 @@ export default function Insights({ insights, smart_tips, score, generated_at, pr
                                                 Prioritas {tip.priority}
                                             </span>
                                             <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
-                                                tip.category === 'skill' ? 'bg-blue-500/20 text-blue-400' :
+                                                tip.category === 'skill' ? 'bg-indigo-900/20 text-indigo-300' :
                                                 tip.category === 'project' ? 'bg-purple-500/20 text-purple-400' :
                                                 tip.category === 'mindset' ? 'bg-amber-500/20 text-amber-400' :
                                                 'bg-teal-500/20 text-teal-400'
@@ -140,3 +140,5 @@ export default function Insights({ insights, smart_tips, score, generated_at, pr
         </AppLayout>
     );
 }
+
+
