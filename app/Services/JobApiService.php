@@ -35,9 +35,11 @@ class JobApiService
         }
 
         try {
+            $searchQuery = $query . ' Indonesia';
             $attempts = [
+                ['query' => $searchQuery, 'country' => 'id', 'page' => 1, 'num_pages' => 1],
+                ['query' => $searchQuery, 'page' => 1, 'num_pages' => 1],
                 ['query' => $query, 'country' => 'id', 'page' => 1, 'num_pages' => 1],
-                ['query' => $query, 'page' => 1, 'num_pages' => 1],
             ];
 
             $data = [];

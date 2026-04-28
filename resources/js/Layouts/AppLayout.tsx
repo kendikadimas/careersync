@@ -46,9 +46,9 @@ export default function AppLayout({ children, header }: Props) {
     const activeItem = navItems.find((item) => item.active);
 
     return (
-        <div className="min-h-screen bg-[#F3F6FF] flex text-[#1A1A2E] font-(--font-heading)">
+        <div className="min-h-screen bg-[#F3F6FF] flex text-[#1A1A2E] font-(--font-heading) max-w-full overflow-x-hidden">
             {/* Sidebar Desktop */}
-            <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-72'} bg-[#F3F6FF] fixed h-full z-20 border-r border-slate-200 transition-all duration-200`}>
+            <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-[#F3F6FF] fixed h-full z-20 border-r border-slate-200 transition-all duration-200`}>
                 <div className="p-6 flex items-center gap-3">
                     <div className="w-10 h-10 bg-[#A9C7FF] rounded-xl flex items-center justify-center text-[#2D3A8C] font-bold">CS</div>
                     {!isSidebarCollapsed && <span className="font-semibold text-base">CareerSync</span>}
@@ -118,9 +118,9 @@ export default function AppLayout({ children, header }: Props) {
             </aside>
 
             {/* Main Content */}
-            <main className={`flex-1 flex flex-col ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-72'} transition-all duration-200`}>
+            <main className={`flex-1 flex flex-col ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'} transition-all duration-200 min-w-0 max-w-full overflow-x-hidden`}>
                 {/* Header */}
-                <header className="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-slate-200 h-16 flex items-center justify-between px-4 md:px-8">
+                <header className="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-slate-200 h-16 flex items-center justify-between px-4 md:px-6">
                     <div className="flex items-center gap-3">
                         <button
                             className="md:hidden p-2 text-[#2D3A8C]"
@@ -242,7 +242,7 @@ export default function AppLayout({ children, header }: Props) {
                 </header>
 
                 {/* Content */}
-                <div className="p-4 md:p-8 max-w-7xl mx-auto w-full relative">
+                <div className="p-3 md:p-6 w-full relative">
                     {/* Badge Notifications Toast */}
                     {showBadgeToast && (
                         <div className="fixed bottom-8 right-8 z-100 flex flex-col gap-3 max-w-sm animate-in slide-in-from-right duration-500">

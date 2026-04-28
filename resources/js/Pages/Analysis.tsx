@@ -71,6 +71,7 @@ function RadarChart({ data }: { data: { label: string; userVal: number; industry
     const cy = 160;
     const r = 110;
     const n = data.length || 3; // Fallback to 3 if empty
+    const hasData = data.length > 0;
 
     function point(val: number, idx: number) {
         const angle = (Math.PI * 2 * idx) / n - Math.PI / 2;
@@ -117,18 +118,22 @@ function RadarChart({ data }: { data: { label: string; userVal: number; industry
                 const p = point(1, i);
                 return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="#e2e8f0" strokeWidth="1" />;
             })}
-            <path
-                d={polyPath(data.map((d) => d.industryVal))}
-                fill="rgba(34,197,94,0.15)"
-                stroke="#22c55e"
-                strokeWidth="2.5"
-            />
-            <path
-                d={polyPath(data.map((d) => d.userVal))}
-                fill="rgba(37,99,235,0.2)"
-                stroke="#2563EB"
-                strokeWidth="2.5"
-            />
+            {hasData && (
+                <path
+                    d={polyPath(data.map((d) => d.industryVal))}
+                    fill="rgba(34,197,94,0.15)"
+                    stroke="#22c55e"
+                    strokeWidth="2.5"
+                />
+            )}
+            {hasData && (
+                <path
+                    d={polyPath(data.map((d) => d.userVal))}
+                    fill="rgba(37,99,235,0.2)"
+                    stroke="#2563EB"
+                    strokeWidth="2.5"
+                />
+            )}
             {data.map((d, i) => {
                 const lp = labelPoint(i);
                 return (
@@ -221,6 +226,9 @@ function UploadForm({
     onAnalyze,
     loading,
     fileInputRef,
+    file,
+    onRemoveFile,
+    previewUrl,
 }: {
     target: string;
     setTarget: (v: string) => void;
@@ -424,9 +432,15 @@ function AnalysisResults({
                     <h2 className="text-[18px] font-black text-[#1A1A2E] mb-1">Skill Gap Analysis</h2>
                     <p className="text-[12px] text-slate-400 font-semibold mb-5 uppercase tracking-wider">Kebutuhan Pasar</p>
                     <div className="space-y-5 flex-1 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
-                        {(profile?.skill_gaps || []).map((item: any, idx: number) => (
-                            <SkillGapBar key={idx} item={item} />
-                        ))}
+                        {(profile?.skill_gaps && profile.skill_gaps.length > 0) ? (
+                            profile.skill_gaps.map((item: any, idx: number) => (
+                                <SkillGapBar key={idx} item={item} />
+                            ))
+                        ) : (
+                            <div className="py-10 flex flex-col items-center justify-center text-center">
+                                <p className="text-[12px] text-slate-400 italic">Belum ada data skill gap.</p>
+                            </div>
+                        )}
                     </div>
                     <Link href={route('roadmap')} className="mt-6 w-full bg-indigo-900 text-white py-3 rounded-full text-[13px] font-bold hover:bg-indigo-800 transition-all text-center shadow-lg shadow-indigo-100">
                         Buka Roadmap Belajar
@@ -458,24 +472,34 @@ function AnalysisResults({
                         Berdasarkan kombinasi skill-mu, AI menemukan beberapa jalur karir alternatif yang memiliki kecocokan tinggi dengan profilmu saat ini.
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {(profile?.career_paths || []).map((pos: any, idx: number) => (
-                            <div key={idx} className="p-5 rounded-2xl border border-slate-50 bg-slate-50/50 hover:bg-white hover:border-indigo-100 hover:shadow-md transition-all group">
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-[16px] font-black text-[#1A1A2E] group-hover:text-indigo-900 transition-colors">{pos.title}</h3>
-                                    <span className="text-[18px] font-black text-indigo-900">{pos.match_percentage}%</span>
+                        {(profile?.career_paths && profile.career_paths.length > 0) ? (
+                            profile.career_paths.map((pos: any, idx: number) => (
+                                <div key={idx} className="p-5 rounded-2xl border border-slate-50 bg-slate-50/50 hover:bg-white hover:border-indigo-100 hover:shadow-md transition-all group">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <h3 className="text-[16px] font-black text-[#1A1A2E] group-hover:text-indigo-900 transition-colors">{pos.title}</h3>
+                                        <span className="text-[18px] font-black text-indigo-900">{pos.match_percentage}%</span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 line-clamp-2 mb-4 leading-relaxed">
+                                        {pos.description}
+                                    </p>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {(pos.required_skills || []).slice(0, 3).map((s: string, i: number) => (
+                                            <span key={i} className="text-[9px] font-bold bg-white px-2 py-1 rounded-lg border border-slate-100 text-slate-400">
+                                                {s}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
-                                <p className="text-[11px] text-slate-500 line-clamp-2 mb-4 leading-relaxed">
-                                    {pos.description}
-                                </p>
-                                <div className="flex flex-wrap gap-1.5">
-                                    {(pos.required_skills || []).slice(0, 3).map((s: string, i: number) => (
-                                        <span key={i} className="text-[9px] font-bold bg-white px-2 py-1 rounded-lg border border-slate-100 text-slate-400">
-                                            {s}
-                                        </span>
-                                    ))}
+                            ))
+                        ) : (
+                            <div className="col-span-full py-12 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 rounded-3xl bg-slate-50/30">
+                                <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                                 </div>
+                                <p className="text-[13px] font-bold text-slate-400">Belum ada jalur karir alternatif</p>
+                                <p className="text-[11px] text-slate-300 mt-1">Coba update CV kamu untuk mendapatkan rekomendasi baru</p>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </div>
@@ -497,9 +521,23 @@ export default function SkillGapAnalysis({
 
     const [mode, setMode] = useState<'upload' | 'paste'>('upload');
     const [dragging, setDragging] = useState(false);
-    const [showUpload, setShowUpload] = useState(!profile?.skill_gaps);
+    const [showUpload, setShowUpload] = useState(!profile?.skill_gaps || profile?.skill_gaps?.length === 0);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (profile?.skill_gaps) {
+            // Debug: log analysis output to the browser console.
+            console.debug('[Analysis] CV analysis result', {
+                skills: profile?.skills,
+                skillGaps: profile?.skill_gaps,
+                careerPaths: profile?.career_paths,
+                smartTips: profile?.smart_tips,
+                education: profile?.education,
+                experiences: profile?.experiences,
+            });
+        }
+    }, [profile?.skill_gaps]);
 
     useEffect(() => {
         if (data.cv_file) {
@@ -580,7 +618,7 @@ export default function SkillGapAnalysis({
                     </div>
                 )}
 
-                {profile?.skill_gaps && !showUpload ? (
+                {profile?.skill_gaps?.length > 0 && !showUpload ? (
                     <AnalysisResults profile={profile} onReset={() => setShowUpload(true)} />
                 ) : (
                     <UploadForm

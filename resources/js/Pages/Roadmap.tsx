@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Head, router } from '@inertiajs/react';
-import { 
-    Map as MapIcon, 
-    Sparkles, 
-    CheckCircle2, 
-    Lock, 
-    PlayCircle, 
+import { Head, router, Link } from '@inertiajs/react';
+import {
+    Map as MapIcon,
+    Sparkles,
+    CheckCircle2,
+    Lock,
+    PlayCircle,
     ExternalLink,
     BookOpen,
     Loader2,
@@ -61,9 +61,9 @@ export default function Roadmap({ roadmap, profile }: any) {
         if (!ms.resources || ms.resources.length === 0 || !ms.why_important) {
             setLoadingDetails(true);
             try {
-                const response = await axios.get(route('roadmap.milestone.details', { 
-                    roadmapId: roadmap.id, 
-                    milestoneId: ms.id 
+                const response = await axios.get(route('roadmap.milestone.details', {
+                    roadmapId: roadmap.id,
+                    milestoneId: ms.id
                 }));
                 setSelectedMilestone(response.data);
                 router.reload({ only: ['roadmap'] });
@@ -92,45 +92,47 @@ export default function Roadmap({ roadmap, profile }: any) {
             <Head title="Roadmap | Career-Sync" />
 
             {!roadmap ? (
-                <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[3rem] border border-slate-100 shadow-sm text-center px-6">
-                    <div className="w-24 h-24 bg-navy-50 rounded-3xl flex items-center justify-center text-navy-900 mb-8">
-                        <MapIcon className="w-12 h-12" />
+                <div className="flex flex-col items-center justify-center py-12 md:py-20 bg-white rounded-3xl md:rounded-[3rem] border border-slate-100 shadow-sm text-center px-4 md:px-6">
+                    <div className="w-20 h-20 md:w-24 md:h-24 bg-navy-50 rounded-3xl flex items-center justify-center text-navy-900 mb-6 md:mb-8">
+                        <MapIcon className="w-10 h-10 md:w-12 md:h-12" />
                     </div>
-                    <h2 className="text-3xl font-black text-navy-900 mb-4">Gunakan AI untuk Memandu Karirmu</h2>
-                    <p className="max-w-md text-slate-500 mb-10">AI akan menganalisis <b>skill gap</b> kamu dan membuatkan rencana belajar untuk menutupinya.</p>
-                    
-                    <button 
+                    <h2 className="text-2xl md:text-3xl font-black text-navy-900 mb-4 px-2">Gunakan AI untuk Memandu Karirmu</h2>
+                    <p className="max-w-md text-slate-500 mb-8 md:mb-10 text-sm md:text-base">AI akan menganalisis <b>skill gap</b> kamu dan membuatkan rencana belajar untuk menutupinya.</p>
+
+                    <button
                         onClick={handleGenerate}
                         disabled={loading}
-                        className="relative overflow-hidden px-8 py-4 bg-navy-900 text-white rounded-2xl font-black flex items-center gap-3 shadow-xl shadow-navy-900/20 hover:scale-105 transition-all disabled:opacity-50"
+                        className="relative overflow-hidden w-full sm:w-auto px-8 py-4 bg-navy-900 text-white rounded-2xl font-black flex items-center justify-center gap-3 shadow-xl shadow-navy-900/20 hover:scale-105 transition-all disabled:opacity-50"
                     >
                         {loading && (
-                            <div 
+                            <div
                                 className="absolute bottom-0 left-0 h-1.5 bg-teal-400 transition-all duration-300 shadow-[0_0_10px_rgba(45,212,191,0.5)]"
                                 style={{ width: `${progress}%` }}
                             ></div>
                         )}
                         {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Sparkles className="w-6 h-6" />}
-                        {loading ? `Menganalisis Skill Gap... ${progress}%` : 'Generate Target Roadmap'}
+                        {loading ? `Menganalisis... ${progress}%` : 'Generate Target Roadmap'}
                     </button>
                 </div>
             ) : (
-                <div className="rounded-[2.25rem] bg-slate-200 p-4 md:p-6 border border-slate-300/80">
-                    <div className="rounded-[1.75rem] bg-white/70 p-4 md:p-6 space-y-5">
-                        <div className="rounded-3xl bg-white p-5 md:p-6 border border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                            <div>
-                                <h3 className="text-2xl font-extrabold text-slate-900">Adaptive Learning Roadmap</h3>
-                                <p className="text-sm text-slate-500 mt-1">Menciptakan learning roadmap sesuai skill gap kamu.</p>
-                                <div className="mt-3 inline-flex items-center gap-2 text-[11px] font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
-                                    <TargetIcon className="w-3.5 h-3.5 text-blue-600" />
-                                    Target: {roadmap.career_target}
+                <div className="rounded-2xl md:rounded-[2rem] bg-slate-200/50 p-2 md:p-4 border border-slate-200 max-w-full overflow-hidden">
+                    <div className="rounded-xl md:rounded-[1.5rem] bg-white/80 p-3 md:p-4 space-y-3 md:space-y-4">
+                        <div className="rounded-2xl bg-white p-3 md:p-4 border border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                            <div className="flex-1">
+                                <h3 className="text-xl font-black text-slate-900 leading-tight">Adaptive Learning Roadmap</h3>
+                                <div className="flex flex-wrap items-center gap-2 mt-1">
+                                    <div className="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                                        <TargetIcon className="w-3 h-3 text-blue-600" />
+                                        Target: {roadmap.career_target}
+                                    </div>
+                                    <span className="text-[11px] text-slate-400 font-medium">Ciptakan jalur belajar sesuai skill gap kamu.</span>
                                 </div>
                             </div>
 
                             <button
                                 onClick={handleGenerate}
                                 disabled={loading}
-                                className="relative overflow-hidden min-w-40 px-6 py-3 bg-indigo-900 text-white rounded-2xl font-bold text-sm hover:bg-indigo-800 transition-colors disabled:opacity-60"
+                                className="relative overflow-hidden px-5 py-2.5 bg-indigo-900 text-white rounded-xl font-bold text-xs hover:bg-indigo-800 transition-colors disabled:opacity-60 shrink-0"
                             >
                                 {loading && (
                                     <div
@@ -139,24 +141,24 @@ export default function Roadmap({ roadmap, profile }: any) {
                                     ></div>
                                 )}
                                 <span className="inline-flex items-center gap-2">
-                                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                                    {loading ? `Updating ${progress}%` : 'Ciptakan!'}
+                                    {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                                    {loading ? `Updating ${progress}%` : 'Regenerate'}
                                 </span>
                             </button>
                         </div>
 
-                        <div className="rounded-3xl bg-white p-5 border border-slate-200">
-                            <div className="flex items-center justify-between mb-3">
-                                <span className="text-[11px] font-bold tracking-wide uppercase text-slate-500">Progress Belajar</span>
-                                <span className="text-sm font-bold text-slate-700">{completion}%</span>
+                        <div className="rounded-2xl bg-white p-3 border border-slate-100">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-[10px] font-bold tracking-wide uppercase text-slate-400">Overall Progress</span>
+                                <span className="text-xs font-black text-indigo-900">{completion}%</span>
                             </div>
-                            <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                                 <div className="h-full bg-indigo-900 transition-all duration-700" style={{ width: `${completion}%` }}></div>
                             </div>
                         </div>
 
-                        <div className="overflow-x-auto pb-2">
-                            <div className="flex gap-3 min-w-max">
+                        <div className="overflow-x-auto pb-2 scrollbar-hide">
+                            <div className="flex gap-3 min-w-max px-1">
                                 {milestones.map((ms: any) => {
                                     const status = (ms.status as string) || 'locked';
                                     const isCurrent = status === 'current';
@@ -168,24 +170,25 @@ export default function Roadmap({ roadmap, profile }: any) {
                                             key={ms.id}
                                             type="button"
                                             onClick={() => handleSelect(ms)}
-                                            className={`w-55 min-h-35 rounded-2xl p-4 text-left transition-all border ${
-                                                isActive
-                                                    ? 'bg-indigo-900 border-indigo-300 text-white shadow-lg'
+                                            className={`w-48 md:w-56 min-h-[100px] rounded-xl p-3 text-left transition-all border shrink-0 ${isActive
+                                                    ? 'bg-indigo-900 border-indigo-300 text-white shadow-lg ring-2 ring-indigo-200'
                                                     : isCompleted
-                                                    ? 'bg-indigo-900 border-indigo-400 text-white'
-                                                    : isCurrent
-                                                    ? 'bg-indigo-900 border-indigo-500 text-white'
-                                                    : 'bg-slate-100 border-slate-200 text-slate-600'
-                                            }`}
+                                                        ? 'bg-indigo-900/90 border-indigo-400 text-white'
+                                                        : isCurrent
+                                                            ? 'bg-indigo-900 border-indigo-500 text-white'
+                                                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                                                }`}
                                         >
                                             <div className="flex items-start justify-between gap-2">
-                                                <span className="text-3xl leading-none">{ms.emoji || '•'}</span>
-                                                {isCompleted && <CheckCircle2 className="w-4 h-4" />}
-                                                {isCurrent && <PlayCircle className="w-4 h-4" />}
-                                                {status === 'locked' && <Lock className="w-4 h-4" />}
+                                                <span className="text-2xl leading-none">{ms.emoji || '•'}</span>
+                                                <div className="p-1 rounded-md bg-white/10">
+                                                    {isCompleted && <CheckCircle2 className="w-3.5 h-3.5" />}
+                                                    {isCurrent && <PlayCircle className="w-3.5 h-3.5" />}
+                                                    {status === 'locked' && <Lock className="w-3.5 h-3.5" />}
+                                                </div>
                                             </div>
-                                            <p className="mt-3 font-bold text-sm leading-snug">{ms.title}</p>
-                                            <p className={`mt-2 text-[11px] font-semibold ${isActive || isCurrent || isCompleted ? 'text-white/80' : 'text-slate-500'}`}>
+                                            <p className="mt-2 font-black text-[12px] leading-tight line-clamp-2">{ms.title}</p>
+                                            <p className={`mt-1 text-[9px] font-bold uppercase tracking-wider ${isActive || isCurrent || isCompleted ? 'text-white/60' : 'text-slate-400'}`}>
                                                 {isCompleted ? 'Selesai' : isCurrent ? 'Sedang dipelajari' : 'Terkunci'}
                                             </p>
                                         </button>
@@ -195,87 +198,111 @@ export default function Roadmap({ roadmap, profile }: any) {
                         </div>
 
                         {selectedMilestone && (
-                            <div className="rounded-3xl bg-white p-5 md:p-6 border border-slate-200">
-                                <h4 className="text-2xl font-extrabold text-slate-900">Detail Milestone: {selectedMilestone.title}</h4>
-                                <p className="text-sm text-slate-500 mt-1">
-                                    Melengkapi skill gap: {selectedMilestone.skill_gaps_addressed?.join(', ') || 'kompetensi inti'}
-                                </p>
-
-                                {loadingDetails ? (
-                                    <div className="mt-6 rounded-2xl bg-slate-100 p-6 text-center">
-                                        <div className="inline-flex w-16 h-16 items-center justify-center rounded-2xl bg-indigo-900 text-white mb-4">
-                                            <Loader2 className="w-8 h-8 animate-spin" />
-                                        </div>
-                                        <p className="text-sm font-semibold text-slate-700">AI sedang menyusun materi pembelajaran...</p>
-                                        <div className="mt-4 h-2 w-full max-w-sm mx-auto rounded-full bg-slate-200 overflow-hidden">
-                                            <div className="h-full bg-indigo-900 transition-all duration-300" style={{ width: `${progress}%` }}></div>
+                            <div className="rounded-2xl bg-white p-4 md:p-5 border border-slate-100 max-h-[500px] overflow-y-auto custom-scrollbar">
+                                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-5 pb-5 border-b border-slate-100">
+                                    <div>
+                                        <h4 className="text-xl font-black text-slate-900 leading-tight">{selectedMilestone.title}</h4>
+                                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Skill Focus:</span>
+                                            {selectedMilestone.skill_gaps_addressed?.map((s: string) => (
+                                                <span key={s} className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-[10px] font-bold">{s}</span>
+                                            )) || <span className="text-[10px] text-slate-500 italic">Umum</span>}
                                         </div>
                                     </div>
+
+                                    {(selectedMilestone.status === 'current' || selectedMilestone.status === 'completed') && (
+                                        <div className="flex flex-col items-end gap-1">
+                                            <Link
+                                                href={route('roadmap.complete', selectedMilestone.id)}
+                                                method="patch"
+                                                as="button"
+                                                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all shrink-0 ${selectedMilestone.status === 'completed'
+                                                        ? 'bg-emerald-500 text-white'
+                                                        : 'bg-indigo-900 text-white hover:bg-indigo-800'
+                                                    }`}
+                                            >
+                                                {selectedMilestone.status === 'completed' ? 'Sudah Selesai' : 'Selesaikan Milestone'}
+                                            </Link>
+                                            {selectedMilestone.status === 'current' && selectedMilestone.capstone_project && (
+                                                <span className="text-[9px] text-slate-400 font-bold italic">*Butuh Capstone Project</span>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {loadingDetails ? (
+                                    <div className="py-12 text-center">
+                                        <Loader2 className="w-8 h-8 animate-spin text-indigo-900 mx-auto mb-3" />
+                                        <p className="text-sm font-bold text-slate-600">Menyusun strategi belajar terbaik...</p>
+                                    </div>
                                 ) : (
-                                    <div className="mt-6 space-y-6">
-                                        <div className="rounded-xl bg-indigo-900 text-white p-5">
-                                            <p className="text-sm leading-relaxed">{selectedMilestone.why_important || 'Milestone ini membantu kamu memperkuat kompetensi inti secara bertahap.'}</p>
+                                    <div className="space-y-6">
+                                        <div className="rounded-xl bg-indigo-900/5 p-4 border border-indigo-100">
+                                            <h5 className="text-[11px] font-black text-indigo-900 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                                <Sparkles className="w-3.5 h-3.5" />
+                                                Strategi Belajar
+                                            </h5>
+                                            <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
+                                                {selectedMilestone.why_important || 'Milestone ini membantu kamu memperkuat kompetensi inti secara bertahap.'}
+                                            </p>
                                         </div>
 
-                                        <div>
-                                            <h5 className="text-xl font-extrabold text-slate-900 mb-3">Materi Pilihan</h5>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                                {(selectedMilestone.resources || []).map((res: any, i: number) => (
-                                                    <a
-                                                        key={i}
-                                                        href={res.url}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className="rounded-xl bg-slate-200 hover:bg-slate-300 transition-colors p-4 min-h-22 flex items-center justify-between gap-3"
-                                                    >
-                                                        <div>
-                                                            <p className="text-xs font-semibold uppercase text-slate-500">{res.type || 'resource'}</p>
-                                                            <p className="text-sm font-bold text-slate-800 mt-1 line-clamp-2">{res.title}</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                            {(selectedMilestone.resources || []).map((res: any, i: number) => (
+                                                <a
+                                                    key={i}
+                                                    href={res.url}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="group rounded-xl bg-slate-50 border border-slate-100 hover:border-indigo-200 hover:bg-white transition-all p-3 flex items-center justify-between gap-3 shadow-sm hover:shadow-md"
+                                                >
+                                                    <div className="overflow-hidden">
+                                                        <div className="flex items-center gap-2">
+                                                            <BookOpen className="w-3 h-3 text-indigo-500" />
+                                                            <p className="text-[9px] font-black uppercase text-indigo-500 tracking-wider">{res.type || 'resource'}</p>
                                                         </div>
-                                                        <ExternalLink className="w-4 h-4 text-slate-500 shrink-0" />
-                                                    </a>
-                                                ))}
-                                                {(!selectedMilestone.resources || selectedMilestone.resources.length === 0) && (
-                                                    <div className="col-span-full rounded-xl bg-slate-100 p-4 text-sm text-slate-500">
-                                                        Materi belum tersedia untuk milestone ini.
+                                                        <p className="text-xs font-bold text-slate-800 mt-1 line-clamp-1 group-hover:text-indigo-900">{res.title}</p>
                                                     </div>
-                                                )}
-                                            </div>
+                                                    <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-500 shrink-0 transition-colors" />
+                                                </a>
+                                            ))}
                                         </div>
 
                                         {selectedMilestone.capstone_project && (
-                                            <div className="rounded-xl bg-indigo-900 text-white p-6">
-                                                <h5 className="text-2xl font-extrabold">Capstone Project</h5>
-                                                <h6 className="text-lg font-bold mt-2">{selectedMilestone.capstone_project.title}</h6>
-                                                <p className="text-sm text-indigo-100 mt-2 max-w-3xl">{selectedMilestone.capstone_project.description}</p>
-                                                <div className="flex flex-wrap gap-2 mt-4">
+                                            <div className="rounded-xl bg-linear-to-br from-indigo-900 to-navy-900 text-white p-5 shadow-xl">
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <div className="p-1.5 rounded-lg bg-white/10">
+                                                        <TargetIcon className="w-4 h-4 text-cyan-300" />
+                                                    </div>
+                                                    <h5 className="text-[11px] font-black uppercase tracking-widest text-cyan-300">Capstone Project</h5>
+                                                </div>
+                                                <h6 className="text-lg font-black leading-tight mb-2">{selectedMilestone.capstone_project.title}</h6>
+                                                <p className="text-[13px] text-indigo-100/80 leading-relaxed mb-4">{selectedMilestone.capstone_project.description}</p>
+
+                                                <div className="flex flex-wrap gap-2 mb-5">
                                                     {selectedMilestone.capstone_project.tech_used?.map((tech: string) => (
-                                                        <span key={tech} className="px-2.5 py-1 rounded-lg bg-white/15 border border-white/20 text-[11px] font-semibold uppercase">
+                                                        <span key={tech} className="px-2 py-0.5 rounded bg-white/10 border border-white/10 text-[9px] font-bold text-white/90">
                                                             {tech}
                                                         </span>
                                                     ))}
                                                 </div>
 
-                                                <div className="mt-6">
-                                                    {(selectedMilestone.status === 'current' || selectedMilestone.status === 'completed') && (
-                                                        <a
-                                                            href={`/roadmap/${roadmap.id}/capstone/${selectedMilestone.id}`}
-                                                            className={`inline-flex min-w-55 justify-center rounded-xl px-5 py-3 text-sm font-bold transition-colors ${
-                                                                selectedMilestone.status === 'completed'
-                                                                    ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
-                                                                    : 'bg-white text-indigo-900 hover:bg-indigo-100'
+                                                <div className="pt-4 border-t border-white/10">
+                                                    <Link
+                                                        href={`/roadmap/${roadmap.id}/capstone/${selectedMilestone.id}`}
+                                                        className={`inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-xs font-black transition-all ${selectedMilestone.status === 'completed'
+                                                                ? 'bg-emerald-500 text-white hover:bg-emerald-600'
+                                                                : 'bg-white text-indigo-900 hover:bg-cyan-50'
                                                             }`}
-                                                        >
-                                                            {selectedMilestone.status === 'completed'
-                                                                ? 'View Submission Score'
-                                                                : 'Submit Project'}
-                                                        </a>
-                                                    )}
-                                                    {selectedMilestone.status === 'locked' && (
-                                                        <p className="text-sm text-indigo-100">Selesaikan milestone sebelumnya untuk membuka capstone.</p>
-                                                    )}
+                                                    >
+                                                        {selectedMilestone.status === 'completed' ? 'View Submission' : 'Start Project'}
+                                                        <ExternalLink className="w-3 h-3" />
+                                                    </Link>
                                                 </div>
                                             </div>
+                                        )}
+                                        {selectedMilestone.status === 'locked' && (
+                                            <p className="text-xs font-bold text-slate-400 italic">Selesaikan milestone sebelumnya untuk membuka proyek ini.</p>
                                         )}
                                     </div>
                                 )}

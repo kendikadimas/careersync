@@ -6,6 +6,7 @@ use App\Data\JobMarketData;
 use App\Models\UserProfile;
 use App\Services\GeminiService;
 use App\Services\JobApiService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -76,6 +77,36 @@ class MarketController extends Controller
             $debugInfo = $apiStatus;
         }
 
+        // AI Career Outlook (Cached for performance)
+        $cacheKey = 'market_outlook_' . md5(is_array($careerTargets) ? implode(',', $careerTargets) : $careerTargets);
+        $outlook = Cache::remember($cacheKey, 3600, function() use ($careerTargets) {
+            $target = is_array($careerTargets) ? implode(', ', $careerTargets) : $careerTargets;
+            try {
+                $prompt = "Berikan analisis singkat 2-3 kalimat mengenai prospek karir sebagai {$target} di Indonesia tahun 2024. Sertakan sentimen pasar (bullish/stable/shifting). Kembalikan HANYA JSON: { \"sentiment\": \"...\", \"summary\": \"...\", \"future_skills\": [\"skill1\", \"skill2\"] }";
+                $res = $this->gemini->callGeminiApi($prompt);
+                return json_decode($this->gemini->cleanJson($res), true);
+            } catch (\Exception $e) {
+                return [
+                    'sentiment' => 'Stable',
+                    'summary' => 'Permintaan untuk peran ini tetap tinggi seiring dengan transformasi digital di berbagai sektor industri di Indonesia.',
+                    'future_skills' => ['AI Integration', 'Cloud Native', 'Cybersecurity']
+                ];
+            }
+        });
+
+        // Top Hiring Companies (Aggregated from jobs)
+        $topCompanies = collect($jobs)
+            ->groupBy('company')
+            ->map(fn($group) => [
+                'name' => $group->first()['company'],
+                'count' => count($group),
+                'logo' => 'https://ui-avatars.com/api/?name=' . urlencode($group->first()['company']) . '&background=random'
+            ])
+            ->sortByDesc('count')
+            ->take(5)
+            ->values()
+            ->toArray();
+
         return Inertia::render('Market', [
             'jobs' => $jobs,
             'trendingSkills' => $trendingSkills,
@@ -83,6 +114,8 @@ class MarketController extends Controller
             'profile' => $profile,
             'isLiveData' => $isLiveData,
             'apiDebug' => $debugInfo,
+            'outlook' => $outlook,
+            'topCompanies' => $topCompanies
         ]);
     }
 

@@ -16,6 +16,46 @@ class JobMarketData
 
         $data = [
             // Tech
+            // Tech
+            'Fullstack Developer' => [
+                ['skill' => 'React.js / Next.js', 'demand' => 85, 'trend' => 'stable', 'category' => 'framework'],
+                ['skill' => 'Node.js / Laravel / PHP', 'demand' => 88, 'trend' => 'stable', 'category' => 'framework'],
+                ['skill' => 'TypeScript', 'demand' => 80, 'trend' => 'rising', 'category' => 'language'],
+                ['skill' => 'Database (SQL/NoSQL)', 'demand' => 82, 'trend' => 'stable', 'category' => 'database'],
+                ['skill' => 'Git & CI/CD', 'demand' => 90, 'trend' => 'stable', 'category' => 'devops'],
+            ],
+            'Frontend Developer' => [
+                ['skill' => 'React.js / Next.js', 'demand' => 89, 'trend' => 'stable', 'category' => 'framework'],
+                ['skill' => 'TypeScript', 'demand' => 82, 'trend' => 'rising', 'category' => 'language'],
+                ['skill' => 'Tailwind CSS', 'demand' => 74, 'trend' => 'rising', 'category' => 'styling'],
+                ['skill' => 'REST & GraphQL API', 'demand' => 68, 'trend' => 'stable', 'category' => 'integration'],
+                ['skill' => 'Git & CI/CD', 'demand' => 94, 'trend' => 'stable', 'category' => 'devops'],
+            ],
+            'Backend Developer' => [
+                ['skill' => 'Node.js / Laravel / PHP', 'demand' => 91, 'trend' => 'stable', 'category' => 'framework'],
+                ['skill' => 'RESTful API Design', 'demand' => 88, 'trend' => 'stable', 'category' => 'architecture'],
+                ['skill' => 'MySQL / PostgreSQL', 'demand' => 85, 'trend' => 'stable', 'category' => 'database'],
+                ['skill' => 'Docker & Kubernetes', 'demand' => 67, 'trend' => 'rising', 'category' => 'devops'],
+            ],
+            'Mobile Developer' => [
+                ['skill' => 'React Native / Flutter', 'demand' => 86, 'trend' => 'stable', 'category' => 'framework'],
+                ['skill' => 'Native iOS/Android', 'demand' => 75, 'trend' => 'stable', 'category' => 'language'],
+                ['skill' => 'Mobile UI/UX', 'demand' => 80, 'trend' => 'stable', 'category' => 'design'],
+                ['skill' => 'API Integration', 'demand' => 88, 'trend' => 'stable', 'category' => 'integration'],
+            ],
+            'DevOps Engineer' => [
+                ['skill' => 'Docker & Kubernetes', 'demand' => 92, 'trend' => 'stable', 'category' => 'devops'],
+                ['skill' => 'CI/CD Pipelines', 'demand' => 95, 'trend' => 'stable', 'category' => 'devops'],
+                ['skill' => 'Cloud (AWS/GCP/Azure)', 'demand' => 88, 'trend' => 'stable', 'category' => 'infrastructure'],
+                ['skill' => 'Scripting (Bash/Python)', 'demand' => 84, 'trend' => 'stable', 'category' => 'automation'],
+            ],
+            'Data Engineer' => [
+                ['skill' => 'Python / Scala', 'demand' => 88, 'trend' => 'stable', 'category' => 'language'],
+                ['skill' => 'SQL (BigQuery/Postgres)', 'demand' => 94, 'trend' => 'stable', 'category' => 'database'],
+                ['skill' => 'Spark / Hadoop / Airflow', 'demand' => 82, 'trend' => 'stable', 'category' => 'data-pipeline'],
+                ['skill' => 'Data Warehousing', 'demand' => 85, 'trend' => 'stable', 'category' => 'architecture'],
+            ],
+
             'Frontend Engineer' => [
                 ['skill' => 'React.js / Next.js', 'demand' => 89, 'trend' => 'stable', 'category' => 'framework'],
                 ['skill' => 'TypeScript', 'demand' => 82, 'trend' => 'rising', 'category' => 'language'],

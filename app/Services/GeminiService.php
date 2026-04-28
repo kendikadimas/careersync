@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Log;
  */
 class GeminiService
 {
+    public function __construct(
+        protected YouTubeSearchService $youtube = new YouTubeSearchService()
+    ) {}
+
     private function parseCvFallback(string $cvText): array
     {
         $lowerText = strtolower($cvText);
@@ -111,7 +115,7 @@ class GeminiService
         return $models ?: ['gemini-2.0-flash'];
     }
 
-    private function callGeminiApi(string $prompt): string
+    public function callGeminiApi(string $prompt): string
     {
         $apiKey = config('gemini.api_key');
         if (!$apiKey) {
@@ -194,7 +198,7 @@ class GeminiService
         throw new \Exception("GEMINI_ALL_MODELS_FAILED: Periksa koneksi internet atau API Key. Cek storage/logs/laravel.log untuk detail.");
     }
 
-    private function cleanJson(string $text): string
+    public function cleanJson(string $text): string
     {
         $text = preg_replace('/```(?:json)?\n?/', '', $text);
         $text = preg_replace('/\n?```/', '', $text);
@@ -213,6 +217,11 @@ class GeminiService
     {
         $target = is_array($careerTarget) ? implode(', ', $careerTarget) : $careerTarget;
         $cacheKey = 'gemini_parse_cv_v2_' . md5($cvText . '|' . $target);
+
+        Log::info('Gemini parseCV start', [
+            'target' => $target,
+            'cv_length' => strlen($cvText),
+        ]);
 
         $cached = Cache::get($cacheKey);
         if (is_array($cached) && !empty($cached)) {
@@ -271,7 +280,138 @@ PROMPT;
     }
 
     // Stub placeholders
-    public function generateRoadmapStructure($d,$f=false) { return ['total_duration_weeks'=>12,'milestones'=>[]]; }
+    public function generateRoadmapStructure(array $data, bool $isUpdate = false): array
+    {
+        $target = $data['career_target'] ?? 'Software Engineer';
+        $priorityGaps = json_encode($data['priority_gaps'] ?? []);
+        $minorGaps = json_encode($data['minor_gaps'] ?? []);
+        $existingSkills = json_encode($data['existing_skills'] ?? []);
+
+        $prompt = <<<PROMPT
+Berdasarkan data berikut, buatlah kurikulum roadmap pembelajaran yang sangat terstruktur untuk mencapai target karir sebagai {$target}.
+
+Data Skill Gap User (Prioritas): {$priorityGaps}
+Data Skill Lainnya: {$minorGaps}
+Data Skill yang sudah dimiliki: {$existingSkills}
+
+Tujuan: Buatlah urutan 5-7 milestone belajar yang logis untuk menutup skill gap tersebut. Milestone harus mencakup aspek teknis (coding/tools) dan non-teknis (workflow/best practices). 
+Setiap milestone harus memiliki 'capstone_project' yang menantang dan relevan dengan dunia kerja nyata untuk target peran {$target}.
+
+Status Milestone: Milestone pertama harus 'current', sisanya 'locked'.
+
+Kembalikan HANYA JSON object dengan struktur:
+{
+  "total_duration_weeks": 12,
+  "milestones": [
+    {
+      "id": 1,
+      "title": "Judul Milestone",
+      "emoji": "🚀",
+      "description": "Deskripsi singkat apa yang dipelajari",
+      "skill_gaps_addressed": ["Skill A", "Skill B"],
+      "status": "current|locked",
+      "capstone_project": {
+        "title": "Nama Proyek",
+        "description": "Deskripsi proyek kecil untuk menguji milestone ini",
+        "tech_used": ["React", "Tailwind"]
+      }
+    }
+  ]
+}
+PROMPT;
+
+        try {
+            $text = $this->callGeminiApi($prompt);
+            $cleaned = $this->cleanJson($text);
+            $result = json_decode($cleaned, true);
+            
+            if (!$result || !isset($result['milestones'])) {
+                throw new \Exception("Invalid Roadmap Format");
+            }
+            
+            return $result;
+        } catch (\Exception $e) {
+            Log::error("Roadmap Structure Generation Failed: " . $e->getMessage());
+            // Fallback: Basic 3-step roadmap
+            return [
+                'total_duration_weeks' => 8,
+                'milestones' => [
+                    [
+                        'id' => 1,
+                        'title' => 'Mastering Core Fundamentals',
+                        'emoji' => '📚',
+                        'description' => 'Memperkuat fondasi dasar yang diperlukan untuk peran ' . $target,
+                        'skill_gaps_addressed' => array_column($data['priority_gaps'] ?? [], 'skill'),
+                        'status' => 'current',
+                        'capstone_project' => [
+                            'title' => 'Personal Portfolio v1',
+                            'description' => 'Membangun aplikasi sederhana menggunakan teknologi inti.',
+                            'tech_used' => ['Basic Tools']
+                        ]
+                    ],
+                    [
+                        'id' => 2,
+                        'title' => 'Advanced Integration',
+                        'emoji' => '⚙️',
+                        'description' => 'Mempelajari integrasi sistem dan workflow profesional.',
+                        'skill_gaps_addressed' => array_column($data['minor_gaps'] ?? [], 'skill'),
+                        'status' => 'locked'
+                    ],
+                    [
+                        'id' => 3,
+                        'title' => 'Industry Readiness',
+                        'emoji' => '💼',
+                        'description' => 'Persiapan akhir untuk standar industri dan deployment.',
+                        'skill_gaps_addressed' => ['Professional Workflow'],
+                        'status' => 'locked'
+                    ]
+                ]
+            ];
+        }
+    }
+
+    public function generateMilestoneDetails(string $careerTarget, array $milestone): array
+    {
+        $title = $milestone['title'] ?? 'this milestone';
+        $addressed = implode(', ', $milestone['skill_gaps_addressed'] ?? []);
+        
+        $prompt = <<<PROMPT
+Berikan penjelasan mendalam mengapa milestone "{$title}" sangat penting untuk target karir sebagai {$careerTarget}. 
+Milestone ini fokus pada penguasaan: {$addressed}.
+Berikan penjelasan yang memotivasi dan teknis dalam Bahasa Indonesia yang profesional.
+
+Kembalikan HANYA JSON object:
+{
+  "why_important": "Penjelasan mendetail dalam 2-3 kalimat"
+}
+PROMPT;
+
+        try {
+            $text = $this->callGeminiApi($prompt);
+            $cleaned = $this->cleanJson($text);
+            $details = json_decode($cleaned, true) ?: ['why_important' => 'Milestone ini krusial untuk kompetensi industri.'];
+            
+            // Integrasi dengan YouTubeSearchService untuk materi REAL
+            $resources = $this->youtube->searchForSkill($title, $careerTarget);
+            $details['resources'] = array_map(function($res) {
+                return [
+                    'title' => $res['title'],
+                    'url' => $res['url'],
+                    'type' => $res['type'] ?? 'video'
+                ];
+            }, $resources);
+
+            return $details;
+        } catch (\Exception $e) {
+            return [
+                'why_important' => 'Mempelajari ' . $title . ' akan membantu kamu menutup gap di ' . $addressed . '.',
+                'resources' => [
+                    ['title' => 'Tutorial ' . $title . ' di YouTube', 'url' => 'https://youtube.com/results?search_query=' . urlencode($title), 'type' => 'video'],
+                    ['title' => 'Dokumentasi Resmi', 'url' => 'https://google.com/search?q=' . urlencode($title . ' docs'), 'type' => 'docs']
+                ]
+            ];
+        }
+    }
     public function generateInsights($u) { return []; }
     public function analyzeJobMatch($u,$j) { return 70; }
     public function batchAnalyzeJobMatches($u,$j) { return []; }

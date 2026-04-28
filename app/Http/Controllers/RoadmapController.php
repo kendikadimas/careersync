@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Data\JobMarketData;
 use App\Models\UserProfile;
 use App\Models\UserRoadmap;
+use App\Models\CapstoneSubmission;
 use App\Services\GeminiService;
 use App\Services\WorkReadinessScoreService;
 use Illuminate\Http\Request;
@@ -79,8 +80,8 @@ class RoadmapController extends Controller
                 'market_skills' => JobMarketData::getSkillsForRole($careerTarget)
             ], $existingRoadmap ? true : false);
 
-            if (empty($roadmapData)) {
-                return back()->with('error', 'Gagal memicu AI. Coba lagi.');
+            if (empty($roadmapData) || empty($roadmapData['milestones'] ?? [])) {
+                return back()->with('error', 'AI tidak dapat menyusun milestone yang valid saat ini. Silakan coba lagi.');
             }
 
             $roadmap = UserRoadmap::create([
@@ -142,46 +143,43 @@ class RoadmapController extends Controller
     public function complete(Request $request, $id)
     {
         $user = auth()->user();
-        $roadmap = UserRoadmap::where('user_id', auth()->id())->latest()->first();
-        if (!$roadmap) return back();
+        $roadmap = UserRoadmap::where('user_id', $user->id)->latest()->first();
+        if (!$roadmap) return back()->with('error', 'Roadmap tidak ditemukan.');
 
-        $data = $roadmap->roadmap_data;
-        $wasCompleted = false;
-        foreach ($data['milestones'] as &$ms) {
-            if ($ms['id'] == $id) {
-                $wasCompleted = ($ms['status'] ?? null) === 'completed';
-                $ms['status'] = 'completed';
-                break;
-            }
-        }
-
-        $completedCount = 0;
-        foreach ($data['milestones'] as $ms) {
-            if (($ms['status'] ?? null) === 'completed') {
-                $completedCount++;
-            }
-        }
-        $roadmap->milestones_completed = $completedCount;
-
-        // Set next milestone to 'current' if locked
-        foreach ($data['milestones'] as &$ms) {
-            if (($ms['status'] ?? 'locked') == 'locked') {
-                $ms['status'] = 'current';
-                break;
-            }
-        }
-
-        $roadmap->roadmap_data = $data;
-        $roadmap->save();
-
-        if (!$wasCompleted) {
-            $this->scoreService->calculateForUser($user);
-        }
+        $milestones = $roadmap->roadmap_data['milestones'] ?? [];
+        $milestone = collect($milestones)->firstWhere('id', $id);
         
-        $newBadges = app(\App\Services\BadgeService::class)->checkAndAwardBadges(auth()->user()->fresh());
+        if (!$milestone) return back()->with('error', 'Milestone tidak ditemukan.');
+
+        // Check if capstone project is required and submitted
+        if (!empty($milestone['capstone_project'])) {
+            $submission = CapstoneSubmission::where([
+                'user_id' => $user->id,
+                'roadmap_id' => $roadmap->id,
+                'milestone_id' => $id
+            ])->first();
+
+            if (!$submission || $submission->status !== 'completed') {
+                return back()->with('error', 'Kamu harus mensubmit dan menyelesaikan Capstone Project untuk milestone ini terlebih dahulu.');
+            }
+        }
+
+        // Check if materials have been viewed (optional check, but good for UX)
+        if (empty($milestone['resources']) || empty($milestone['why_important'])) {
+             return back()->with('error', 'Silakan buka detail milestone dan pelajari materi yang tersedia terlebih dahulu.');
+        }
+
+        $success = $roadmap->completeMilestone($id);
+        
+        if (!$success) {
+            return back()->with('error', 'Gagal memperbarui status milestone.');
+        }
+
+        $this->scoreService->calculateForUser($user);
+        $newBadges = app(\App\Services\BadgeService::class)->checkAndAwardBadges($user->fresh());
         
         return back()->with([
-            'success' => 'Milestone diselesaikan!',
+            'success' => 'Milestone berhasil diselesaikan! Milestone berikutnya telah terbuka.',
             'new_badges' => $newBadges,
         ]);
     }

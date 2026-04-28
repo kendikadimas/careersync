@@ -75,7 +75,7 @@ class CapstoneController extends Controller
         $submission->update(['completion_score' => $score]);
 
         if ($score >= 60) {
-            $this->completeMilestone($roadmap, $milestoneId);
+            $roadmap->completeMilestone($milestoneId);
             $submission->update(['status' => 'completed']);
             $this->scoreService->calculateForUser(auth()->user());
         }
@@ -112,32 +112,6 @@ class CapstoneController extends Controller
         $score += min($selfReportMax, $selfScore);
 
         return min(100, $score);
-    }
-
-    private function completeMilestone(UserRoadmap $roadmap, string $milestoneId): void
-    {
-        $data = $roadmap->roadmap_data;
-        $milestones = $data['milestones'] ?? [];
-
-        $completed = 0;
-        $nextUnlocked = false;
-
-        foreach ($milestones as &$ms) {
-            if ($ms['id'] === $milestoneId) {
-                $ms['status'] = 'completed';
-                $completed++;
-            } elseif ($ms['status'] === 'completed') {
-                $completed++;
-            } elseif (!$nextUnlocked && $ms['status'] === 'locked') {
-                $ms['status'] = 'current';
-                $nextUnlocked = true;
-            }
-        }
-
-        $roadmap->update([
-            'roadmap_data'          => array_merge($data, ['milestones' => $milestones]),
-            'milestones_completed'  => $completed,
-        ]);
     }
 
     private function getChecklistItems(array $milestone): array

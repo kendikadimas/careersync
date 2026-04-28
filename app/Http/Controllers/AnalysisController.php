@@ -10,6 +10,7 @@ use App\Services\GeminiService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -90,8 +91,21 @@ class AnalysisController extends Controller
                 try {
                     $this->runAnalysisForUser($userId, $cvText, $careerTargets);
                 } catch (\Throwable $e) {
-                    Log::error('Background CV analysis failed for user ' . $userId . ': ' . $e->getMessage());
-                    Cache::put($errorKey, 'Analisis AI gagal diproses. Coba submit ulang CV Anda.', now()->addMinutes(5));
+                    $debugId = (string) Str::uuid();
+                    Log::error('Background CV analysis failed', [
+                        'debug_id' => $debugId,
+                        'user_id' => $userId,
+                        'career_targets' => $careerTargets,
+                        'cv_length' => strlen($cvText),
+                        'error' => $e->getMessage(),
+                    ]);
+                    $message = 'Analisis AI gagal diproses. Coba submit ulang CV Anda.';
+                    if (config('app.debug')) {
+                        $message .= ' Debug ID: ' . $debugId . '. Error: ' . $e->getMessage();
+                    } else {
+                        $message .= ' Debug ID: ' . $debugId . '.';
+                    }
+                    Cache::put($errorKey, $message, now()->addMinutes(5));
                 } finally {
                     Cache::forget($processingKey);
                 }
