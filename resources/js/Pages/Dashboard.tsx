@@ -1,9 +1,42 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, Link } from '@inertiajs/react';
 import { useState, useRef } from 'react';
+import { 
+    BarChart, 
+    Bar, 
+    XAxis, 
+    YAxis, 
+    CartesianGrid, 
+    Tooltip, 
+    ResponsiveContainer,
+    Cell,
+    LabelList,
+    AreaChart,
+    Area
+} from 'recharts';
+import { 
+    LayoutDashboard, 
+    BarChart3, 
+    Map as MapIcon, 
+    TrendingUp, 
+    LogOut, 
+    Menu, 
+    X, 
+    Bell,
+    CheckCircle2,
+    Settings,
+    ChevronDown,
+    CircleHelp,
+    Trophy,
+    Briefcase,
+    Eye,
+    ChevronRight,
+    Target
+} from 'lucide-react';
 
 interface DashboardProps {
     user: {
+        id: number;
         name: string;
         rank: string;
         points: number;
@@ -164,6 +197,108 @@ function GrowthChart({ data, labels }: { data: number[]; labels: string[] }) {
     );
 }
 
+function TrendingSkillsChart({ data }: { data: any[] }) {
+    const chartData = [...data]
+        .sort((a, b) => (b.change || 0) - (a.change || 0))
+        .slice(0, 5)
+        .map((s, i) => ({
+            rank: i + 1,
+            name: s.skill || s.name,
+            growth: s.change || 0,
+            full: 100 // for background bars if needed, but growth is small
+        }));
+
+    // Find max growth to scale the chart nicely
+    const maxGrowth = Math.max(...chartData.map(d => d.growth), 10);
+
+    return (
+        <div className="h-[300px] w-full mt-6">
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                    layout="vertical"
+                    data={chartData}
+                    margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+                    barSize={12}
+                >
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                    <XAxis type="number" hide domain={[0, maxGrowth + 2]} />
+                    <YAxis 
+                        dataKey="name" 
+                        type="category" 
+                        axisLine={false} 
+                        tickLine={false}
+                        width={100}
+                        tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }}
+                    />
+                    <Tooltip 
+                        cursor={{ fill: '#f8fafc' }}
+                        content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                                return (
+                                    <div className="bg-white p-3 rounded-lg shadow-xl border border-slate-100">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Rank #{payload[0].payload.rank}</p>
+                                        <p className="text-sm font-black text-slate-900 mb-1">{payload[0].payload.name}</p>
+                                        <p className="text-sm font-black text-indigo-600">+{payload[0].value}% Growth</p>
+                                    </div>
+                                );
+                            }
+                            return null;
+                        }}
+                    />
+                    <Bar 
+                        dataKey="growth" 
+                        radius={[0, 10, 10, 0]}
+                        fill="#4F46E5"
+                        background={{ fill: '#f1f5f9', radius: 10 }}
+                        animationBegin={200}
+                        animationDuration={1200}
+                    >
+                        <LabelList 
+                            dataKey="growth" 
+                            position="right" 
+                            formatter={(val: number) => `+${val}%`}
+                            style={{ fill: '#6366f1', fontSize: 11, fontWeight: 900 }} 
+                        />
+                    </Bar>
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}
+
+function ScoreHistoryChart({ data }: { data: any[] }) {
+    if (!data || data.length === 0) return null;
+
+    const formattedData = data.map(d => ({
+        score: Number(d.score),
+        label: d.label
+    }));
+
+    return (
+        <div className="w-full h-24 mt-4">
+            <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={formattedData}>
+                    <defs>
+                        <linearGradient id="scoreColor" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
+                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                        </linearGradient>
+                    </defs>
+                    <Area 
+                        type="monotone" 
+                        dataKey="score" 
+                        stroke="#6366f1" 
+                        strokeWidth={2}
+                        fillOpacity={1} 
+                        fill="url(#scoreColor)" 
+                        animationDuration={1500}
+                    />
+                </AreaChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}
+
 export default function Dashboard({
     user,
     badges = [],
@@ -224,7 +359,16 @@ export default function Dashboard({
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang, {user.name}! 👋</h1>
-                        <p className="text-slate-500 text-sm mt-1">Pantau perkembangan karirmu dan raih target kerjamu hari ini.</p>
+                        <div className="flex items-center gap-3 mt-1">
+                            <p className="text-slate-500 text-sm">Pantau perkembangan karirmu dan raih target kerjamu hari ini.</p>
+                            <Link 
+                                href={route('profile.public', user.rank === 'admin' ? 1 : user.id)} 
+                                className="flex items-center gap-1.5 text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-700 transition-colors bg-indigo-50 px-2.5 py-1 rounded-lg"
+                            >
+                                <Eye className="w-3 h-3" />
+                                Lihat Profil Publik
+                            </Link>
+                        </div>
                     </div>
                     <div className="flex items-center gap-3 bg-white p-2 pr-4 rounded-lg shadow-sm border border-slate-100">
                         <div className="w-10 h-10 rounded-lg bg-indigo-900 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-200">
@@ -246,21 +390,49 @@ export default function Dashboard({
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                     {/* Readiness Gauge */}
                     <div className="lg:col-span-4 bg-white rounded-lg p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center h-full">
-                        <h3 className="text-[24px] font-bold text-slate-900 mb-6">Work Readiness</h3>
+                        <div className="w-full flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-black text-slate-900">Work Readiness</h3>
+                            <div className="flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded-lg">
+                                <Target className="w-3 h-3 text-indigo-600" />
+                                <span className="text-[9px] font-black text-indigo-700 uppercase tracking-widest">OBE Target</span>
+                            </div>
+                        </div>
+                        
                         <GaugeChart percent={workReadinessScore} />
-                        <div className="mt-4">
-                            <span className="inline-block px-3 py-1 rounded-lg bg-indigo-50 text-indigo-900 text-[11px] font-bold tracking-wider mb-2">
-                                {score?.category || 'No Analysis Yet'}
-                            </span>
+                        
+                        <div className="mt-6 flex flex-col items-center w-full">
+                            <div className="flex flex-col items-center gap-1 mb-4">
+                                <span className={`inline-block px-4 py-1.5 rounded-lg text-[11px] font-black tracking-widest uppercase ${
+                                    workReadinessScore >= 80 ? 'bg-emerald-100 text-emerald-700' : 
+                                    workReadinessScore >= 60 ? 'bg-indigo-100 text-indigo-700' :
+                                    workReadinessScore >= 40 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'
+                                }`}>
+                                    {workReadinessScore >= 80 ? 'Industry Ready' : 
+                                     workReadinessScore >= 60 ? 'Competent' : 
+                                     workReadinessScore >= 40 ? 'Developing' : 'Apprentice'}
+                                </span>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">100 = Standar Industri</p>
+                            </div>
+
+                            {/* Score Growth Chart */}
+                            <div className="w-full border-t border-slate-50 pt-4">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Growth Trend</span>
+                                    <span className="text-[10px] font-black text-indigo-600">+{growthData[growthData.length-1] - (growthData[0] || 0)}%</span>
+                                </div>
+                                <ScoreHistoryChart data={scoreHistory} />
+                            </div>
+                            
                             {scoreMeta?.isStale && (
-                                <p className="text-[10px] text-amber-500 font-semibold italic mt-1">Progress terbaru terdeteksi. Update skor?</p>
+                                <p className="text-[10px] text-amber-500 font-black uppercase tracking-widest italic mt-4 animate-pulse text-center">Progress terbaru terdeteksi. Update skor?</p>
                             )}
                         </div>
-                        <div className="grid grid-cols-2 gap-3 w-full mt-auto pt-8">
+
+                        <div className="grid grid-cols-2 gap-3 w-full mt-8">
                             <Link href={route('analysis')} className="bg-slate-900 text-white text-xs font-bold py-3 rounded-lg hover:bg-slate-800 transition-all shadow-md active:scale-95 text-center">
-                                Analisis CV
+                                Re-Analyze
                             </Link>
-                            <Link href={route('score.calculate')} method="post" as="button" className="bg-slate-50 text-slate-600 text-xs font-bold py-3 rounded-lg hover:bg-slate-100 transition-all border border-slate-100 active:scale-95">
+                            <Link href={route('score.calculate')} method="post" as="button" className="bg-white text-slate-600 text-xs font-bold py-3 rounded-lg hover:bg-slate-50 transition-all border border-slate-200 active:scale-95">
                                 Refresh
                             </Link>
                         </div>
@@ -338,7 +510,7 @@ export default function Dashboard({
                         <div className="flex items-center justify-between mb-8">
                             <h3 className="text-lg font-bold text-slate-900">Perkembangan Skor</h3>
                             <div className="flex items-center gap-2">
-                                <span className="w-3 h-3 rounded-full bg-indigo-500" />
+                                <span className="w-3 h-3 rounded-lg bg-indigo-500" />
                                 <span className="text-[11px] font-bold text-slate-500 tracking-widest">Daily Progress</span>
                             </div>
                         </div>
@@ -418,7 +590,7 @@ export default function Dashboard({
                                         <h4 className="text-[15px] font-bold text-slate-900 truncate">{job.title}</h4>
                                         <div className="flex items-center gap-2 mt-0.5">
                                             <span className="text-[11px] font-bold text-slate-400 tracking-tight">{job.company}</span>
-                                            <span className="w-1 h-1 rounded-full bg-slate-200" />
+                                            <span className="w-1 h-1 rounded-lg bg-slate-200" />
                                             <span className="text-[11px] font-bold text-indigo-900">IDR {(job.salary_min / 1000000).toFixed(0)}JT+</span>
                                         </div>
                                     </div>
@@ -442,41 +614,34 @@ export default function Dashboard({
                         <div className="flex items-center justify-between mb-8">
                             <div>
                                 <h3 className="text-xl font-black text-slate-900 tracking-tight">Trending Skills</h3>
-                                {/* <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Market Demand Analysis</p> */}
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Kenaikan demand dibanding bulan lalu</p>
                             </div>
-                            {/* <div className="px-3 py-1 bg-indigo-50 text-indigo-900 rounded-lg text-[10px] font-black border border-indigo-100 uppercase tracking-tight">
-                                Data Terkini
-                            </div> */}
                         </div>
                         
-                        <div className="space-y-3 flex-1">
-                            {trendingSkills.slice(0, 5).map((skill: any, i: number) => (
-                                <div key={i} className="group flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-50 hover:bg-white hover:border-indigo-100 hover:shadow-md transition-all cursor-default">
-                                    <div className="w-10 h-10 rounded-lg bg-white border border-slate-100 flex items-center justify-center font-bold  text-indigo-900 group-hover:text-indigo-900 group-hover:border-indigo-900/20 transition-all shrink-0">
-                                        {String(i + 1).padStart(2, '0')}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-[14px] font-bold text-slate-700 group-hover:text-slate-900 transition-colors truncate">
-                                            {skill.skill || skill.name}
-                                        </p>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
-                                                <div 
-                                                    className="h-full bg-indigo-900 rounded-full transition-all duration-700" 
-                                                    style={{ width: `${Math.min(100, 30 + (i * -5) + (skill.change || 0))}%` }} 
-                                                />
-                                            </div>
+                        <div className="flex-1 min-h-[300px] flex flex-col justify-center">
+                            {(() => {
+                                const sortedSkills = [...trendingSkills].sort((a, b) => (b.change || 0) - (a.change || 0));
+                                return (
+                                    <>
+                                        <TrendingSkillsChart data={sortedSkills} />
+                                        
+                                        <div className="mt-auto pt-6 grid grid-cols-2 gap-4">
+                                            {/* <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-100/50">
+                                                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Pertumbuhan Tertinggi</p>
+                                                <p className="text-lg font-black text-emerald-700 truncate">
+                                                    {sortedSkills[0]?.skill || sortedSkills[0]?.name || '-'}
+                                                </p>
+                                            </div> */}
+                                            {/* <div className="p-4 rounded-lg bg-indigo-50 border border-indigo-100/50">
+                                                <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1">Rata-rata Demand</p>
+                                                <p className="text-lg font-black text-indigo-700">
+                                                    {Math.round(sortedSkills.reduce((acc, curr) => acc + (curr.demand || 0), 0) / (sortedSkills.length || 1))}%
+                                                </p>
+                                            </div> */}
                                         </div>
-                                    </div>
-                                    <div className="text-right shrink-0">
-                                        <div className="flex items-center gap-1 text-emerald-600 mb-0.5">
-                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                                            <span className="text-[12px] font-black">+{skill.change || 0}%</span>
-                                        </div>
-                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Rising</p>
-                                    </div>
-                                </div>
-                            ))}
+                                    </>
+                                );
+                            })()}
                         </div>
 
                         {/* <div className="mt-8 pt-6 border-t border-slate-50">

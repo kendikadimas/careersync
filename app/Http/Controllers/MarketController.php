@@ -27,7 +27,7 @@ class MarketController extends Controller
         $isLiveData = !empty($jobs);
 
         if (empty($jobs)) {
-            $jobs = JobMarketData::getJobListings();
+            $jobs = JobMarketData::getJobListings($careerTargets);
         }
 
         // Calculate match scores using Batch Analysis for speed
@@ -149,5 +149,69 @@ class MarketController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal melakukan riset: ' . $e->getMessage());
         }
+    }
+
+    public function setTarget(Request $request)
+    {
+        $request->validate(['target' => 'required|string']);
+        $user = auth()->user();
+        $profile = UserProfile::where('user_id', $user->id)->first();
+
+        if (!$profile) {
+            return back()->with('error', 'Silakan selesaikan analisis CV terlebih dahulu.');
+        }
+
+        // 1. Normalize Career Target (Strip seniority levels like 'Senior', 'Lead', etc.)
+        $target = $request->target;
+        $cleanTarget = preg_replace('/\b(Senior|Junior|Lead|Staff|Principal|Associate|Manager|Head of|Director of|Sr\.|Jr\.|I|II|III|Level \d)\b/i', '', $target);
+        $cleanTarget = trim(preg_replace('/\s+/', ' ', $cleanTarget));
+        
+        // Fallback to original if too short after cleaning
+        $finalTarget = strlen($cleanTarget) > 3 ? $cleanTarget : $target;
+
+        $profile->career_target = [$finalTarget];
+
+        // 2. Recalculate Skill Gaps against the new target
+        $marketSkills = JobMarketData::getSkillsForRole($request->target);
+        $userSkills = $profile->skills ?? [];
+        $userSkillNames = array_map(fn($s) => strtolower($s['name'] ?? ''), $userSkills);
+
+        $newGaps = [];
+        foreach ($marketSkills as $ms) {
+            $userScore = 0;
+            $userLevel = 'missing';
+
+            // Simple string matching for now (logic similar to AnalysisController)
+            foreach ($userSkills as $us) {
+                $uName = strtolower($us['name'] ?? '');
+                $mName = strtolower($ms['skill'] ?? '');
+                if (str_contains($uName, $mName) || str_contains($mName, $uName)) {
+                    $userLevel = $us['level'] ?? 'beginner';
+                    $userScore = match(strtolower($userLevel)) {
+                        'expert', 'advanced' => 90,
+                        'intermediate' => 60,
+                        'beginner' => 30,
+                        default => 0
+                    };
+                    break;
+                }
+            }
+
+            $gap = max(0, $ms['demand'] - $userScore);
+            $newGaps[] = [
+                'skill' => $ms['skill'],
+                'market_demand' => $ms['demand'],
+                'user_score' => $userScore,
+                'user_level' => $userLevel,
+                'gap' => $gap,
+                'status' => $gap <= 0 ? 'strong' : ($gap <= 25 ? 'developing' : 'missing'),
+                'status_label' => $gap <= 0 ? 'SIAP INDUSTRI' : ($gap <= 25 ? 'PERLU PENINGKATAN' : 'PRIORITAS BELAJAR')
+            ];
+        }
+
+        $profile->skill_gaps = $newGaps;
+        $profile->save();
+
+        return redirect()->route('roadmap')->with('success', "Target karir berhasil diubah ke {$request->target}. Silakan buat roadmap belajar baru.");
     }
 }

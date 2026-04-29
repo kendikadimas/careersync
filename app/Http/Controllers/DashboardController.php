@@ -82,7 +82,7 @@ class DashboardController extends Controller
         }
 
         // Get Filtered Jobs based on Career Target
-        $allJobs = $hasLiveJobs ? $liveJobs : JobMarketData::getJobListings();
+        $allJobs = $hasLiveJobs ? $liveJobs : JobMarketData::getJobListings($primaryTarget);
         $userSkills = array_map(fn($s) => strtolower($s['name']), $profile->skills ?? []);
         
         $recommendedJobs = [];
@@ -142,6 +142,7 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard', [
             'user' => [
+                'id' => $user->id,
                 'name' => $user->name,
                 'rank' => $user->rank ?? 'Apprentice',
                 'points' => $user->total_points ?? 0,

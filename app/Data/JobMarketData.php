@@ -129,20 +129,40 @@ class JobMarketData
         return $data[$role] ?? [];
     }
 
-    public static function getJobListings(): array
+    public static function getJobListings(array|string|null $targetRole = null): array
     {
         $companies = ['Gojek', 'Unilever', 'Bank Mandiri', 'Shopee', 'Mayapada Hospital', 'Restaurant Group', 'Digital Agency', 'Hotel Mulia', 'KPMG', 'Pertamina'];
         $locations = ['Jakarta', 'Bandung', 'Surabaya', 'Denpasar', 'Remote'];
-        $roles = [
+        $allRoles = [
             'Frontend Engineer', 'Backend Engineer', 'Graphic Designer', 
             'Social Media Specialist', 'Project Manager', 'HR Specialist', 
             'Accountant', 'Chef / Cook', 'Barista'
         ];
 
+        // Determine which roles to use for generation
+        $rolesToGenerate = [];
+        if ($targetRole) {
+            if (is_array($targetRole)) {
+                $rolesToGenerate = $targetRole;
+            } else {
+                $rolesToGenerate = [$targetRole];
+            }
+        } else {
+            $rolesToGenerate = $allRoles;
+        }
+
         $jobs = [];
         for ($i = 1; $i <= 35; $i++) {
-            $role = $roles[array_rand($roles)];
-            $jobSkills = array_column(array_slice(self::getSkillsForRole($role), 0, 4), 'skill');
+            $role = $rolesToGenerate[array_rand($rolesToGenerate)];
+            
+            // If the role is not in our predefined data, use a fallback like 'Backend Engineer'
+            $skillsData = self::getSkillsForRole($role);
+            if (empty($skillsData)) {
+                $role = 'Backend Engineer';
+                $skillsData = self::getSkillsForRole($role);
+            }
+
+            $jobSkills = array_column(array_slice($skillsData, 0, 4), 'skill');
             
             $jobs[] = [
                 'id' => $i,

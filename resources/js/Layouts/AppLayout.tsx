@@ -13,6 +13,9 @@ import {
     Settings,
     ChevronDown,
     CircleHelp,
+    Trophy,
+    Briefcase,
+    Stethoscope
 } from 'lucide-react';
 
 interface Props {
@@ -39,23 +42,25 @@ export default function AppLayout({ children, header }: Props) {
 
     const navItems = [
         { name: 'Dashboard', href: route('dashboard'), icon: LayoutDashboard, active: route().current('dashboard') },
-        { name: 'Skill Gap Analysis', href: route('analysis'), icon: BarChart3, active: route().current('analysis') },
-        { name: 'Dynamic Learning Path', href: route('roadmap'), icon: MapIcon, active: route().current('roadmap') },
-        { name: 'Market Intelligent', href: route('market'), icon: TrendingUp, active: route().current('market') },
+        { name: 'Diagnostic Assessment', href: route('analysis'), icon: Stethoscope, active: route().current('analysis') },
+        { name: 'Learning Path & PBL', href: route('roadmap'), icon: MapIcon, active: route().current('roadmap') },
+        { name: 'Market Intelligence', href: route('market'), icon: TrendingUp, active: route().current('market') },
+        { name: 'Leaderboard', href: route('leaderboard'), icon: Trophy, active: route().current('leaderboard') },
+        { name: 'My Portfolio', href: route('portfolio.index'), icon: Briefcase, active: route().current('portfolio.index') },
     ];
     const activeItem = navItems.find((item) => item.active);
 
     return (
         <div className="min-h-screen bg-[#F3F6FF] flex text-[#1A1A2E] font-(--font-heading) max-w-full overflow-x-hidden">
             {/* Sidebar Desktop */}
-            <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-[#F3F6FF] fixed h-full z-20 border-r border-slate-200 transition-all duration-200`}>
+            <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-indigo-950 fixed h-full z-20 border-r border-white/5 transition-all duration-200 shadow-2xl`}>
                 <div className="p-6 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#A9C7FF] rounded-xl flex items-center justify-center text-[#2D3A8C] font-bold">CS</div>
-                    {!isSidebarCollapsed && <span className="font-semibold text-base">CareerSync</span>}
+                    <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">CS</div>
+                    {!isSidebarCollapsed && <span className="font-bold text-lg text-white tracking-tight">CareerSync</span>}
                     <button
                         type="button"
                         onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                        className="ml-auto w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-500 hover:text-[#2563EB] hover:border-[#2563EB] flex items-center justify-center"
+                        className="ml-auto w-8 h-8 rounded-full bg-white/10 border border-white/10 text-white/50 hover:text-white hover:border-white/30 flex items-center justify-center transition-all"
                         aria-label="Toggle sidebar"
                     >
                         {isSidebarCollapsed ? '›' : '‹'}
@@ -63,57 +68,47 @@ export default function AppLayout({ children, header }: Props) {
                 </div>
 
                 <div className={`px-6 mt-10 ${isSidebarCollapsed ? 'hidden' : ''}`}>
-                    <p className="text-2xl font-bold">Welcome</p>
-                    <p className="text-2xl font-bold">
-                        Back, <span className="text-indigo-900">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
+                    <p className="text-2xl font-bold text-white leading-tight">Welcome</p>
+                    <p className="text-2xl font-bold text-white leading-tight">
+                        Back, <span className="text-indigo-400">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
                     </p>
-                    <p className="text-sm text-slate-400">ready to upgrade your skills?</p>
+                    <p className="text-sm text-indigo-200/40 mt-1">Ready to upgrade your skills?</p>
                 </div>
 
-                <nav className={`flex-1 px-6 mt-6 space-y-2 pb-6 ${isSidebarCollapsed ? 'px-3' : ''}`}>
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            className={`w-full h-12 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-between'} rounded-full text-[13px] font-semibold inline-flex items-center transition-all ${
-                                item.active
-                                    ? 'bg-[#111111] text-white shadow-sm'
-                                    : 'text-slate-500 hover:bg-white/70 hover:text-slate-700'
-                            }`}
-                        >
-                            <span className={`inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'}`}>
-                                <item.icon className="w-4 h-4" />
-                                {!isSidebarCollapsed && <span>{item.name}</span>}
-                            </span>
-                            {!isSidebarCollapsed && item.active && <ChevronDown className="w-4 h-4 text-white/80" />}
-                        </Link>
-                    ))}
-                </nav>
+                <div className={`px-4 mt-8 flex-1 flex flex-col ${isSidebarCollapsed ? 'px-2' : ''}`}>
+                    <nav className="bg-white/5 backdrop-blur-md rounded-lg p-2.5 space-y-3 border border-white/5">
+                        {navItems.map((item) => (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                className={`w-full h-11 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-between'} rounded-lg text-[13px] font-black inline-flex items-center transition-all ${
+                                    item.active
+                                        ? 'bg-white text-indigo-950 shadow-lg shadow-indigo-950/20'
+                                        : 'text-indigo-100/60 hover:bg-white/10 hover:text-white'
+                                }`}
+                            >
+                                <span className={`inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'}`}>
+                                    <item.icon className={`w-4 h-4 ${item.active ? 'text-indigo-600' : 'text-indigo-300/50'}`} />
+                                    {!isSidebarCollapsed && <span>{item.name}</span>}
+                                </span>
+                                {!isSidebarCollapsed && item.active && (
+                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 shadow-sm" />
+                                )}
+                            </Link>
+                        ))}
+                    </nav>
+                </div>
 
-                <div className={`p-6 mt-auto space-y-2 ${isSidebarCollapsed ? 'px-3' : ''}`}>
-                    {/* <Link
-                        href={route('app.faq')}
-                        className={`w-full h-11 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-start'} rounded-full text-[13px] font-semibold text-slate-500 hover:bg-white/70 hover:text-slate-700 inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'} transition-colors`}
-                    >
-                        <CircleHelp className="w-4 h-4" />
-                        {!isSidebarCollapsed && 'FAQ'}
-                    </Link>
+                <div className={`p-4 mt-auto border-t border-white/5 ${isSidebarCollapsed ? 'px-2' : ''}`}>
                     <Link
-                        href={route('help')}
-                        className={`w-full h-11 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-start'} rounded-full text-[13px] font-semibold text-slate-500 hover:bg-white/70 hover:text-slate-700 inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'} transition-colors`}
-                    >
-                        <CircleHelp className="w-4 h-4" />
-                        {!isSidebarCollapsed && 'Help'}
-                    </Link> */}
-                    {/* <Link
                         href={route('logout')}
                         method="post"
                         as="button"
-                        className={`w-full h-11 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-start'} rounded-full text-[13px] font-semibold bg-[#2D3A8C] text-white inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'} transition-colors hover:bg-[#1f2963]`}
+                        className={`w-full h-11 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-start'} rounded-lg text-[13px] font-bold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'} transition-all`}
                     >
                         <LogOut className="w-4 h-4" />
-                        {!isSidebarCollapsed && 'Log Out'}
-                    </Link> */}
+                        {!isSidebarCollapsed && 'Sign Out'}
+                    </Link>
                 </div>
             </aside>
 
@@ -176,23 +171,23 @@ export default function AppLayout({ children, header }: Props) {
                         </button>
 
                         {openPanel === 'settings' && (
-                            <div className="absolute right-40 top-12 w-64 bg-white border border-slate-200 shadow-lg rounded-2xl p-4 z-20">
+                            <div className="absolute right-40 top-12 w-64 bg-white border border-slate-200 shadow-lg rounded-lg p-4 z-20">
                                 <p className="text-sm font-bold text-[#1A1A2E] mb-3">Settings</p>
                                 <div className="space-y-2 text-sm text-slate-600">
-                                    <Link href={route('settings.index')} className="block px-3 py-2 rounded-xl hover:bg-slate-50">Akun & Privasi</Link>
-                                    <Link href={route('settings.index')} className="block px-3 py-2 rounded-xl hover:bg-slate-50">Preferensi Notifikasi</Link>
-                                    <Link href={route('settings.index')} className="block px-3 py-2 rounded-xl hover:bg-slate-50">Bahasa & Tampilan</Link>
+                                    <Link href={route('settings.index')} className="block px-3 py-2 rounded-lg hover:bg-slate-50">Akun & Privasi</Link>
+                                    <Link href={route('settings.index')} className="block px-3 py-2 rounded-lg hover:bg-slate-50">Preferensi Notifikasi</Link>
+                                    <Link href={route('settings.index')} className="block px-3 py-2 rounded-lg hover:bg-slate-50">Bahasa & Tampilan</Link>
                                 </div>
                             </div>
                         )}
 
                         {openPanel === 'notifications' && (
-                            <div className="absolute right-24 top-12 w-72 bg-white border border-slate-200 shadow-lg rounded-2xl p-4 z-20">
+                            <div className="absolute right-24 top-12 w-72 bg-white border border-slate-200 shadow-lg rounded-lg p-4 z-20">
                                 <p className="text-sm font-bold text-[#1A1A2E] mb-3">Notifications</p>
                                 <div className="space-y-3">
                                     {notifications && notifications.length > 0 ? (
                                         notifications.map((item: any) => (
-                                            <div key={item.id} className="p-3 rounded-xl bg-slate-50">
+                                            <div key={item.id} className="p-3 rounded-lg bg-slate-50">
                                                 <p className="text-[12px] font-semibold text-[#1A1A2E]">{item.title}</p>
                                                 <p className="text-[11px] text-slate-500">{item.body || 'Tidak ada detail'}</p>
                                                 <div className="flex items-center justify-between mt-2">
@@ -221,7 +216,7 @@ export default function AppLayout({ children, header }: Props) {
                         )}
 
                         {openPanel === 'profile' && (
-                            <div className="absolute right-0 top-12 w-64 bg-white border border-slate-200 shadow-lg rounded-2xl p-4 z-20">
+                            <div className="absolute right-0 top-12 w-64 bg-white border border-slate-200 shadow-lg rounded-lg p-4 z-20">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-10 h-10 rounded-full bg-linear-to-br from-orange-300 to-pink-400 flex items-center justify-center text-white font-bold">
                                         {auth?.user?.name?.charAt(0) || 'U'}
@@ -232,9 +227,9 @@ export default function AppLayout({ children, header }: Props) {
                                     </div>
                                 </div>
                                 <div className="space-y-2 text-sm text-slate-600">
-                                    <Link href={route('profile.details')} className="block px-3 py-2 rounded-xl hover:bg-slate-50">Detail Profil</Link>
-                                    <Link href={route('profile.edit')} className="block px-3 py-2 rounded-xl hover:bg-slate-50">Keamanan Akun</Link>
-                                    <Link href={route('profile.edit')} className="block px-3 py-2 rounded-xl hover:bg-slate-50">Pengaturan Karier</Link>
+                                    <Link href={route('profile.details')} className="block px-3 py-2 rounded-lg hover:bg-slate-50">Detail Profil</Link>
+                                    <Link href={route('profile.edit')} className="block px-3 py-2 rounded-lg hover:bg-slate-50">Keamanan Akun</Link>
+                                    <Link href={route('profile.edit')} className="block px-3 py-2 rounded-lg hover:bg-slate-50">Pengaturan Karier</Link>
                                 </div>
                             </div>
                         )}
@@ -247,7 +242,7 @@ export default function AppLayout({ children, header }: Props) {
                     {showBadgeToast && (
                         <div className="fixed bottom-8 right-8 z-100 flex flex-col gap-3 max-w-sm animate-in slide-in-from-right duration-500">
                             {activeBadges.map((badge, idx) => (
-                                <div key={idx} className="bg-[#2D3A8C] border-2 border-[#4F6FE8] shadow-2xl shadow-[#4F6FE8]/20 p-5 rounded-2xl text-white flex gap-4">
+                                <div key={idx} className="bg-[#2D3A8C] border-2 border-[#4F6FE8] shadow-2xl shadow-[#4F6FE8]/20 p-5 rounded-lg text-white flex gap-4">
                                     <div className="text-4xl animate-bounce">{badge.emoji}</div>
                                     <div>
                                         <h4 className="font-black text-[#A9C7FF] uppercase tracking-widest text-xs mb-1">New Badge Earned!</h4>
@@ -263,13 +258,13 @@ export default function AppLayout({ children, header }: Props) {
                     )}
 
                     {flash.success && (
-                        <div className="mb-6 p-4 bg-[#EAF0FF] border border-[#D9E4FF] text-[#2D3A8C] rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top duration-300">
+                        <div className="mb-6 p-4 bg-[#EAF0FF] border border-[#D9E4FF] text-[#2D3A8C] rounded-lg flex items-center gap-3 animate-in fade-in slide-in-from-top duration-300">
                             <CheckCircle2 className="w-5 h-5 text-indigo-900" />
                             <p className="text-sm font-medium">{flash.success}</p>
                         </div>
                     )}
                     {flash.error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center gap-3">
+                        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center gap-3">
                             <X className="w-5 h-5 text-red-500" />
                             <p className="text-sm font-medium">{flash.error}</p>
                         </div>
@@ -281,62 +276,56 @@ export default function AppLayout({ children, header }: Props) {
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
                 <div className="fixed inset-0 z-50 md:hidden">
-                    <div className="absolute inset-0 bg-black/30" onClick={() => setIsMobileMenuOpen(false)}></div>
-                    <aside className="absolute left-0 top-0 bottom-0 w-80 bg-[#F3F6FF] text-[#1A1A2E] flex flex-col p-5 animate-in slide-in-from-left duration-300">
-                        <div className="flex items-center justify-between mb-6">
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
+                    <aside className="absolute left-0 top-0 bottom-0 w-80 bg-indigo-950 text-white flex flex-col p-5 animate-in slide-in-from-left duration-300">
+                        <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-[#A9C7FF] rounded-xl flex items-center justify-center text-[#2D3A8C] font-bold">CS</div>
-                                <span className="font-semibold">CareerSync</span>
+                                <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">CS</div>
+                                <span className="font-bold text-lg tracking-tight">CareerSync</span>
                             </div>
-                            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2">
+                            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/50 hover:text-white">
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <div className="mb-6">
-                            <p className="text-2xl font-bold">Welcome</p>
-                            <p className="text-2xl font-bold">
-                                Back, <span className="text-indigo-900">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
+                        <div className="mb-10">
+                            <p className="text-2xl font-bold text-white leading-tight">Welcome</p>
+                            <p className="text-2xl font-bold text-white leading-tight">
+                                Back, <span className="text-indigo-400">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
                             </p>
-                            <p className="text-sm text-slate-400">ready to upgrade your skills?</p>
+                            <p className="text-sm text-indigo-200/40 mt-1">Ready to upgrade your skills?</p>
                         </div>
 
-                        <nav className="flex-1 space-y-2">
+                        <nav className="flex-1 space-y-1">
                             {navItems.map((item) => (
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className={`w-full h-12 px-4 rounded-full text-[13px] font-semibold inline-flex items-center justify-between transition-all ${
+                                    className={`w-full h-11 px-4 rounded-lg text-[13px] font-bold inline-flex items-center justify-between transition-all ${
                                         item.active
-                                            ? 'bg-[#111111] text-white'
-                                            : 'text-slate-500 hover:bg-white/70 hover:text-slate-700'
+                                            ? 'bg-white/10 text-white border-l-2 border-indigo-400'
+                                            : 'text-indigo-200/50 hover:bg-white/5 hover:text-white'
                                     }`}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     <span className="inline-flex items-center gap-3">
-                                        <item.icon className="w-4 h-4" />
+                                        <item.icon className={`w-4 h-4 ${item.active ? 'text-indigo-400' : ''}`} />
                                         {item.name}
                                     </span>
-                                    {item.active && <ChevronDown className="w-4 h-4 text-white/80" />}
+                                    {item.active && <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 shadow-sm shadow-indigo-400/50" />}
                                 </Link>
                             ))}
                         </nav>
 
-                        <div className="mt-6 space-y-2">
-                            {/* <button className="w-full h-11 px-4 rounded-full text-[13px] font-semibold inline-flex items-center gap-3 text-slate-500 hover:bg-white/70 hover:text-slate-700 transition-colors">
-                                <CircleHelp className="w-4 h-4" /> FAQ
-                            </button>
-                            <button className="w-full h-11 px-4 rounded-full text-[13px] font-semibold inline-flex items-center gap-3 text-slate-500 hover:bg-white/70 hover:text-slate-700 transition-colors">
-                                <CircleHelp className="w-4 h-4" /> Help
-                            </button> */}
+                        <div className="mt-auto pt-6 border-t border-white/5">
                             <Link
                                 href={route('logout')}
                                 method="post"
                                 as="button"
-                                className="w-full h-11 px-4 rounded-full text-[13px] font-semibold bg-[#2D3A8C] text-white inline-flex items-center gap-3 transition-colors hover:bg-[#1f2963]"
+                                className="w-full h-11 px-4 rounded-lg text-[13px] font-bold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 inline-flex items-center gap-3 transition-all"
                             >
                                 <LogOut className="w-4 h-4" />
-                                Log Out
+                                Sign Out
                             </Link>
                         </div>
                     </aside>

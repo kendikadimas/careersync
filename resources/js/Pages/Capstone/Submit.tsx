@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm, Link } from '@inertiajs/react';
-import { Target, CheckCircle2, AlertCircle, ArrowLeft, Loader2, Code, LayoutTemplate } from 'lucide-react';
+import { 
+    Target, 
+    CheckCircle2, 
+    AlertCircle, 
+    ArrowLeft, 
+    Loader2, 
+    Code, 
+    LayoutTemplate,
+    Link as LinkIcon
+} from 'lucide-react';
 
 export default function Submit({ roadmap, milestone, submission, checklist_items }: any) {
     const { data, setData, post, processing, errors } = useForm({
@@ -59,7 +68,7 @@ export default function Submit({ roadmap, milestone, submission, checklist_items
 
     useEffect(() => {
         setPreviewScore(calculatePreviewScore());
-    }, [data]);
+    }, [data, githubVerification]);
 
     const handleCheck = (key: string) => {
         if (data.checklist_completed.includes(key)) {
@@ -101,11 +110,13 @@ export default function Submit({ roadmap, milestone, submission, checklist_items
                 </Link>
 
                 {submission && submission.status === 'completed' && (
-                    <div className="mb-8 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-start gap-4">
-                        <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
+                    <div className="mb-8 p-5 bg-emerald-50 border border-emerald-100 rounded-lg flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                            <CheckCircle2 className="w-6 h-6" />
+                        </div>
                         <div>
                             <h3 className="font-bold text-emerald-900">Project Selesai! (Score: {submission.completion_score}/100)</h3>
-                            <p className="text-sm text-emerald-700 mt-1">Kamu sudah menyelesaikan project ini dengan baik. Milestone berikutnya sudah terbuka.</p>
+                            <p className="text-[13px] text-emerald-700 mt-1 font-medium">Kamu sudah menyelesaikan project ini dengan baik. Milestone berikutnya sudah terbuka.</p>
                         </div>
                     </div>
                 )}
@@ -114,40 +125,44 @@ export default function Submit({ roadmap, milestone, submission, checklist_items
                     {/* Kolom Kiri: Form & Checklist */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* Header Info */}
-                        <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <span className="text-3xl">{milestone.emoji}</span>
-                                <h1 className="text-2xl font-black text-navy-900 shrink-0">{milestone.title}</h1>
+                        <div className="mb-8">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-12 h-12 bg-white border border-slate-100 shadow-sm rounded-lg flex items-center justify-center text-3xl">
+                                    {milestone.emoji}
+                                </div>
+                                <div>
+                                    <h1 className="text-2xl font-black text-slate-900 tracking-tight">{milestone.title}</h1>
+                                    <p className="text-[13px] font-bold text-indigo-500 uppercase tracking-widest">
+                                        Milestone Capstone
+                                    </p>
+                                </div>
                             </div>
-                            <p className="text-sm font-semibold text-teal-600 mb-4 inline-flex px-3 py-1 bg-teal-50 rounded-full border border-teal-100">
-                                Milestone Review
-                            </p>
                         </div>
 
                         {/* Project Brief */}
-                        <div className="bg-navy-900 text-white rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-navy-900/10 border border-navy-800">
+                        <div className="bg-indigo-950 text-white rounded-lg p-8 relative overflow-hidden shadow-xl border border-indigo-900">
                             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
                             
                             <div className="relative z-10">
-                                <div className="flex items-center gap-2 text-teal-400 mb-3">
+                                <div className="flex items-center gap-2 text-indigo-400 mb-4">
                                     <Target className="w-5 h-5" />
-                                    <h3 className="font-bold text-sm tracking-widest uppercase">Target Project</h3>
+                                    <h3 className="font-black text-[11px] tracking-widest uppercase">Project Brief</h3>
                                 </div>
-                                <h2 className="text-2xl font-black mb-3">
+                                <h2 className="text-2xl font-black mb-4">
                                     {milestone.capstone_project?.title || 'Mini Project'}
                                 </h2>
-                                <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                                <p className="text-indigo-100/70 text-sm leading-relaxed mb-8 max-w-2xl font-medium">
                                     {milestone.capstone_project?.description || 'Implementasikan apa yang sudah kamu pelajari di milestone ini.'}
                                 </p>
 
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-2 text-sm text-slate-400">
-                                        <Code className="w-4 h-4 shrink-0" />
-                                        <span>Tech Stack:</span>
+                                <div className="flex flex-wrap gap-4 items-center">
+                                    <div className="flex items-center gap-2">
+                                        <Code className="w-4 h-4 text-indigo-400" />
+                                        <span className="text-[12px] font-bold text-indigo-300 uppercase tracking-wider">Stack:</span>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                         {milestone.skills?.map((tch: string) => (
-                                            <span key={tch} className="px-3 py-1 bg-white/10 text-white rounded-full text-xs font-semibold backdrop-blur-sm border border-white/5">
+                                            <span key={tch} className="px-3 py-1 bg-white/10 text-white rounded-lg text-[11px] font-bold border border-white/5">
                                                 {tch}
                                             </span>
                                         ))}
@@ -157,25 +172,30 @@ export default function Submit({ roadmap, milestone, submission, checklist_items
                         </div>
 
                         {/* Submission Form */}
-                        <form onSubmit={submitForm} className="space-y-8 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+                        <form onSubmit={submitForm} className="space-y-8 bg-white p-6 sm:p-8 rounded-lg border border-slate-100 shadow-sm">
                             
                             <div className="space-y-6">
                                 <div>
-                                    <label htmlFor="github_url" className="block text-sm font-bold text-navy-900 mb-1">
-                                        Link Repository GitHub <span className="text-rose-500">*</span>
+                                    <label htmlFor="github_url" className="flex items-center gap-2 text-[13px] font-bold text-slate-700 mb-2">
+                                        <Code className="w-4 h-4 text-slate-400" />
+                                        Repository GitHub <span className="text-rose-500">*</span>
                                     </label>
-                                    <p className="text-xs text-slate-500 mb-3">Pastikan repo kamu PUBLIC agar bisa dinilai.</p>
-                                    <input 
-                                        type="url" 
-                                        id="github_url"
-                                        value={data.github_url}
-                                        onChange={e => setData('github_url', e.target.value)}
-                                        onBlur={handleVerifyGithub}
-                                        className="w-full rounded-xl border-slate-200 shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                                        placeholder="https://github.com/username/nama-project"
-                                    />
-                                    {verifying && <p className="text-teal-500 text-xs mt-2 font-medium flex items-center"><Loader2 className="w-3 h-3 mr-1 animate-spin"/> Menganalisis repository...</p>}
-                                    {errors.github_url && <p className="text-rose-500 text-xs mt-2 font-medium">{errors.github_url}</p>}
+                                    <div className="relative group">
+                                        <input 
+                                            type="url" 
+                                            id="github_url"
+                                            value={data.github_url}
+                                            onChange={e => setData('github_url', e.target.value)}
+                                            onBlur={handleVerifyGithub}
+                                            className="w-full pl-12 pr-5 py-4 rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium text-sm"
+                                            placeholder="https://github.com/username/project"
+                                        />
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
+                                            <Code className="w-5 h-5" />
+                                        </div>
+                                    </div>
+                                    {verifying && <p className="text-indigo-600 text-[11px] mt-2 font-bold flex items-center uppercase tracking-widest"><Loader2 className="w-3 h-3 mr-1.5 animate-spin"/> Menganalisis repository...</p>}
+                                    {errors.github_url && <p className="text-rose-500 text-xs mt-2 font-bold">{errors.github_url}</p>}
                                     
                                     {githubVerification && !verifying && (
                                         <div className={`mt-2 p-3 rounded-lg text-xs ${
@@ -203,40 +223,46 @@ export default function Submit({ roadmap, milestone, submission, checklist_items
                                 </div>
 
                                 <div>
-                                    <label htmlFor="demo_url" className="block text-sm font-bold text-navy-900 mb-1">
-                                        Link Demo / Deploy <span className="text-slate-400 font-normal">(Opsional)</span>
+                                    <label htmlFor="demo_url" className="flex items-center gap-2 text-[13px] font-bold text-slate-700 mb-2">
+                                        <LinkIcon className="w-4 h-4 text-slate-400" />
+                                        Link Demo / Deploy <span className="text-slate-400 font-normal ml-auto text-[11px]">(Opsional)</span>
                                     </label>
-                                    <p className="text-xs text-slate-500 mb-3">Berani unjuk gigi? Deploy project kamu (+15 Poin!)</p>
-                                    <input 
-                                        type="url" 
-                                        id="demo_url"
-                                        value={data.demo_url}
-                                        onChange={e => setData('demo_url', e.target.value)}
-                                        className="w-full rounded-xl border-slate-200 shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                                        placeholder="https://nama-project.vercel.app"
-                                    />
-                                    {errors.demo_url && <p className="text-rose-500 text-xs mt-2 font-medium">{errors.demo_url}</p>}
+                                    <div className="relative group">
+                                        <input 
+                                            type="url" 
+                                            id="demo_url"
+                                            value={data.demo_url}
+                                            onChange={e => setData('demo_url', e.target.value)}
+                                            className="w-full pl-12 pr-5 py-4 rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium text-sm"
+                                            placeholder="https://project.vercel.app"
+                                        />
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
+                                            <LinkIcon className="w-5 h-5" />
+                                        </div>
+                                    </div>
+                                    <p className="text-[11px] text-slate-400 mt-2 font-bold uppercase tracking-widest">Deploy project kamu untuk mendapatkan +15 Poin!</p>
+                                    {errors.demo_url && <p className="text-rose-500 text-xs mt-2 font-bold">{errors.demo_url}</p>}
                                 </div>
 
                                 <div>
-                                    <label htmlFor="description" className="block text-sm font-bold text-navy-900 mb-1">
-                                        Ceritakan Project Kamu <span className="text-rose-500">*</span>
+                                    <label htmlFor="description" className="flex items-center gap-2 text-[13px] font-bold text-slate-700 mb-2">
+                                        <Code className="w-4 h-4 text-slate-400" />
+                                        Deskripsi Project <span className="text-rose-500">*</span>
                                     </label>
-                                    <p className="text-xs text-slate-500 mb-3">Jelaskan fitur utama dan apa yang kamu bangun (min. 50 karakter).</p>
                                     <textarea 
                                         id="description"
-                                        rows={4}
+                                        rows={5}
                                         value={data.description}
                                         onChange={e => setData('description', e.target.value)}
-                                        className="w-full rounded-xl border-slate-200 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
-                                        placeholder="Project ini adalah aplikasi..."
+                                        className="w-full px-5 py-4 rounded-lg border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium text-sm resize-none"
+                                        placeholder="Jelaskan fitur utama dan apa yang kamu bangun..."
                                     ></textarea>
                                     <div className="flex justify-between items-center mt-2">
                                         {errors.description ? (
-                                            <p className="text-rose-500 text-xs font-medium">{errors.description}</p>
+                                            <p className="text-rose-500 text-[11px] font-bold">{errors.description}</p>
                                         ) : <span></span>}
-                                        <span className={`text-xs font-medium ${data.description.length < 50 ? 'text-amber-500' : 'text-emerald-500'}`}>
-                                            {data.description.length} / 50 min
+                                        <span className={`text-[11px] font-black uppercase tracking-widest ${data.description.length < 50 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                                            {data.description.length} / 50 characters min
                                         </span>
                                     </div>
                                 </div>
@@ -251,53 +277,54 @@ export default function Submit({ roadmap, milestone, submission, checklist_items
                                     <p className="text-sm text-slate-500 mt-1">Centang kriteria yang sudah kamu penuhi. Kumpulkan poin sebanyak-banyaknya!</p>
                                 </div>
 
-                                <div className="space-y-3">
+                                <div className="space-y-4">
                                     {checklist_items?.map((item: any) => (
-                                        <label key={item.key} className={`flex items-start gap-4 p-4 rounded-2xl border transition-all cursor-pointer ${data.checklist_completed.includes(item.key) ? 'bg-teal-50 border-teal-200' : 'bg-white border-slate-200 hover:border-slate-300'}`}>
+                                        <label key={item.key} className={`flex items-start gap-4 p-5 rounded-lg border transition-all cursor-pointer ${data.checklist_completed.includes(item.key) ? 'bg-indigo-50/50 border-indigo-200 ring-4 ring-indigo-50/20' : 'bg-slate-50/30 border-slate-100 hover:border-indigo-100 hover:bg-white hover:shadow-md'}`}>
                                             <div className="flex items-center h-6 shrink-0 pt-0.5">
                                                 <input
                                                     type="checkbox"
                                                     checked={data.checklist_completed.includes(item.key)}
                                                     onChange={() => handleCheck(item.key)}
-                                                    className="w-5 h-5 rounded border-slate-300 text-teal-600 focus:ring-teal-600 cursor-pointer"
+                                                    className="w-5 h-5 rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
                                                 />
                                             </div>
                                             <div className="flex-1">
-                                                <p className={`text-sm font-semibold leading-relaxed ${data.checklist_completed.includes(item.key) ? 'text-teal-900' : 'text-slate-700'}`}>
+                                                <p className={`text-[14px] font-bold leading-relaxed ${data.checklist_completed.includes(item.key) ? 'text-indigo-900' : 'text-slate-600'}`}>
                                                     {item.label}
                                                 </p>
                                             </div>
                                             <div className="shrink-0 pt-0.5">
-                                                <span className={`text-xs font-bold px-2 py-1 flex items-center justify-center rounded-lg ${data.checklist_completed.includes(item.key) ? 'bg-teal-100 text-teal-700' : 'bg-slate-100 text-slate-500'}`}>
-                                                    +{item.points}
-                                                </span>
+                                                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-black text-[10px] uppercase tracking-widest ${data.checklist_completed.includes(item.key) ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-400'}`}>
+                                                    <Target className="w-3 h-3" />
+                                                    +{item.points} pts
+                                                </div>
                                             </div>
                                         </label>
                                     ))}
                                 </div>
-                                {errors.checklist_completed && <p className="text-rose-500 text-xs mt-3 font-medium flex items-center"><AlertCircle className="w-3 h-3 mr-1"/> {errors.checklist_completed}</p>}
+                                {errors.checklist_completed && <p className="text-rose-500 text-xs mt-4 font-bold flex items-center gap-1.5 uppercase tracking-widest"><AlertCircle className="w-4 h-4"/> {errors.checklist_completed}</p>}
                             </div>
 
                             <button 
                                 type="submit" 
                                 disabled={processing || !isSubmittable}
-                                className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-navy-900 text-white rounded-2xl font-black shadow-xl shadow-navy-900/20 hover:bg-navy-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full flex items-center justify-center gap-3 px-8 py-5 bg-indigo-950 text-white rounded-lg font-black text-sm shadow-xl shadow-indigo-100 hover:bg-indigo-900 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                             >
                                 {processing ? <Loader2 className="w-5 h-5 animate-spin" /> : <LayoutTemplate className="w-5 h-5" />}
-                                {submission ? 'Update Submission' : 'Submit Project untuk Evaluasi'}
+                                {submission ? 'Perbarui Submission' : 'Submit Project & Klaim Sertifikat'}
                             </button>
                         </form>
                     </div>
 
                     {/* Kolom Kanan: Preview Score Sticky */}
                     <div className="lg:col-span-1">
-                        <div className="sticky top-8 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
-                            <h3 className="font-black text-navy-900 mb-6 text-center">Estimasi Score</h3>
+                        <div className="sticky top-8 bg-white rounded-lg p-8 border border-slate-100 shadow-sm">
+                            <h3 className="font-black text-slate-900 mb-8 text-center uppercase tracking-widest text-xs">Estimasi Score</h3>
                             
-                            <div className="flex flex-col items-center mb-8">
-                                <div className={`w-32 h-32 rounded-full flex flex-col items-center justify-center shadow-inner relative overflow-hidden ${getScoreColor(previewScore)} transition-colors duration-500`}>
-                                    <span className="text-4xl font-black">{previewScore}</span>
-                                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">Dari 100</span>
+                            <div className="flex flex-col items-center mb-10">
+                                <div className={`w-36 h-36 rounded-full flex flex-col items-center justify-center shadow-inner relative overflow-hidden ${getScoreColor(previewScore)} transition-all duration-700 ring-8 ring-slate-50`}>
+                                    <span className="text-5xl font-black tracking-tighter">{previewScore}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">SCORE</span>
                                 </div>
                             </div>
 
