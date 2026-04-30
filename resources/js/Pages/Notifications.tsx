@@ -17,7 +17,7 @@ interface NotificationsProps {
 export default function Notifications({ notifications }: NotificationsProps) {
     return (
         <AppLayout header="Notifications">
-            <Head title="Notifications | CareerSync" />
+            <Head title="Notifications | Kembangin" />
 
             <div className="max-w-4xl mx-auto space-y-6">
                 <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">

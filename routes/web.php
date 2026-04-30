@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Market
         Route::get('/market', [MarketController::class, 'index'])->name('market');
+        Route::post('/market/research', [MarketController::class, 'research'])->name('market.research');
         Route::post('/market/set-target', [MarketController::class, 'setTarget'])->name('market.set-target');
 
         // Help Center

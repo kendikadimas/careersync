@@ -11,7 +11,7 @@ class GitHubVerificationService
 
     private function headers(): array
     {
-        $headers = ['Accept' => 'application/vnd.github.v3+json', 'User-Agent' => 'CareerSync-Academy'];
+        $headers = ['Accept' => 'application/vnd.github.v3+json', 'User-Agent' => 'Kembangin'];
         $token = config('services.github.token');
         if ($token) $headers['Authorization'] = "Bearer {$token}";
         return $headers;

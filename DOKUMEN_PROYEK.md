@@ -1,7 +1,7 @@
-# Dokumen Overview Proyek: Career-Sync Academy
+# Dokumen Overview Proyek: Kembangin
 
 ## 1. Pengenalan Proyek
-**Career-Sync Academy (careersync)** adalah sebuah platform EdTech mutakhir berbasis AI yang bertujuan untuk membantu terutama pengembang web (Web Developers) atau pencari kerja agar kemampuannya lebih relevan (sinkron) dengan kebutuhan pasar kerja saat ini.
+**Kembangin** adalah sebuah platform EdTech mutakhir berbasis AI yang bertujuan untuk membantu terutama pengembang web (Web Developers) atau pencari kerja agar kemampuannya lebih relevan (sinkron) dengan kebutuhan pasar kerja saat ini.
 
 Platform ini berfungsi sebagai "jembatan" bagi para talenta untuk menilai seberapa siap mereka menghadapi dunia industri (Workforce Readiness), serta memberikan mereka jalur pembelajaran (*Roadmap*) yang disesuaikan dengan kondisi pasar kerja terkini secara *real-time*.
 
@@ -46,4 +46,4 @@ Berdasarkan skema model pada `app/Models/`, berikut adalah gambaran entitas utam
 * **Forum Komunitas**: `PeerDiscussion`, `PeerDiscussionReply`.
 
 ## 5. Kesimpulan
-**Career-Sync Academy** bukan lagi sekadar web LMS (Learning Management System) statis, melainkan produk AI interaktif yang terus memperbarui diri berdasarkan data industri. Sistem ini secara holistik memetakan kemampuan saat ini, menunjukkan target apa yang harus dipelajari agar cepat dipekerjakan, memberikan panduan belajarnya, sekaligus mewadahi validasi karya dan komunitas bagi penggunanya secara *end-to-end*.
+**Kembangin** bukan lagi sekadar web LMS (Learning Management System) statis, melainkan produk AI interaktif yang terus memperbarui diri berdasarkan data industri. Sistem ini secara holistik memetakan kemampuan saat ini, menunjukkan target apa yang harus dipelajari agar cepat dipekerjakan, memberikan panduan belajarnya, sekaligus mewadahi validasi karya dan komunitas bagi penggunanya secara *end-to-end*.

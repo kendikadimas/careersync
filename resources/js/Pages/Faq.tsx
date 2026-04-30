@@ -35,7 +35,7 @@ export default function Faq({ faqs }: Props) {
                 <div className="max-w-2xl mx-auto">
                     <p className="text-xs font-black text-teal-600 uppercase tracking-[0.2em] mb-4">Pusat Bantuan</p>
                     <h1 className="text-4xl font-black text-gray-900 mb-6 leading-tight">Pertanyaan yang Sering Ditanyakan</h1>
-                    <p className="text-gray-500 text-lg leading-relaxed font-medium">Tidak menemukan jawaban yang kamu cari? <br className="sm:hidden" /> <a href="mailto:hello@careersync.id" className="text-teal-600 hover:text-teal-700 transition-colors font-black underline decoration-2 underline-offset-4">Hubungi tim kami</a></p>
+                    <p className="text-gray-500 text-lg leading-relaxed font-medium">Tidak menemukan jawaban yang kamu cari? <br className="sm:hidden" /> <a href="mailto:hello@kembangin.id" className="text-teal-600 hover:text-teal-700 transition-colors font-black underline decoration-2 underline-offset-4">Hubungi tim kami</a></p>
                 </div>
             </section>
             
@@ -49,7 +49,7 @@ export default function Faq({ faqs }: Props) {
                     <div className="relative z-10">
                         <h2 className="font-black text-white text-2xl mb-3 tracking-tight">Masih punya pertanyaan?</h2>
                         <p className="text-sm text-navy-300 mb-10 font-medium uppercase tracking-widest">Kami di sini untuk membantu kamu mencapai target karirmu.</p>
-                        <a href="mailto:hello@careersync.id" className="inline-block bg-teal-500 text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-teal-400 transition-all shadow-xl shadow-teal-500/20 hover:scale-105">Kirim Pesan</a>
+                        <a href="mailto:hello@kembangin.id" className="inline-block bg-teal-500 text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-teal-400 transition-all shadow-xl shadow-teal-500/20 hover:scale-105">Kirim Pesan</a>
                     </div>
                 </div>
             </section>

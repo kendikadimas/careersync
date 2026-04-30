@@ -34,7 +34,7 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
                     
                     <div className="relative z-10 flex flex-col md:flex-row justify-between items-center p-8 md:p-10 gap-8">
                         <div className="text-center md:text-left">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] font-black uppercase tracking-widest mb-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] font-black mb-4">
                                 <Trophy className="w-3 h-3 text-amber-400" />
                                 Talent Competition
                             </div>
@@ -46,12 +46,12 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
                             <div className="flex items-center gap-8">
                                 {user_opted_in && current_user_rank && (
                                     <div className="text-center md:text-right border-r border-white/10 pr-8">
-                                        <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Peringkat Kamu</p>
+                                        <p className="text-[10px] font-bold text-indigo-300 mb-1">Peringkat Kamu</p>
                                         <p className="text-4xl font-black text-white">#{current_user_rank}</p>
                                     </div>
                                 )}
                                 <div className="text-center md:text-right">
-                                    <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Status Visibilitas</p>
+                                    <p className="text-[10px] font-bold text-indigo-300 mb-1">Status Visibilitas</p>
                                     <label className="relative inline-flex items-center cursor-pointer">
                                         <input 
                                             type="checkbox" 
@@ -60,7 +60,7 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
                                             className="sr-only peer"
                                         />
                                         <div className="w-11 h-6 bg-indigo-800 rounded-full peer peer-focus:ring-4 peer-focus:ring-indigo-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-500"></div>
-                                        <span className="ml-3 text-xs font-black uppercase tracking-widest text-indigo-100">
+                                        <span className="ml-3 text-xs font-black text-indigo-100">
                                             {user_opted_in ? 'Public' : 'Incognito'}
                                         </span>
                                     </label>
@@ -108,7 +108,7 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
 
                                 <div className="text-center mb-4">
                                     <h4 className={`font-black tracking-tight ${isFirst ? 'text-xl' : 'text-lg'} text-slate-900 line-clamp-1`}>{leader.name}</h4>
-                                    <p className={`text-[10px] font-black uppercase tracking-widest ${getRankColor(leader.rank)}`}>{leader.rank}</p>
+                                    <p className={`text-[10px] font-black ${getRankColor(leader.rank)}`}>{leader.rank}</p>
                                 </div>
 
                                 {/* Base */}
@@ -123,9 +123,9 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
                                         {idx + 1}
                                     </div>
                                     <div className="text-3xl font-black text-slate-900 leading-none">{leader.total_points.toLocaleString()}</div>
-                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Points Total</div>
+                                    <div className="text-[10px] font-black text-slate-400 mt-2">Points Total</div>
                                     
-                                    <div className={`mt-6 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                                    <div className={`mt-6 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black ${
                                         leader.score >= 80 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-600'
                                     }`}>
                                         Score: {leader.score || 0}
@@ -139,14 +139,14 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
                 {/* LEADERBOARD TABLE */}
                 <div className="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden">
                     <div className="px-6 py-4 border-b border-slate-50 flex items-center justify-between">
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Ranking List</h3>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{leaders.length} Talenta Terdaftar</span>
+                        <h3 className="text-sm font-black text-slate-900">Ranking List</h3>
+                        <span className="text-[10px] font-bold text-slate-400">{leaders.length} Talenta Terdaftar</span>
                     </div>
                     
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                                <tr className="bg-slate-50 text-slate-400 text-[10px] font-black">
                                     <th className="px-6 py-4 w-20 text-center">Rank</th>
                                     <th className="px-6 py-4">Talent Profile</th>
                                     <th className="px-6 py-4 hidden md:table-cell">Target Karir</th>
@@ -183,14 +183,14 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
                                                     <div>
                                                         <div className="flex items-center gap-2">
                                                             <span className="font-black text-slate-900 text-sm">{leader.name}</span>
-                                                            {isMe && <span className="px-1.5 py-0.5 rounded bg-indigo-900 text-white text-[8px] font-black uppercase tracking-widest">You</span>}
+                                                            {isMe && <span className="px-1.5 py-0.5 rounded bg-indigo-900 text-white text-[8px] font-black">You</span>}
                                                         </div>
-                                                        <p className={`text-[9px] font-black uppercase tracking-widest ${getRankColor(leader.rank)}`}>{leader.rank}</p>
+                                                        <p className={`text-[9px] font-black ${getRankColor(leader.rank)}`}>{leader.rank}</p>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-5 hidden md:table-cell">
-                                                <span className="text-[11px] font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded uppercase tracking-tight border border-slate-100">
+                                                <span className="text-[11px] font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded tracking-tight border border-slate-100">
                                                     {leader.career_target || 'Generalist'}
                                                 </span>
                                             </td>
@@ -238,7 +238,6 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
                     </div>
                 </div>
             </div>
-        </AppLayout>
         </AppLayout>
     );
 }

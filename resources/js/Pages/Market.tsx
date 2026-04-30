@@ -45,7 +45,7 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
 
     return (
         <AppLayout header="Market Intelligence">
-            <Head title="Standar Kompetensi Industri | CareerSync" />
+            <Head title="Standar Kompetensi Industri | Kembangin" />
 
             <div className="max-w-6xl mx-auto pt-4 pb-20 px-4">
                 
@@ -55,7 +55,7 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                         <AlertCircle className="w-6 h-6" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-amber-900 uppercase tracking-tight mb-1">Dashboard Monitoring Kurikulum</h3>
+                        <h3 className="text-sm font-black text-amber-900 tracking-tight mb-1">Dashboard Monitoring Kurikulum</h3>
                         <p className="text-sm font-bold text-amber-800/80 leading-relaxed">
                             Data ini ditarik secara real-time dari industri untuk membantu Anda menentukan target belajar (benchmark kurikulum), bukan untuk dilamar saat ini. Fokuslah pada pemenuhan gap kompetensi.
                         </p>
@@ -77,7 +77,7 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                             <Globe className="w-5 h-5 text-indigo-600" />
                          </div>
                          <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Intel</p>
+                            <p className="text-[10px] font-black text-slate-400 leading-none mb-1">Total Intel</p>
                             <p className="text-xl font-black text-[#1A1A2E] leading-none">{stats?.total_jobs || 0}</p>
                          </div>
                     </div>
@@ -88,7 +88,7 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                     <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-lg blur-3xl -mr-20 -mt-20"></div>
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                         <div className="lg:col-span-4">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white/10 border border-white/20 text-teal-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white/10 border border-white/20 text-teal-400 text-[10px] font-black mb-6">
                                 <Sparkles className="w-3.5 h-3.5" />
                                 Trending Minggu Ini
                             </div>
@@ -103,12 +103,12 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                             {trendingSkills?.slice(0, 6).map((skill, i) => (
                                 <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-lg hover:bg-white/10 transition-colors">
                                     <div className="flex justify-between items-start mb-3">
-                                        <p className="text-[9px] font-black text-teal-400 uppercase tracking-widest">{skill.trend === 'rising' ? '📈 Rising' : '💎 Core'}</p>
+                                        <p className="text-[9px] font-black text-teal-400">{skill.trend === 'rising' ? '📈 Rising' : '💎 Core'}</p>
                                         <Zap className="w-3.5 h-3.5 text-indigo-300" />
                                     </div>
                                     <h4 className="text-base font-black text-white mb-4 truncate">{skill.skill}</h4>
                                     <div className="space-y-2">
-                                        <div className="flex justify-between text-[9px] font-black text-indigo-300 uppercase">
+                                        <div className="flex justify-between text-[9px] font-black text-indigo-300">
                                             <span>Demand Intensity</span>
                                             <span>{skill.demand}%</span>
                                         </div>
@@ -129,7 +129,7 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                     {/* Left: Intelligence Sidebar */}
                     <div className="lg:col-span-4 space-y-8">
                         <div className="bg-white rounded-lg p-8 border border-slate-100 shadow-sm">
-                            <h4 className="text-base font-black text-[#1A1A2E] mb-6 flex items-center gap-2 uppercase tracking-tight">
+                            <h4 className="text-base font-black text-[#1A1A2E] mb-6 flex items-center gap-2 tracking-tight">
                                 <TrendingUp className="w-5 h-5 text-teal-500" />
                                 Market Sentiment
                             </h4>
@@ -137,10 +137,10 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                                 "{outlook?.summary || 'Gunakan standar ini untuk memvalidasi roadmap belajar Anda agar sesuai dengan kebutuhan pasar kerja saat ini.'}"
                             </div>
                             <div className="space-y-4">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Future-Proof Targets</p>
+                                <p className="text-[10px] font-black text-slate-400">Future-Proof Targets</p>
                                 <div className="flex flex-wrap gap-2">
                                     {outlook?.future_skills?.map(s => (
-                                        <span key={s} className="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-tight border border-indigo-100">
+                                        <span key={s} className="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg text-[10px] font-black tracking-tight border border-indigo-100">
                                             {s}
                                         </span>
                                     ))}
@@ -155,7 +155,7 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                                 </div>
                                 <div>
                                     <h4 className="text-base font-black text-[#1A1A2E] leading-none mb-1">Target Kurikulum</h4>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Benchmark Mode</p>
+                                    <p className="text-[10px] font-bold text-slate-400">Benchmark Mode</p>
                                 </div>
                              </div>
                              <p className="text-[13px] text-slate-500 font-bold leading-relaxed">
@@ -182,7 +182,7 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                                 <select 
                                     value={filterLocation}
                                     onChange={(e) => setFilterLocation(e.target.value)}
-                                    className="flex-1 md:flex-none pl-5 pr-10 py-4 bg-indigo-50/50 border-none rounded-lg text-xs font-black text-indigo-900 uppercase tracking-widest cursor-pointer outline-none appearance-none"
+                                    className="flex-1 md:flex-none pl-5 pr-10 py-4 bg-indigo-50/50 border-none rounded-lg text-xs font-black text-indigo-900 cursor-pointer outline-none appearance-none"
                                 >
                                     {locations.map(l => <option key={l} value={l}>{l}</option>)}
                                 </select>
@@ -196,7 +196,7 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                                     <div className="w-20 h-20 bg-slate-50 rounded-lg flex items-center justify-center mx-auto mb-6">
                                         <Search className="w-8 h-8 text-slate-200" />
                                     </div>
-                                    <h3 className="text-xl font-black text-slate-300 uppercase tracking-tight">Data Tidak Ditemukan</h3>
+                                    <h3 className="text-xl font-black text-slate-300 tracking-tight">Data Tidak Ditemukan</h3>
                                 </div>
                             ) : (
                                 filteredJobs.map((job) => (
@@ -211,23 +211,23 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                                                     <h3 className="text-xl font-black text-[#1A1A2E] group-hover:text-indigo-600 transition-colors leading-tight">{job.title}</h3>
                                                 </div>
                                                 <div className="flex flex-wrap gap-5 items-center">
-                                                    <span className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-tight">
+                                                    <span className="flex items-center gap-1.5 text-xs font-bold text-slate-400 tracking-tight">
                                                         <Building2 className="w-4 h-4 text-indigo-400" /> {job.company}
                                                     </span>
-                                                    <span className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-tight">
+                                                    <span className="flex items-center gap-1.5 text-xs font-bold text-slate-400 tracking-tight">
                                                         <MapPin className="w-4 h-4 text-indigo-400" /> {job.location}
                                                     </span>
                                                 </div>
                                             </div>
 
                                             <div className="flex flex-col items-end gap-2">
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Readiness Level</p>
+                                                <p className="text-[10px] font-black text-slate-400">Readiness Level</p>
                                                 <div className={`px-5 py-3 rounded-lg text-xl font-black shadow-sm ${
                                                     job.match_score >= 80 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 
                                                     job.match_score >= 50 ? 'bg-amber-50 text-amber-600 border border-amber-100' : 
                                                     'bg-slate-50 text-slate-400 border border-slate-100'
                                                 }`}>
-                                                    {job.match_score}% MATCH
+                                                    {job.match_score}% Match
                                                 </div>
                                             </div>
                                         </div>
@@ -235,42 +235,42 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
                                         {/* Skills Comparison */}
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 pt-8 border-t border-slate-50">
                                             <div>
-                                                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                <p className="text-[10px] font-black text-emerald-600 mb-4 flex items-center gap-2">
                                                     <CheckCircle2 className="w-4 h-4" /> Keahlian yang Anda Punya
                                                 </p>
                                                 <div className="flex flex-wrap gap-2">
                                                     {job.skills_required?.filter(skill => 
                                                         profile?.skills?.some(s => s.name.toLowerCase().includes(skill.toLowerCase()) || skill.toLowerCase().includes(s.name.toLowerCase()))
                                                     ).map(skill => (
-                                                        <span key={skill} className="bg-indigo-900 text-white px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-tight">
+                                                        <span key={skill} className="bg-indigo-900 text-white px-4 py-1.5 rounded-lg text-[10px] font-bold">
                                                             {skill}
                                                         </span>
-                                                    )) || <span className="text-[10px] font-bold text-slate-300 uppercase">Belum ada kecocokan</span>}
+                                                    )) || <span className="text-[10px] font-bold text-slate-300">Belum ada kecocokan</span>}
                                                 </div>
                                             </div>
                                             <div>
-                                                <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                <p className="text-[10px] font-black text-rose-500 mb-4 flex items-center gap-2">
                                                     <CircleDashed className="w-4 h-4" /> Keahlian Harus Dipelajari
                                                 </p>
                                                 <div className="flex flex-wrap gap-2">
                                                     {job.skills_required?.filter(skill => 
                                                         !profile?.skills?.some(s => s.name.toLowerCase().includes(skill.toLowerCase()) || skill.toLowerCase().includes(s.name.toLowerCase()))
                                                     ).map(skill => (
-                                                        <span key={skill} className="bg-rose-50 text-rose-600 px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-tight border border-rose-100">
+                                                        <span key={skill} className="bg-rose-50 text-rose-600 px-4 py-1.5 rounded-lg text-[10px] font-bold border border-rose-100">
                                                             {skill}
                                                         </span>
-                                                    )) || <span className="text-[10px] font-bold text-slate-300 uppercase">Sudah memenuhi semua</span>}
+                                                    )) || <span className="text-[10px] font-bold text-slate-300">Sudah memenuhi semua</span>}
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-6 border-t border-slate-50/50">
-                                            <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                            <div className="flex items-center gap-2 text-[10px] font-black text-slate-400">
                                                 <Info className="w-4 h-4 text-indigo-400" /> Dashboard Benchmark v2.0
                                             </div>
                                             <button 
                                                 onClick={() => handleSetTarget(job.title)}
-                                                className="w-full sm:w-auto bg-indigo-900 text-white px-8 py-4 rounded-lg font-black uppercase text-sm flex items-center justify-center gap-3 hover:bg-indigo-800 transition-all shadow-xl shadow-indigo-900/10 active:scale-[0.98]"
+                                                className="w-full sm:w-auto bg-indigo-900 text-white px-8 py-4 rounded-lg font-black text-sm flex items-center justify-center gap-3 hover:bg-indigo-800 transition-all shadow-xl shadow-indigo-900/10 active:scale-[0.98]"
                                             >
                                                 Jadikan Target Belajar <ArrowRight className="w-5 h-5" />
                                             </button>

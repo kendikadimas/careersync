@@ -5,7 +5,7 @@ const helpSections = [
         title: 'Kontak Cepat',
         description: 'Hubungi tim kami untuk bantuan teknis atau pertanyaan akun.',
         items: [
-            { label: 'Email', value: 'hello@careersync.id' },
+            { label: 'Email', value: 'hello@kembangin.id' },
             { label: 'WhatsApp', value: '+62 812-3456-7890' },
         ],
     },

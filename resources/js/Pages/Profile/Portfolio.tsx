@@ -67,10 +67,10 @@ export default function Portfolio({ projects, user }: any) {
                             <div>
                                 <h1 className="text-3xl font-black tracking-tight mb-2">{user.name}</h1>
                                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                                    <span className="px-3 py-1 bg-white/10 rounded-lg text-xs font-black uppercase tracking-widest text-indigo-100 border border-white/10">
+                                    <span className="px-3 py-1 bg-white/10 rounded-lg text-xs font-black text-indigo-100 border border-white/10">
                                         {profile?.career_target || 'Generalist'}
                                     </span>
-                                    <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-400/20 rounded-lg text-xs font-black uppercase tracking-widest text-amber-400 border border-amber-400/20">
+                                    <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-400/20 rounded-lg text-xs font-black text-amber-400 border border-amber-400/20">
                                         <Award className="w-3 h-3" /> {user.rank}
                                     </span>
                                 </div>
@@ -80,12 +80,12 @@ export default function Portfolio({ projects, user }: any) {
                         <div className="flex flex-col items-center md:items-end gap-4">
                             <div className="flex items-center gap-6">
                                 <div className="text-center md:text-right border-r border-white/10 pr-6">
-                                    <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Total Points</p>
+                                    <p className="text-[10px] font-bold text-indigo-300 mb-1">Total Points</p>
                                     <p className="text-3xl font-black text-white">{user.total_points.toLocaleString()}</p>
                                 </div>
                                 <Link 
                                     href={route('profile.public', user.id)} 
-                                    className="bg-white text-indigo-900 hover:bg-indigo-50 px-6 py-3 rounded-lg font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl active:scale-95"
+                                    className="bg-white text-indigo-900 hover:bg-indigo-50 px-6 py-3 rounded-lg font-black text-xs transition-all flex items-center gap-2 shadow-xl active:scale-95"
                                 >
                                     <ExternalLink className="w-4 h-4" /> Lihat Profil Publik
                                 </Link>
@@ -97,22 +97,22 @@ export default function Portfolio({ projects, user }: any) {
                 {/* BADGES SECTION */}
                 <div className="bg-white rounded-lg p-8 shadow-sm border border-slate-100">
                     <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                        <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
                             <Award className="w-4 h-4 text-amber-500" /> Pencapaian Badge ({badges.length})
                         </h3>
                     </div>
                     
                     {badges.length === 0 ? (
                         <div className="py-6 text-center bg-slate-50 rounded-lg border border-dashed border-slate-200">
-                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Belum ada badge yang diraih</p>
+                            <p className="text-slate-400 text-xs font-bold">Belum ada badge yang diraih</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                             {badges.map((b: any) => (
                                 <div key={b.id} className="group relative flex flex-col items-center p-4 bg-white border border-slate-100 rounded-lg transition-all hover:shadow-xl hover:border-indigo-200 hover:-translate-y-1 text-center">
                                     <div className="text-4xl mb-3 drop-shadow-sm transition-transform group-hover:scale-110">{b.emoji}</div>
-                                    <div className="font-black text-[11px] text-slate-800 uppercase tracking-tight line-clamp-1">{b.name}</div>
-                                    <div className={`text-[8px] font-black uppercase tracking-widest mt-1 ${
+                                    <div className="font-black text-[11px] text-slate-800 line-clamp-1">{b.name}</div>
+                                    <div className={`text-[8px] font-black mt-1 ${
                                         b.rarity === 'EPIC' ? 'text-purple-500' : b.rarity === 'RARE' ? 'text-amber-600' : 'text-slate-400'
                                     }`}>{b.rarity}</div>
                                     
@@ -133,13 +133,13 @@ export default function Portfolio({ projects, user }: any) {
                     {/* ADD PROJECT FORM */}
                     <div className="lg:col-span-4">
                         <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-100 sticky top-8">
-                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                            <h3 className="text-sm font-black text-slate-900 mb-6 flex items-center gap-2">
                                 <FolderGit2 className="w-4 h-4 text-indigo-600" /> Tambah Project Baru
                             </h3>
                             
                             <form onSubmit={submit} className="space-y-5">
                                 <div>
-                                    <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nama Project</label>
+                                    <label className="block text-[11px] font-black text-slate-500 mb-1.5">Nama Project</label>
                                     <input 
                                         type="text" 
                                         value={data.title} 
@@ -148,11 +148,11 @@ export default function Portfolio({ projects, user }: any) {
                                         className="w-full bg-slate-50 border-slate-200 rounded-lg text-sm font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all px-4 py-3" 
                                         placeholder="E-Commerce API"
                                     />
-                                    {errors.title && <div className="text-rose-500 text-[10px] font-bold mt-1 uppercase tracking-widest">{errors.title}</div>}
+                                    {errors.title && <div className="text-rose-500 text-[10px] font-bold mt-1">{errors.title}</div>}
                                 </div>
                                 
                                 <div>
-                                    <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Deskripsi Singkat</label>
+                                    <label className="block text-[11px] font-black text-slate-500 mb-1.5">Deskripsi Singkat</label>
                                     <textarea 
                                         value={data.description} 
                                         onChange={e => setData('description', e.target.value)} 
@@ -161,11 +161,11 @@ export default function Portfolio({ projects, user }: any) {
                                         className="w-full bg-slate-50 border-slate-200 rounded-lg text-sm font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all px-4 py-3" 
                                         placeholder="Membangun REST API dengan Laravel dan MySQL..."
                                     />
-                                    {errors.description && <div className="text-rose-500 text-[10px] font-bold mt-1 uppercase tracking-widest">{errors.description}</div>}
+                                    {errors.description && <div className="text-rose-500 text-[10px] font-bold mt-1">{errors.description}</div>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5">GitHub URL</label>
+                                    <label className="block text-[11px] font-black text-slate-500 mb-1.5">GitHub URL</label>
                                     <div className="relative">
                                         <input 
                                             type="url" 
@@ -177,12 +177,12 @@ export default function Portfolio({ projects, user }: any) {
                                         />
                                         <Code className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                                     </div>
-                                    <p className="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest italic">Repo PUBLIC akan diverifikasi otomatis.</p>
-                                    {errors.github_url && <div className="text-rose-500 text-[10px] font-bold mt-1 uppercase tracking-widest">{errors.github_url}</div>}
+                                    <p className="text-[10px] text-slate-400 font-bold mt-2 italic">Repo Public akan diverifikasi otomatis.</p>
+                                    {errors.github_url && <div className="text-rose-500 text-[10px] font-bold mt-1">{errors.github_url}</div>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Demo URL (Opsional)</label>
+                                    <label className="block text-[11px] font-black text-slate-500 mb-1.5">Demo URL (Opsional)</label>
                                     <input 
                                         type="url" 
                                         value={data.demo_url} 
@@ -193,7 +193,7 @@ export default function Portfolio({ projects, user }: any) {
                                 </div>
 
                                 <div>
-                                    <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Tech Stack</label>
+                                    <label className="block text-[11px] font-black text-slate-500 mb-1.5">Tech Stack</label>
                                     <input 
                                         type="text" 
                                         placeholder="Ketik & Enter (e.g: React)" 
@@ -204,18 +204,18 @@ export default function Portfolio({ projects, user }: any) {
                                     />
                                     <div className="flex flex-wrap gap-2">
                                         {data.tech_stack.map(tech => (
-                                            <span key={tech} className="bg-indigo-50 text-indigo-600 text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 cursor-pointer hover:bg-rose-50 hover:text-rose-600 transition-colors border border-indigo-100 uppercase tracking-widest" onClick={() => removeTech(tech)}>
+                                            <span key={tech} className="bg-indigo-50 text-indigo-600 text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 cursor-pointer hover:bg-rose-50 hover:text-rose-600 transition-colors border border-indigo-100" onClick={() => removeTech(tech)}>
                                                 {tech} &times;
                                             </span>
                                         ))}
                                     </div>
-                                    {errors.tech_stack && <div className="text-rose-500 text-[10px] font-bold mt-1 uppercase tracking-widest">{errors.tech_stack}</div>}
+                                    {errors.tech_stack && <div className="text-rose-500 text-[10px] font-bold mt-1">{errors.tech_stack}</div>}
                                 </div>
 
                                 <div className="pt-4">
                                     <button 
                                         disabled={processing} 
-                                        className="w-full bg-indigo-900 hover:bg-indigo-800 text-white font-black text-xs uppercase tracking-widest py-4 rounded-lg transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50"
+                                        className="w-full bg-indigo-900 hover:bg-indigo-800 text-white font-black text-xs py-4 rounded-lg transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50"
                                     >
                                         {processing ? 'Menyimpan...' : 'Simpan ke Portfolio'}
                                     </button>
@@ -227,8 +227,8 @@ export default function Portfolio({ projects, user }: any) {
                     {/* PROJECTS GRID */}
                     <div className="lg:col-span-8 space-y-8">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Project Showcase</h3>
-                            <div className="px-2.5 py-1 rounded bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                            <h3 className="text-sm font-black text-slate-900">Project Showcase</h3>
+                            <div className="px-2.5 py-1 rounded bg-slate-100 text-slate-500 text-[10px] font-bold">
                                 {projects.length} Projects
                             </div>
                         </div>
@@ -238,7 +238,7 @@ export default function Portfolio({ projects, user }: any) {
                                 <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-6">
                                     <FolderGit2 className="w-8 h-8 text-slate-200" />
                                 </div>
-                                <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Belum Ada Project</h4>
+                                <h4 className="text-sm font-black text-slate-900">Belum Ada Project</h4>
                                 <p className="text-xs text-slate-400 mt-2 max-w-xs font-medium">Tambahkan hasil karya terbaikmu untuk membangun profil yang dilirik oleh rekruter industri.</p>
                             </div>
                         ) : (
@@ -250,7 +250,7 @@ export default function Portfolio({ projects, user }: any) {
                                             {proj.thumbnail_url ? (
                                                 <img src={proj.thumbnail_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-slate-200 font-black text-2xl uppercase tracking-tighter select-none p-8 text-center leading-none">
+                                                <div className="w-full h-full flex items-center justify-center text-slate-200 font-black text-2xl tracking-tighter select-none p-8 text-center leading-none">
                                                     {proj.title}
                                                 </div>
                                             )}
@@ -261,7 +261,7 @@ export default function Portfolio({ projects, user }: any) {
                                             
                                             {proj.github_verified && (
                                                 <div className="absolute top-4 right-4 bg-teal-500 text-white px-2 py-1 rounded text-[10px] font-black flex items-center gap-1.5 shadow-xl shadow-teal-500/20">
-                                                    <ShieldCheck className="w-3 h-3" /> VERIFIED
+                                                    <ShieldCheck className="w-3 h-3" /> Verified
                                                 </div>
                                             )}
                                         </div>
@@ -272,26 +272,26 @@ export default function Portfolio({ projects, user }: any) {
                                             
                                             <div className="flex flex-wrap gap-1.5 mb-6">
                                                 {proj.tech_stack.slice(0, 4).map((tech: string, i: number) => (
-                                                    <span key={i} className="text-[9px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">{tech}</span>
+                                                    <span key={i} className="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">{tech}</span>
                                                 ))}
                                                 {proj.tech_stack.length > 4 && <span className="text-[9px] font-black text-slate-300">+{proj.tech_stack.length - 4}</span>}
                                             </div>
                                             
                                             <div className="mt-auto grid grid-cols-2 gap-3 pt-5 border-t border-slate-50">
-                                                <a href={proj.github_url} target="_blank" className="flex items-center justify-center gap-1.5 text-[10px] font-black uppercase tracking-widest py-2.5 bg-slate-50 hover:bg-slate-100 rounded text-slate-600 transition-all border border-slate-100">
+                                                <a href={proj.github_url} target="_blank" className="flex items-center justify-center gap-1.5 text-[10px] font-black py-2.5 bg-slate-50 hover:bg-slate-100 rounded text-slate-600 transition-all border border-slate-100">
                                                     <Code className="w-3.5 h-3.5" /> Repository
                                                 </a>
                                                 {proj.demo_url ? (
-                                                    <a href={proj.demo_url} target="_blank" className="flex items-center justify-center gap-1.5 text-[10px] font-black uppercase tracking-widest py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded transition-all border border-indigo-100">
+                                                    <a href={proj.demo_url} target="_blank" className="flex items-center justify-center gap-1.5 text-[10px] font-black py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded transition-all border border-indigo-100">
                                                         <ExternalLink className="w-3.5 h-3.5" /> Live Demo
                                                     </a>
                                                 ) : (
-                                                    <button onClick={() => handleDelete(proj.id)} className="flex items-center justify-center gap-1.5 text-[10px] font-black uppercase tracking-widest py-2.5 text-rose-400 hover:bg-rose-50 rounded transition-all">
+                                                    <button onClick={() => handleDelete(proj.id)} className="flex items-center justify-center gap-1.5 text-[10px] font-black py-2.5 text-rose-400 hover:bg-rose-50 rounded transition-all">
                                                         <Trash2 className="w-3.5 h-3.5" /> Delete
                                                     </button>
                                                 )}
                                                 {proj.demo_url && (
-                                                    <button onClick={() => handleDelete(proj.id)} className="col-span-2 mt-2 flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-widest py-1 text-slate-300 hover:text-rose-500 transition-all">
+                                                    <button onClick={() => handleDelete(proj.id)} className="col-span-2 mt-2 flex items-center justify-center gap-1.5 text-[9px] font-black py-1 text-slate-300 hover:text-rose-500 transition-all">
                                                         <Trash2 className="w-3 h-3" /> Remove Project
                                                     </button>
                                                 )}
@@ -304,8 +304,6 @@ export default function Portfolio({ projects, user }: any) {
                     </div>
 
                 </div>
-            </div>
-        </AppLayout>
             </div>
         </AppLayout>
     );

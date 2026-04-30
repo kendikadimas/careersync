@@ -15,7 +15,7 @@ import {
     CircleHelp,
     Trophy,
     Briefcase,
-    Stethoscope
+    FileSearch
 } from 'lucide-react';
 
 interface Props {
@@ -40,23 +40,38 @@ export default function AppLayout({ children, header }: Props) {
         }
     }, [flash.new_badges]);
 
-    const navItems = [
-        { name: 'Dashboard', href: route('dashboard'), icon: LayoutDashboard, active: route().current('dashboard') },
-        { name: 'Diagnostic Assessment', href: route('analysis'), icon: Stethoscope, active: route().current('analysis') },
-        { name: 'Learning Path & PBL', href: route('roadmap'), icon: MapIcon, active: route().current('roadmap') },
-        { name: 'Market Intelligence', href: route('market'), icon: TrendingUp, active: route().current('market') },
-        { name: 'Leaderboard', href: route('leaderboard'), icon: Trophy, active: route().current('leaderboard') },
-        { name: 'My Portfolio', href: route('portfolio.index'), icon: Briefcase, active: route().current('portfolio.index') },
+    const menuGroups = [
+        {
+            title: 'Menu Utama',
+            items: [
+                { name: 'Dashboard', href: route('dashboard'), icon: LayoutDashboard, active: route().current('dashboard') },
+            ]
+        },
+        {
+            title: 'Analisis & Progress',
+            items: [
+                { name: 'Diagnostic Assessment', href: route('analysis'), icon: FileSearch, active: route().current('analysis') },
+                { name: 'Learning Path & PBL', href: route('roadmap'), icon: MapIcon, active: route().current('roadmap') },
+                { name: 'Market Intelligence', href: route('market'), icon: TrendingUp, active: route().current('market') },
+            ]
+        },
+        {
+            title: 'Personal & Portofolio',
+            items: [
+                { name: 'Leaderboard', href: route('leaderboard'), icon: Trophy, active: route().current('leaderboard') },
+                { name: 'My Portfolio', href: route('portfolio.index'), icon: Briefcase, active: route().current('portfolio.index') },
+            ]
+        }
     ];
-    const activeItem = navItems.find((item) => item.active);
+    const activeItem = menuGroups.flatMap(g => g.items).find((item) => item.active);
 
     return (
-        <div className="min-h-screen bg-[#F3F6FF] flex text-[#1A1A2E] font-(--font-heading) max-w-full overflow-x-hidden">
+        <div className="min-h-screen bg-[#F3F6FF] flex text-[#1A1A2E] font-(--font-heading) max-w-full items-start">
             {/* Sidebar Desktop */}
-            <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-indigo-950 fixed h-full z-20 border-r border-white/5 transition-all duration-200 shadow-2xl`}>
+            <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-indigo-950 sticky top-0 h-screen z-20 border-r border-white/5 transition-all duration-200 shadow-2xl`}>
                 <div className="p-6 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">CS</div>
-                    {!isSidebarCollapsed && <span className="font-bold text-lg text-white tracking-tight">CareerSync</span>}
+                    <img src="/logo-white.svg" alt="Logo" className="w-10 h-10 object-contain" />
+                    {!isSidebarCollapsed && <span className="font-bold text-lg text-white tracking-tight">Kembangin</span>}
                     <button
                         type="button"
                         onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -67,36 +82,37 @@ export default function AppLayout({ children, header }: Props) {
                     </button>
                 </div>
 
-                <div className={`px-6 mt-10 ${isSidebarCollapsed ? 'hidden' : ''}`}>
-                    <p className="text-2xl font-bold text-white leading-tight">Welcome</p>
-                    <p className="text-2xl font-bold text-white leading-tight">
-                        Back, <span className="text-indigo-400">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
-                    </p>
-                    <p className="text-sm text-indigo-200/40 mt-1">Ready to upgrade your skills?</p>
-                </div>
-
-                <div className={`px-4 mt-8 flex-1 flex flex-col ${isSidebarCollapsed ? 'px-2' : ''}`}>
-                    <nav className="bg-white/5 backdrop-blur-md rounded-lg p-2.5 space-y-3 border border-white/5">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.name}
-                                href={item.href}
-                                className={`w-full h-11 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-between'} rounded-lg text-[13px] font-black inline-flex items-center transition-all ${
-                                    item.active
-                                        ? 'bg-white text-indigo-950 shadow-lg shadow-indigo-950/20'
-                                        : 'text-indigo-100/60 hover:bg-white/10 hover:text-white'
-                                }`}
-                            >
-                                <span className={`inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'}`}>
-                                    <item.icon className={`w-4 h-4 ${item.active ? 'text-indigo-600' : 'text-indigo-300/50'}`} />
-                                    {!isSidebarCollapsed && <span>{item.name}</span>}
-                                </span>
-                                {!isSidebarCollapsed && item.active && (
-                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 shadow-sm" />
-                                )}
-                            </Link>
-                        ))}
-                    </nav>
+                <div className={`px-4 mt-6 flex-1 flex flex-col ${isSidebarCollapsed ? 'px-2' : ''} overflow-y-auto custom-scrollbar`}>
+                    {menuGroups.map((group, idx) => (
+                        <div key={group.title} className={idx !== 0 ? 'mt-8' : ''}>
+                            {!isSidebarCollapsed && (
+                                <p className="text-[10px] font-black text-indigo-400/50 tracking-widest px-4 mb-3">
+                                    {group.title}
+                                </p>
+                            )}
+                            <nav className="space-y-1">
+                                {group.items.map((item) => (
+                                    <Link
+                                        key={item.name}
+                                        href={item.href}
+                                        className={`w-full h-10 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-between'} rounded-lg text-[12px] font-black inline-flex items-center transition-all ${
+                                            item.active
+                                                ? 'bg-white text-indigo-950 shadow-lg shadow-indigo-950/20'
+                                                : 'text-indigo-100/60 hover:bg-white/10 hover:text-white'
+                                        }`}
+                                    >
+                                        <span className={`inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'}`}>
+                                            <item.icon className={`w-4 h-4 ${item.active ? 'text-indigo-600' : 'text-indigo-300/50'}`} />
+                                            {!isSidebarCollapsed && <span>{item.name}</span>}
+                                        </span>
+                                        {!isSidebarCollapsed && item.active && (
+                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 shadow-sm" />
+                                        )}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </div>
+                    ))}
                 </div>
 
                 <div className={`p-4 mt-auto border-t border-white/5 ${isSidebarCollapsed ? 'px-2' : ''}`}>
@@ -113,7 +129,7 @@ export default function AppLayout({ children, header }: Props) {
             </aside>
 
             {/* Main Content */}
-            <main className={`flex-1 flex flex-col ${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'} transition-all duration-200 min-w-0 max-w-full overflow-x-hidden`}>
+            <main className={`flex-1 flex flex-col transition-all duration-200 min-w-0 max-w-full overflow-x-hidden`}>
                 {/* Header */}
                 <header className="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-slate-200 h-16 flex items-center justify-between px-4 md:px-6">
                     <div className="flex items-center gap-3">
@@ -280,21 +296,21 @@ export default function AppLayout({ children, header }: Props) {
                     <aside className="absolute left-0 top-0 bottom-0 w-80 bg-indigo-950 text-white flex flex-col p-5 animate-in slide-in-from-left duration-300">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">CS</div>
-                                <span className="font-bold text-lg tracking-tight">CareerSync</span>
+                                <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">K</div>
+                                <span className="font-bold text-lg tracking-tight">Kembangin</span>
                             </div>
                             <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/50 hover:text-white">
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <div className="mb-10">
+                        {/* <div className="mb-10">
                             <p className="text-2xl font-bold text-white leading-tight">Welcome</p>
                             <p className="text-2xl font-bold text-white leading-tight">
                                 Back, <span className="text-indigo-400">{auth?.user?.name?.split(' ')[0] || 'User'}</span>
                             </p>
                             <p className="text-sm text-indigo-200/40 mt-1">Ready to upgrade your skills?</p>
-                        </div>
+                        </div> */}
 
                         <nav className="flex-1 space-y-1">
                             {navItems.map((item) => (

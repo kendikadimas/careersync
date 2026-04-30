@@ -89,7 +89,7 @@ export default function Demo({ profile, skill_gap, roadmap, work_readiness, reco
 
     return (
         <PublicLayout>
-            <Head title="Demo Interaktif | Career-Sync Academy" />
+            <Head title="Demo Interaktif | Kembangin" />
             
             <div className="bg-amber-50 border-b border-amber-100 py-4 px-4 sticky top-16 z-40">
                 <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">

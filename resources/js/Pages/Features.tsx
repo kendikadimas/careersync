@@ -147,7 +147,7 @@ export default function Features() {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(20,184,166,0.05),transparent_50%)]"></div>
                 <div className="max-w-5xl mx-auto relative z-10">
                     <div className="text-center mb-20 text-balance">
-                        <h2 className="text-3xl md:text-4xl font-black mb-6 tracking-tighter uppercase tracking-widest">Kenapa Memilih Career-Sync?</h2>
+                        <h2 className="text-3xl md:text-4xl font-black mb-6 tracking-tighter uppercase tracking-widest">Kenapa Memilih Kembangin?</h2>
                         <p className="text-navy-300 text-sm md:text-base font-medium max-w-xl mx-auto leading-relaxed">Perbandingan nyata antara metode belajar konvensional yang lambat vs platform kami yang berbasis data.</p>
                     </div>
 
@@ -170,7 +170,7 @@ export default function Features() {
                         </div>
                         <div className="bg-navy-950 p-12 md:p-16 relative overflow-hidden">
                             <div className="absolute inset-0 bg-teal-500/5 pulse-slow"></div>
-                            <h3 className="text-teal-400 font-black text-xs uppercase tracking-[0.3em] mb-12 flex items-center gap-3 relative z-10"><div className="w-2 h-2 bg-teal-400 rounded-full shadow-lg shadow-teal-500"></div> Career-Sync Academy</h3>
+                            <h3 className="text-teal-400 font-black text-xs uppercase tracking-[0.3em] mb-12 flex items-center gap-3 relative z-10"><div className="w-2 h-2 bg-teal-400 rounded-full shadow-lg shadow-teal-500"></div> Kembangin</h3>
                             <div className="space-y-8 relative z-10">
                                 {[
                                     { t: 'Otomatisasi Data AI', d: 'AI kami yang meriset dan merangkum pasar kerja untukmu setiap 24 jam.' },

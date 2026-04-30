@@ -52,7 +52,7 @@ export default function DashboardFaq({ faqs }: Props) {
                     <p className="text-xs font-black text-[#2563EB] uppercase tracking-[0.2em] mb-3">Pusat Bantuan</p>
                     <h1 className="text-3xl font-black text-gray-900 mb-4 leading-tight">Pertanyaan yang Sering Ditanyakan</h1>
                     <p className="text-gray-500 text-sm leading-relaxed font-medium">
-                        Tidak menemukan jawaban yang kamu cari? <a href="mailto:hello@careersync.id" className="text-[#2563EB] font-black underline decoration-2 underline-offset-4">Hubungi tim kami</a>
+                        Tidak menemukan jawaban yang kamu cari? <a href="mailto:hello@kembangin.id" className="text-[#2563EB] font-black underline decoration-2 underline-offset-4">Hubungi tim kami</a>
                     </p>
                 </div>
 

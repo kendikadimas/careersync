@@ -113,10 +113,10 @@ function GaugeChart({ percent, dark = false }: { percent: number; dark?: boolean
             </defs>
             <path d={describeArc(startAngle, startAngle + sweepAngle)} fill="none" stroke="#F1F5F9" strokeWidth="12" strokeLinecap="round" />
             <path d={describeArc(startAngle, fillEnd)} fill="none" stroke="url(#gaugeGrad)" strokeWidth="12" strokeLinecap="round" strokeDasharray="0" />
-            <text x="100" y="105" textAnchor="middle" className={`text-3xl font-black ${dark ? 'fill-white' : 'fill-slate-800'}`} style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            <text x="100" y="105" textAnchor="middle" className={`text-3xl font-black ${dark ? 'fill-white' : 'fill-slate-800'}`} style={{ fontFamily: 'Geist, sans-serif' }}>
                 {percent}%
             </text>
-            <text x="100" y="130" textAnchor="middle" className={`text-[10px] font-bold ${dark ? 'fill-indigo-200' : 'fill-slate-400'} tracking-widest`}>
+            <text x="100" y="130" textAnchor="middle" className={`text-[10px] font-bold ${dark ? 'fill-indigo-200' : 'fill-slate-400'}`}>
                 Readiness
             </text>
         </svg>
@@ -128,8 +128,9 @@ function GrowthChart({ data, labels }: { data: number[]; labels: string[] }) {
     const h = 180;
     const padX = 20;
     const padY = 30;
-    const maxVal = Math.max(...data, 100);
+    const dataMax = Math.max(...data);
     const minVal = 0;
+    const maxVal = Math.min(100, dataMax + (dataMax < 20 ? 10 : dataMax * 0.2));
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     const pts = data.map((v, i) => ({
@@ -137,7 +138,15 @@ function GrowthChart({ data, labels }: { data: number[]; labels: string[] }) {
         y: h - padY - ((v - minVal) / (maxVal - minVal)) * (h - padY * 2),
     }));
 
-    const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+    // Generate smooth cubic bezier path
+    const linePath = pts.reduce((acc, p, i, a) => {
+        if (i === 0) return `M ${p.x} ${p.y}`;
+        const prev = a[i - 1];
+        const cp1x = prev.x + (p.x - prev.x) / 2;
+        const cp2x = prev.x + (p.x - prev.x) / 2;
+        return `${acc} C ${cp1x} ${prev.y}, ${cp2x} ${p.y}, ${p.x} ${p.y}`;
+    }, "");
+
     const areaPath = `${linePath} L ${pts[pts.length - 1].x} ${h - padY} L ${pts[0].x} ${h - padY} Z`;
 
     const handleMove = (event: React.MouseEvent<SVGSVGElement>) => {
@@ -151,7 +160,7 @@ function GrowthChart({ data, labels }: { data: number[]; labels: string[] }) {
     return (
         <svg
             viewBox={`0 0 ${w} ${h}`}
-            className="w-full h-auto"
+            className="w-full h-auto overflow-visible"
             onMouseMove={handleMove}
             onMouseLeave={() => setActiveIndex(null)}
         >
@@ -182,17 +191,23 @@ function GrowthChart({ data, labels }: { data: number[]; labels: string[] }) {
                 </g>
             )}
 
-            {labels.map((m, i) => (
-                <text
-                    key={i}
-                    x={padX + (i / (data.length - 1 || 1)) * (w - padX * 2)}
-                    y={h - 5}
-                    textAnchor="middle"
-                    className="text-[10px] font-medium fill-slate-400"
-                >
-                    {m}
-                </text>
-            ))}
+            {labels.map((m, i) => {
+                // Show labels strategically to avoid overlap
+                const shouldShow = i === 0 || i === data.length - 1 || (data.length > 5 && i % Math.ceil(data.length / 4) === 0);
+                if (!shouldShow) return null;
+
+                return (
+                    <text
+                        key={i}
+                        x={padX + (i / (data.length - 1 || 1)) * (w - padX * 2)}
+                        y={h - 5}
+                        textAnchor={i === 0 ? "start" : i === data.length - 1 ? "end" : "middle"}
+                        className="text-[9px] font-bold fill-slate-400"
+                    >
+                        {m}
+                    </text>
+                );
+            })}
         </svg>
     );
 }
@@ -212,7 +227,7 @@ function TrendingSkillsChart({ data }: { data: any[] }) {
     const maxGrowth = Math.max(...chartData.map(d => d.growth), 10);
 
     return (
-        <div className="h-[300px] w-full mt-6">
+        <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                     layout="vertical"
@@ -236,7 +251,7 @@ function TrendingSkillsChart({ data }: { data: any[] }) {
                             if (active && payload && payload.length) {
                                 return (
                                     <div className="bg-white p-3 rounded-lg shadow-xl border border-slate-100">
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Rank #{payload[0].payload.rank}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 mb-1">Rank #{payload[0].payload.rank}</p>
                                         <p className="text-sm font-black text-slate-900 mb-1">{payload[0].payload.name}</p>
                                         <p className="text-sm font-black text-indigo-600">+{payload[0].value}% Growth</p>
                                     </div>
@@ -323,8 +338,15 @@ export default function Dashboard({
     const milestoneRemaining = roadmapStats?.remaining ?? Math.max((roadmap?.total_milestones ?? 0) - (roadmap?.milestones_completed ?? 0), 0);
     const totalMilestones = roadmapStats?.total ?? roadmap?.total_milestones ?? 0;
 
-    const growthData = historyScores.length >= 2 ? historyScores : [0, 0, 0, 0, 0];
-    const growthLabels = historyScores.length >= 2 ? historyLabels : ['-', '-', '-', '-', '-'];
+    const processedScores = historyScores.length > 0 && historyScores[0] !== 0 
+        ? [0, ...historyScores] 
+        : (historyScores.length > 0 ? historyScores : [0]);
+    const processedLabels = historyScores.length > 0 && historyScores[0] !== 0 
+        ? ['Mulai', ...historyLabels] 
+        : (historyLabels.length > 0 ? historyLabels : ['-']);
+
+    const growthData = processedScores.length >= 2 ? processedScores : Array(5).fill(processedScores[0]);
+    const growthLabels = processedLabels.length >= 2 ? processedLabels : Array(5).fill(processedLabels[0]);
 
     const careerTarget = Array.isArray(profile?.career_target)
         ? profile.career_target[0] || 'Unset'
@@ -352,18 +374,18 @@ export default function Dashboard({
 
     return (
         <AppLayout>
-            <Head title="Dashboard | CareerSync" />
+            <Head title="Dashboard | Kembangin" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang, {user.name}! 👋</h1>
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang, {user.name}!</h1>
                         <div className="flex items-center gap-3 mt-1">
                             <p className="text-slate-500 text-sm">Pantau perkembangan karirmu dan raih target kerjamu hari ini.</p>
                             <Link 
                                 href={route('profile.public', user.rank === 'admin' ? 1 : user.id)} 
-                                className="flex items-center gap-1.5 text-[11px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-700 transition-colors bg-indigo-50 px-2.5 py-1 rounded-lg"
+                                className="flex items-center gap-1.5 text-[11px] font-black text-indigo-600 hover:text-indigo-700 transition-colors bg-indigo-50 px-2.5 py-1 rounded-lg"
                             >
                                 <Eye className="w-3 h-3" />
                                 Lihat Profil Publik
@@ -375,12 +397,12 @@ export default function Dashboard({
                             {user.rank.charAt(0)}
                         </div>
                         <div>
-                            <p className="text-[10px] font-bold text-slate-400 tracking-widest">Rank</p>
+                            <p className="text-[10px] font-bold text-slate-400">Rank</p>
                             <p className="text-sm font-bold text-slate-800">{user.rank}</p>
                         </div>
                         <div className="h-8 w-px bg-slate-100 mx-2" />
                         <div>
-                            <p className="text-[10px] font-bold text-slate-400 tracking-widest">Points</p>
+                            <p className="text-[10px] font-bold text-slate-400">Points</p>
                             <p className="text-sm font-black text-indigo-900">{user.points.toLocaleString()}</p>
                         </div>
                     </div>
@@ -393,8 +415,8 @@ export default function Dashboard({
                         <div className="w-full flex items-center justify-between mb-6">
                             <h3 className="text-lg font-black text-slate-900">Work Readiness</h3>
                             <div className="flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded-lg">
-                                <Target className="w-3 h-3 text-indigo-600" />
-                                <span className="text-[9px] font-black text-indigo-700 uppercase tracking-widest">OBE Target</span>
+                                {/* <Target className="w-3 h-3 text-indigo-600" /> */}
+                                {/* <span className="text-[9px] font-black text-indigo-700">OBE Target</span> */}
                             </div>
                         </div>
                         
@@ -402,7 +424,7 @@ export default function Dashboard({
                         
                         <div className="mt-6 flex flex-col items-center w-full">
                             <div className="flex flex-col items-center gap-1 mb-4">
-                                <span className={`inline-block px-4 py-1.5 rounded-lg text-[11px] font-black tracking-widest uppercase ${
+                                <span className={`inline-block px-4 py-1.5 rounded-lg text-[11px] font-black ${
                                     workReadinessScore >= 80 ? 'bg-emerald-100 text-emerald-700' : 
                                     workReadinessScore >= 60 ? 'bg-indigo-100 text-indigo-700' :
                                     workReadinessScore >= 40 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'
@@ -411,20 +433,20 @@ export default function Dashboard({
                                      workReadinessScore >= 60 ? 'Competent' : 
                                      workReadinessScore >= 40 ? 'Developing' : 'Apprentice'}
                                 </span>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">100 = Standar Industri</p>
+                                {/* <p className="text-[10px] font-bold text-slate-400">100 = Standar Industri</p> */}
                             </div>
 
                             {/* Score Growth Chart */}
-                            <div className="w-full border-t border-slate-50 pt-4">
+                            {/* <div className="w-full border-t border-slate-50 pt-4">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Growth Trend</span>
+                                    <span className="text-[10px] font-bold text-slate-400">Growth Trend</span>
                                     <span className="text-[10px] font-black text-indigo-600">+{growthData[growthData.length-1] - (growthData[0] || 0)}%</span>
                                 </div>
                                 <ScoreHistoryChart data={scoreHistory} />
-                            </div>
+                            </div> */}
                             
                             {scoreMeta?.isStale && (
-                                <p className="text-[10px] text-amber-500 font-black uppercase tracking-widest italic mt-4 animate-pulse text-center">Progress terbaru terdeteksi. Update skor?</p>
+                                <p className="text-[10px] text-amber-500 font-black italic mt-4 animate-pulse text-center">Progress terbaru terdeteksi. Update skor?</p>
                             )}
                         </div>
 
@@ -511,7 +533,7 @@ export default function Dashboard({
                             <h3 className="text-lg font-bold text-slate-900">Perkembangan Skor</h3>
                             <div className="flex items-center gap-2">
                                 <span className="w-3 h-3 rounded-lg bg-indigo-500" />
-                                <span className="text-[11px] font-bold text-slate-500 tracking-widest">Daily Progress</span>
+                                <span className="text-[11px] font-bold text-slate-500">Daily Progress</span>
                             </div>
                         </div>
                         <GrowthChart data={growthData} labels={growthLabels} />
@@ -536,7 +558,7 @@ export default function Dashboard({
                                     className="flex gap-2 overflow-x-auto custom-scrollbar-hide snap-x pb-2"
                                 >
                                     {hardSkills.length > 0 ? hardSkills.map((skill: any, i: number) => (
-                                        <div key={i} className="snap-start shrink-0 px-4 py-2.5 bg-slate-50 border border-slate-100 text-[13px] font-bold text-slate-700 rounded-lg hover:border-indigo-200 hover:text-indigo-900 hover:bg-white transition-all shadow-sm">
+                                        <div key={i} className="snap-start shrink-0 px-4 py-2.5 bg-indigo-950 border border-white/10 text-[13px] font-bold text-white rounded-lg hover:bg-indigo-900 transition-all shadow-sm">
                                             {typeof skill === 'object' ? skill.name : skill}
                                         </div>
                                     )) : (
@@ -559,7 +581,7 @@ export default function Dashboard({
                                     className="flex gap-2 overflow-x-auto custom-scrollbar-hide snap-x pb-2"
                                 >
                                     {softSkills.length > 0 ? softSkills.map((skill: any, i: number) => (
-                                        <div key={i} className="snap-start shrink-0 px-4 py-2.5 bg-indigo-50/50 border border-indigo-100 text-[13px] font-bold text-indigo-900 rounded-lg hover:border-indigo-300 hover:bg-white transition-all shadow-sm">
+                                        <div key={i} className="snap-start shrink-0 px-4 py-2.5 bg-indigo-900 border border-white/5 text-[13px] font-bold text-white rounded-lg hover:bg-indigo-800 transition-all shadow-sm">
                                             {typeof skill === 'object' ? skill.name : skill}
                                         </div>
                                     )) : (
@@ -570,7 +592,7 @@ export default function Dashboard({
                         </div>
 
                         <div className="mt-8 pt-4 border-t border-slate-50">
-                            {/* <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Geser untuk melihat lebih banyak keahlian</p> */}
+                            {/* <p className="text-[10px] font-bold text-slate-400 text-center">Geser untuk melihat lebih banyak keahlian</p> */}
                         </div>
                     </div>
                 </div>
@@ -611,35 +633,20 @@ export default function Dashboard({
 
                     {/* Trending Skills Professional List */}
                     <div className="lg:col-span-5 bg-white rounded-lg p-8 shadow-sm border border-slate-100 flex flex-col">
-                        <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center justify-between mb-4">
                             <div>
                                 <h3 className="text-xl font-black text-slate-900 tracking-tight">Trending Skills</h3>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Kenaikan demand dibanding bulan lalu</p>
+                                <p className="text-[10px] font-bold text-slate-400 mt-1">Kenaikan demand dibanding bulan lalu</p>
                             </div>
                         </div>
                         
-                        <div className="flex-1 min-h-[300px] flex flex-col justify-center">
+                        <div className="flex flex-col">
                             {(() => {
                                 const sortedSkills = [...trendingSkills].sort((a, b) => (b.change || 0) - (a.change || 0));
                                 return (
-                                    <>
+                                    <div className="space-y-2">
                                         <TrendingSkillsChart data={sortedSkills} />
-                                        
-                                        <div className="mt-auto pt-6 grid grid-cols-2 gap-4">
-                                            {/* <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-100/50">
-                                                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Pertumbuhan Tertinggi</p>
-                                                <p className="text-lg font-black text-emerald-700 truncate">
-                                                    {sortedSkills[0]?.skill || sortedSkills[0]?.name || '-'}
-                                                </p>
-                                            </div> */}
-                                            {/* <div className="p-4 rounded-lg bg-indigo-50 border border-indigo-100/50">
-                                                <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1">Rata-rata Demand</p>
-                                                <p className="text-lg font-black text-indigo-700">
-                                                    {Math.round(sortedSkills.reduce((acc, curr) => acc + (curr.demand || 0), 0) / (sortedSkills.length || 1))}%
-                                                </p>
-                                            </div> */}
-                                        </div>
-                                    </>
+                                    </div>
                                 );
                             })()}
                         </div>

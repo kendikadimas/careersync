@@ -41,7 +41,7 @@ export default function Error({ status }: { status: number }) {
                     </div>
                     
                     <div className="mt-16 pt-8 border-t border-slate-100 flex items-center justify-center gap-6">
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">CareerSync Academy System v2.5</p>
+                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">Kembangin System v2.5</p>
                     </div>
                 </div>
             </div>

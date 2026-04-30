@@ -22,7 +22,7 @@ export default function PublicLayout({ children, title }: Props) {
                                     <path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white" />
                                 </svg>
                             </div>
-                            <span className="font-semibold text-[#1A1A2E] text-lg text-left">CareerSync</span>
+                            <span className="font-semibold text-[#1A1A2E] text-lg text-left">Kembangin</span>
                             <span className="text-xs bg-navy-50 text-navy-600 px-2 py-0.5 rounded-full font-medium">Academy</span>
                         </Link>
 
@@ -86,7 +86,7 @@ export default function PublicLayout({ children, title }: Props) {
                                         <path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white" />
                                     </svg>
                                 </div>
-                                <span className="font-semibold text-white text-sm">CareerSync Academy</span>
+                                <span className="font-semibold text-white text-sm">Kembangin</span>
                             </div>
                             <p className="text-xs leading-relaxed text-white/70">Platform AI untuk bridging skill gap antara kurikulum kampus dan kebutuhan industri IT Indonesia.</p>
                         </div>
@@ -115,7 +115,7 @@ export default function PublicLayout({ children, title }: Props) {
                         </div>
                     </div>
                     <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-                        <p className="text-xs">© 2026 CareerSync Academy. Dibuat untuk SDG 4 & SDG 8.</p>
+                        <p className="text-xs">© 2026 Kembangin. Dibuat untuk SDG 4 & SDG 8.</p>
                         <div className="flex gap-4">
                             <Link href="https://github.com/kendikadimas/careersync" className="text-xs hover:text-white transition-colors">GitHub</Link>
                         </div>

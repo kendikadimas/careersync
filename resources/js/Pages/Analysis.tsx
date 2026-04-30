@@ -231,7 +231,7 @@ function RadarChart({ data }: { data: { label: string; userVal: number; industry
                         fontSize="10"
                         fontWeight="700"
                         fill={hoveredPoint?.idx === i ? "#1e293b" : "#475569"}
-                        fontFamily="'Plus Jakarta Sans', sans-serif"
+                        fontFamily="'Geist', sans-serif"
                         className="transition-colors duration-200"
                     >
                         {lines.map((line, idx) => (
@@ -494,7 +494,7 @@ function RoadmapMilestone({
                 ? 'border-indigo-300 bg-white shadow-xl scale-[1.02]' 
                 : isLocked 
                     ? 'border-slate-50 bg-slate-50/50 opacity-60 grayscale cursor-not-allowed'
-                    : status === 'SEDANG DIPELAJARI'
+                    : status === 'Sedang Dipelajari'
                         ? 'border-indigo-900 bg-indigo-900 text-white shadow-lg shadow-indigo-100'
                         : 'border-slate-100 bg-white hover:border-indigo-200 hover:shadow-md'
             }`}
@@ -506,7 +506,7 @@ function RoadmapMilestone({
                 {isLocked ? (
                     <svg className="text-slate-400" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 ) : (
-                    status === 'SEDANG DIPELAJARI' && (
+                    status === 'Sedang Dipelajari' && (
                         <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
                             <svg className="text-white" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
                         </div>
@@ -514,19 +514,19 @@ function RoadmapMilestone({
                 )}
             </div>
 
-            <h3 className={`text-[13px] font-black leading-snug mb-2 ${expanded || status === 'SEDANG DIPELAJARI' ? '' : 'text-slate-700'}`}>
+            <h3 className={`text-[13px] font-black leading-snug mb-2 ${expanded || status === 'Sedang Dipelajari' ? '' : 'text-slate-700'}`}>
                 {title}
             </h3>
             
-            <p className={`text-[9px] font-black uppercase tracking-widest ${
-                status === 'SEDANG DIPELAJARI' ? 'text-indigo-200' : 'text-slate-400'
+            <p className={`text-[9px] font-black ${
+                status === 'Sedang Dipelajari' ? 'text-indigo-200' : 'text-slate-400'
             }`}>
                 {status}
             </p>
 
             {expanded && !isLocked && (
                 <div className="mt-4 pt-4 border-t border-indigo-100 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <p className="text-[10px] font-black text-indigo-900 uppercase tracking-widest mb-3">Materi Pembelajaran:</p>
+                    <p className="text-[10px] font-black text-indigo-900 mb-3">Materi Pembelajaran:</p>
                     <ul className="space-y-2">
                         {details.map((item, i) => (
                             <li key={i} className="flex items-start gap-2 text-[11px] text-slate-600 font-medium">
@@ -565,7 +565,7 @@ function CareerPathCard({ pos }: { pos: any }) {
                     {!expanded && (
                         <div className="flex items-center gap-1.5 mt-1.5">
                             <div className="w-1.5 h-1.5 rounded-lg bg-indigo-400 animate-pulse" />
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Detail Jalur Karir</p>
+                            <p className="text-[10px] font-bold text-slate-400">Detail Jalur Karir</p>
                         </div>
                     )}
                 </div>
@@ -573,7 +573,7 @@ function CareerPathCard({ pos }: { pos: any }) {
                     <span className={`text-[18px] font-black transition-colors ${expanded ? 'text-indigo-600' : 'text-indigo-900'}`}>
                         {pos.match_percentage}%
                     </span>
-                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none">Match</span>
+                    <span className="text-[9px] font-black text-slate-300 leading-none">Match</span>
                 </div>
             </div>
             
@@ -587,7 +587,7 @@ function CareerPathCard({ pos }: { pos: any }) {
                     
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Skill yang Diperlukan</p>
+                            <p className="text-[10px] font-black text-slate-400">Skill yang Diperlukan</p>
                             <span className="text-[9px] font-bold text-indigo-400 bg-indigo-50 px-2 py-0.5 rounded-lg">AI Recommendation</span>
                         </div>
                         <div className="flex flex-wrap gap-2">
@@ -617,15 +617,6 @@ function AnalysisResults({
         userVal: (g.user_score || 10) / 100,
         industryVal: (g.market_demand || 80) / 100
     }));
-
-    const milestones = [
-        { title: 'Mastering Node.js & Advanced TypeScript Backend', status: 'SEDANG DIPELAJARI', icon: '🟢', isLocked: false, details: ['Node.js Event Loop & Architecture', 'TypeScript Advanced Types', 'Design Patterns in Backend', 'Error Handling & Security'] },
-        { title: 'Professional RESTful API Design & Documentation', status: 'TERKUNCI', icon: '📡', isLocked: true, details: [] },
-        { title: 'Advanced Laravel & PHP Optimization', status: 'TERKUNCI', icon: '🐘', isLocked: true, details: [] },
-        { title: 'Database Mastery & Complex Modeling', status: 'TERKUNCI', icon: '🗄️', isLocked: true, details: [] },
-        { title: 'Containerization with Docker', status: 'TERKUNCI', icon: '🐳', isLocked: true, details: [] },
-    ];
-
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
@@ -659,7 +650,7 @@ function AnalysisResults({
 
                 <div className="md:col-span-2 bg-white rounded-lg p-7 shadow-sm border border-slate-100 flex flex-col">
                     <h2 className="text-[18px] font-black text-[#1A1A2E] mb-1">Skill Gap Analysis</h2>
-                    <p className="text-[12px] text-slate-400 font-semibold mb-4 uppercase tracking-wider">Kebutuhan Pasar</p>
+                    <p className="text-[12px] text-slate-400 font-semibold mb-4">Kebutuhan Pasar</p>
                     
                     <div className="space-y-5 flex-1 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
                         {(profile?.skill_gaps && profile.skill_gaps.length > 0) ? (
@@ -675,24 +666,6 @@ function AnalysisResults({
                     <Link href={route('roadmap')} className="mt-6 w-full bg-indigo-900 text-white py-3 rounded-lg text-[13px] font-bold hover:bg-indigo-800 transition-all text-center shadow-lg shadow-indigo-100">
                         Buka Roadmap Belajar
                     </Link>
-                </div>
-            </div>
-
-            <div className="bg-white rounded-lg p-8 shadow-sm border border-slate-100">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h2 className="text-[20px] font-black text-[#1A1A2E] mb-1">Learning Roadmap</h2>
-                        <p className="text-[13px] text-slate-400">Ikuti kurikulum khusus untuk mencapai target karirmu.</p>
-                    </div>
-                    <div className="px-4 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-[11px] font-bold border border-indigo-100">
-                        Level: Beginner to Expert
-                    </div>
-                </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    {milestones.map((m, i) => (
-                        <RoadmapMilestone key={i} {...m} />
-                    ))}
                 </div>
             </div>
 
@@ -819,7 +792,7 @@ export default function SkillGapAnalysis({
     if (analysisProcessing) {
         return (
             <AppLayout header="Skill Gap Analysis">
-                <Head title="Menganalisis CV... | CareerSync" />
+                <Head title="Menganalisis CV... | Kembangin" />
                 <div className="max-w-full mx-auto pt-20 text-center">
                     <div className="relative inline-block mb-8">
                         <div className="w-24 h-24 rounded-lg bg-indigo-900 animate-pulse flex items-center justify-center shadow-xl shadow-indigo-100">
@@ -846,7 +819,7 @@ export default function SkillGapAnalysis({
 
     return (
         <AppLayout header="Skill Gap Analysis">
-            <Head title="Skill Gap Analysis | CareerSync" />
+            <Head title="Skill Gap Analysis | Kembangin" />
             <div className="max-w-full mx-auto pt-4">
                 {analysisProcessingError && (
                     <div className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-lg flex items-center gap-4 text-rose-600">

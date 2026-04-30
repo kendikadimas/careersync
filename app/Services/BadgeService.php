@@ -64,7 +64,7 @@ class BadgeService
     private function getContext(string $slug): string
     {
         return match($slug) {
-            'first-login'       => 'Selamat datang di Career-Sync Academy!',
+            'first-login'       => 'Selamat datang di Kembangin!',
             'cv-uploaded'       => 'CV berhasil dianalisis oleh AI',
             'roadmap-generated' => 'Learning roadmap pertama berhasil dibuat',
             'first-insight'     => 'Membaca AI insights pertama kali',

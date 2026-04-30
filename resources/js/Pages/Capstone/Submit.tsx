@@ -101,7 +101,7 @@ export default function Submit({ roadmap, milestone, submission, checklist_items
 
     return (
         <AppLayout header="Submit Capstone Project">
-            <Head title={`Submit ${milestone.title} | Career-Sync`} />
+            <Head title={`Submit ${milestone.title} | Kembangin`} />
             
             <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
                 <Link href={route('roadmap')} className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-navy-900 mb-8 transition-colors">

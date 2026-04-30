@@ -29,7 +29,7 @@ export default function ProfileDetail({ profile }: ProfileDetailProps) {
 
     return (
         <AppLayout header="Profile Detail">
-            <Head title="Profile Detail | CareerSync" />
+            <Head title="Profile Detail | Kembangin" />
 
             <div className="max-w-3xl mx-auto">
                 <form onSubmit={submit} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-4">

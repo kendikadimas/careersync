@@ -79,7 +79,7 @@ export default function Onboarding() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-            <Head title="Onboarding | Career-Sync Academy" />
+            <Head title="Onboarding | Kembangin" />
             
             <div className="max-w-4xl w-full">
                 {/* Progress Bar */}

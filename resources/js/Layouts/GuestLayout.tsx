@@ -11,10 +11,8 @@ export default function Guest({ children }: PropsWithChildren) {
                 <div className="w-full max-w-md">
                     {/* Brand Logo */}
                     <Link href="/" className="inline-flex items-center gap-3 mb-12 group">
-                        <div className="w-10 h-10 bg-navy-900 rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300 shadow-lg shadow-navy-900/20">
-                            <Target className="w-6 h-6 text-teal-400" />
-                        </div>
-                        <span className="text-2xl font-black tracking-tight text-navy-900">Career-Sync</span>
+                        <img src="/logo1.svg" alt="Logo" className="w-10 h-10 object-contain" />
+                        <span className="text-2xl font-black tracking-tight text-navy-900">Kembangin</span>
                     </Link>
 
                     {/* Form Container */}

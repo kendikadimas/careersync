@@ -18,7 +18,7 @@ class CrawlJobMarket extends Command
     public function handle(JobCrawlerService $crawler, SkillAggregatorService $aggregator)
     {
         $this->info("                                                            ");
-        $this->info(" 🚀 CAREER-SYNC MULTI-SOURCE ANALYTICS PIPELINE            ");
+        $this->info(" 🚀 KEMBANGIN MULTI-SOURCE ANALYTICS PIPELINE            ");
         $this->info(" ======================================================== ");
         
         $sources = [

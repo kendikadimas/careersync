@@ -89,7 +89,7 @@ export default function Roadmap({ roadmap, profile }: any) {
 
     return (
         <AppLayout header="Learning Roadmap">
-            <Head title="Roadmap | Career-Sync" />
+            <Head title="Roadmap | Kembangin" />
 
             {!roadmap ? (
                 <div className="flex flex-col items-center justify-center py-12 md:py-20 bg-white rounded-lg md:rounded-lg border border-slate-100 shadow-sm text-center px-4 md:px-6">
@@ -149,7 +149,7 @@ export default function Roadmap({ roadmap, profile }: any) {
 
                         <div className="rounded-lg bg-white p-3 border border-slate-100">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-bold tracking-wide uppercase text-slate-400">Overall Progress</span>
+                                <span className="text-[10px] font-bold text-slate-400">Overall Progress</span>
                                 <span className="text-xs font-black text-indigo-900">{completion}%</span>
                             </div>
                             <div className="h-2 bg-slate-100 rounded-lg overflow-hidden">
@@ -188,7 +188,7 @@ export default function Roadmap({ roadmap, profile }: any) {
                                                 </div>
                                             </div>
                                             <p className="mt-2 font-black text-[12px] leading-tight line-clamp-2">{ms.title}</p>
-                                            <p className={`mt-1 text-[9px] font-bold uppercase tracking-wider ${isActive || isCurrent || isCompleted ? 'text-white/60' : 'text-slate-400'}`}>
+                                            <p className={`mt-1 text-[9px] font-bold ${isActive || isCurrent || isCompleted ? 'text-white/60' : 'text-slate-400'}`}>
                                                 {isCompleted ? 'Selesai' : isCurrent ? 'Sedang dipelajari' : 'Terkunci'}
                                             </p>
                                         </button>
@@ -203,7 +203,7 @@ export default function Roadmap({ roadmap, profile }: any) {
                                     <div>
                                         <h4 className="text-xl font-black text-slate-900 leading-tight">{selectedMilestone.title}</h4>
                                         <div className="flex flex-wrap items-center gap-2 mt-2">
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Skill Focus:</span>
+                                            <span className="text-[10px] font-bold text-slate-400">Skill Focus:</span>
                                             {selectedMilestone.skill_gaps_addressed?.map((s: string) => (
                                                 <span key={s} className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-[10px] font-bold">{s}</span>
                                             )) || <span className="text-[10px] text-slate-500 italic">Umum</span>}
@@ -238,7 +238,7 @@ export default function Roadmap({ roadmap, profile }: any) {
                                 ) : (
                                     <div className="space-y-6">
                                         <div className="rounded-lg bg-indigo-900/5 p-4 border border-indigo-100">
-                                            <h5 className="text-[11px] font-black text-indigo-900 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                            <h5 className="text-[11px] font-black text-indigo-900 mb-2 flex items-center gap-2">
                                                 <Sparkles className="w-3.5 h-3.5" />
                                                 Strategi Belajar
                                             </h5>
@@ -271,8 +271,8 @@ export default function Roadmap({ roadmap, profile }: any) {
                                                                         <PlayCircle className="w-6 h-6 fill-white" />
                                                                     </div>
                                                                 </div>
-                                                                <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] font-bold backdrop-blur-sm">
-                                                                    VIDEO
+                                                                <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] font-bold">
+                                                                    Video
                                                                 </div>
                                                             </div>
                                                         )}
@@ -280,9 +280,9 @@ export default function Roadmap({ roadmap, profile }: any) {
                                                         <div className="p-4 flex flex-col flex-1">
                                                             <div className="flex items-center gap-2 mb-2">
                                                                 {isYoutube ? (
-                                                                    <div className="px-2 py-0.5 rounded-lg bg-rose-50 text-rose-600 text-[9px] font-black uppercase tracking-wider border border-rose-100">YouTube</div>
+                                                                    <div className="px-2 py-0.5 rounded-lg bg-rose-50 text-rose-600 text-[9px] font-black border border-rose-100">YouTube</div>
                                                                 ) : (
-                                                                    <div className="px-2 py-0.5 rounded-lg bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase tracking-wider border border-indigo-100">Article</div>
+                                                                    <div className="px-2 py-0.5 rounded-lg bg-indigo-50 text-indigo-600 text-[9px] font-black border border-indigo-100">Article</div>
                                                                 )}
                                                                 {res.channel && (
                                                                     <span className="text-[10px] font-bold text-slate-400 truncate flex-1 tracking-tight">
@@ -301,7 +301,7 @@ export default function Roadmap({ roadmap, profile }: any) {
                                                                     <ExternalLink className="w-3 h-3" />
                                                                 </span>
                                                                 {res.verified && (
-                                                                    <div className="px-1.5 py-0.5 rounded-full bg-teal-50 text-teal-600 text-[8px] font-black uppercase">Verified</div>
+                                                                    <div className="px-1.5 py-0.5 rounded-full bg-teal-50 text-teal-600 text-[8px] font-black">Verified</div>
                                                                 )}
                                                             </div>
                                                         </div>
@@ -316,7 +316,7 @@ export default function Roadmap({ roadmap, profile }: any) {
                                                     <div className="p-1.5 rounded-lg bg-white/10">
                                                         <TargetIcon className="w-4 h-4 text-cyan-300" />
                                                     </div>
-                                                    <h5 className="text-[11px] font-black uppercase tracking-widest text-cyan-300">Capstone Project</h5>
+                                                    <h5 className="text-[11px] font-black text-cyan-300">Capstone Project</h5>
                                                 </div>
                                                 <h6 className="text-lg font-black leading-tight mb-2">{selectedMilestone.capstone_project.title}</h6>
                                                 <p className="text-[13px] text-indigo-100/80 leading-relaxed mb-4">{selectedMilestone.capstone_project.description}</p>

@@ -3,7 +3,7 @@
 return [
     'items' => [
         [
-            'q' => 'Bagaimana Career-Sync Academy menganalisis CV saya?',
+            'q' => 'Bagaimana Kembangin menganalisis CV saya?',
             'a' => 'Kami menggunakan Google Gemini AI untuk membaca dan mengekstrak skill dari CV kamu secara otomatis. AI kami dilatih untuk memahami berbagai format CV dan mengenali skill teknis maupun non-teknis. Prosesnya hanya butuh beberapa detik.',
         ],
         [
@@ -12,7 +12,7 @@ return [
         ],
         [
             'q' => 'Apakah platform ini benar-benar gratis?',
-            'a' => 'Ya, Career-Sync Academy sepenuhnya gratis untuk pengguna individual. Kamu bisa menganalisis CV, melihat skill gap, dan mendapatkan learning roadmap tanpa biaya apapun. Kami berkomitmen untuk membuat akses karir yang setara bagi semua orang.',
+            'a' => 'Ya, Kembangin sepenuhnya gratis untuk pengguna individual. Kamu bisa menganalisis CV, melihat skill gap, dan mendapatkan learning roadmap tanpa biaya apapun. Kami berkomitmen untuk membuat akses karir yang setara bagi semua orang.',
         ],
         [
             'q' => 'Seberapa akurat analisis skill gap-nya?',

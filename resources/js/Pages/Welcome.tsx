@@ -49,7 +49,7 @@ const StatCounter = ({ end, duration = 1500, label }: { end: number, duration?: 
 export default function Welcome({ auth }: any) {
     return (
         <div className="bg-white selection:bg-teal-100 selection:text-teal-900 overflow-hidden">
-            <Head title="Selamat Datang di Career-Sync Academy" />
+            <Head title="Selamat Datang di Kembangin" />
 
             {/* Navbar */}
             <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-xl border-b border-slate-100">
@@ -58,7 +58,7 @@ export default function Welcome({ auth }: any) {
                         <div className="w-10 h-10 bg-linear-to-tr from-navy-900 to-navy-700 rounded-xl flex items-center justify-center p-2 shadow-lg">
                            <TrendingUp className="text-teal-400" />
                         </div>
-                        <span className="text-2xl font-black text-navy-900 tracking-tighter">CareerSync</span>
+                        <span className="text-2xl font-black text-navy-900 tracking-tighter">Kembangin</span>
                     </div>
 
                     <div className="hidden md:flex items-center gap-10">
@@ -250,11 +250,11 @@ export default function Welcome({ auth }: any) {
                 <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
                      <div className="flex items-center gap-3">
                         <TrendingUp className="text-navy-900 w-6 h-6" />
-                        <span className="font-black text-xl text-navy-900 tracking-tighter">CareerSync</span>
+                        <span className="font-black text-xl text-navy-900 tracking-tighter">Kembangin</span>
                     </div>
                     
                     <div className="text-slate-400 text-sm font-medium">
-                        &copy; 2026 Career-Sync Academy. Built for Future Indonesian Talents.
+                        &copy; 2026 Kembangin. Built for Future Indonesian Talents.
                     </div>
 
                     <div className="flex items-center gap-6">

@@ -28,13 +28,12 @@ class DashboardController extends Controller
         $score = WorkReadinessScore::where('user_id', $user->id)->latest()->first();
         $scoreHistory = WorkReadinessScore::where('user_id', $user->id)
             ->latest()
+            ->take(20)
             ->get(['score', 'created_at'])
-            ->groupBy(fn ($row) => $row->created_at->format('Y-m-d'))
-            ->map(fn ($group) => [
-                'score' => (int) $group->max('score'),
-                'label' => $group->first()->created_at->locale('id')->translatedFormat('d M'),
+            ->map(fn ($row) => [
+                'score' => (int) $row->score,
+                'label' => $row->created_at->locale('id')->translatedFormat('d M H:i'),
             ])
-            ->take(12)
             ->reverse()
             ->values();
         

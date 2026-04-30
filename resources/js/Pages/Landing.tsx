@@ -1,362 +1,473 @@
-import { Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+    FileSearch, Route, TrendingUp, Trophy,
+    ArrowRight, CheckCircle2, Upload, BarChart3, Rocket,
+    GraduationCap, Building2, Menu, X, Cpu, Briefcase, Camera, Send, Mail, ExternalLink
+} from 'lucide-react';
+import InteractiveHoverButton from '@/Components/ui/interactive-hover-button';
+import CTAWithVerticalMarquee from '@/Components/ui/cta-with-text-marquee';
+import Navbar from '@/Components/Navbar';
+import { ContainerScroll } from '@/Components/ui/container-scroll-animation';
 
 interface Props {
     stats: { jobs_analyzed: number; accuracy: number; skills_mapped: number; users: number };
 }
 
-const formatNumber = (value: number) => value.toLocaleString('id-ID');
+const fmt = (v: number) => v.toLocaleString('id-ID');
 
-function Navbar() {
-    const [open, setOpen] = useState(false);
-
+/* ───────────────── HERO ───────────────── */
+function Hero() {
     return (
-        <nav className="sticky top-0 z-50 bg-white border-b border-slate-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="h-16 flex items-center justify-between">
-                    <Link href="#hero" className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold">
-                            CP
+        <section className="relative overflow-hidden bg-[#f6f6f6] pt-4 pb-4 md:pt-6 md:pb-2">
+            <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-40" />
+            <div className="flex flex-col overflow-hidden">
+                <ContainerScroll
+                    titleComponent={
+                        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-24">
+                            <div className="inline-flex items-center gap-2.5 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 text-[13px] font-semibold text-accent mb-8 hover:bg-accent/15 transition-colors cursor-default">
+                                AI-Powered Skill Gap Analysis v2.0
+                            </div>
+                            <h1 className="text-[60px] font-extrabold text-slate-900 leading-[66px] tracking-tight font-[family-name:var(--font-heading)]">
+                                Kembangkan Potensimu.<br />
+                                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                                    Sinkronkan dengan Industri.
+                                </span>
+                            </h1>
+                            <p className="mt-6 text-slate-600 text-[15px] font-medium sm:text-[18px] max-w-2xl mx-auto leading-relaxed">
+                                Platform pembelajaran adaptif yang mempersonalisasi alur belajar Anda melalui identifikasi skill-gap berbasis kecerdasan buatan.
+                            </p>
+                            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                                <InteractiveHoverButton
+                                    text="Mulai Analisis CV"
+                                    className="rounded-lg shadow-xl shadow-primary/20 text-[16px] px-8 py-3.5 min-w-0"
+                                    onClick={() => {
+                                        setTimeout(() => {
+                                            router.visit('/register');
+                                        }, 1000);
+                                    }}
+                                />
+                            </div>
                         </div>
-                        <div className="leading-tight">
-                            <p className="text-sm font-semibold text-[#1A1A2E]">CareerPath AI</p>
-                            <p className="text-[10px] text-slate-500">AI Career Platform</p>
+                    }
+                >
+                    <div className="relative h-full w-full group">
+                        <div className="absolute -inset-4 bg-primary/10 rounded-[2rem] blur-3xl opacity-30" />
+                        <div className="relative h-full bg-slate-100 rounded-2xl overflow-hidden p-2 md:p-3 shadow-2xl">
+                            <img src="/Dashboard View.png" alt="Kembangin Dashboard Preview" className="w-full h-auto rounded-xl shadow-sm" />
                         </div>
-                    </Link>
-
-                    <div className="hidden md:flex items-center gap-8 text-sm text-slate-600">
-                        <Link href="#hero" className="hover:text-[#1A1A2E] transition-colors">Home</Link>
-                        <Link href="#features" className="hover:text-[#1A1A2E] transition-colors">Fitur</Link>
-                        <Link href="#how-it-works" className="hover:text-[#1A1A2E] transition-colors">Cara Kerja</Link>
-                        <Link href="/blog" className="hover:text-[#1A1A2E] transition-colors">Blog</Link>
                     </div>
-
-                    <div className="hidden md:flex items-center">
-                        <Link
-                            href="/login"
-                            className="bg-primary text-white px-6 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg hover:bg-[#23307B] transition-all"
-                        >
-                            Login
-                        </Link>
-                    </div>
-
-                    <button
-                        onClick={() => setOpen(!open)}
-                        className="md:hidden p-2 text-slate-600 hover:text-[#1A1A2E]"
-                        aria-label="Toggle navigation"
-                    >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            {open ? (
-                                <path d="M6 18L18 6M6 6l12 12" />
-                            ) : (
-                                <path d="M4 6h16M4 12h16M4 18h16" />
-                            )}
-                        </svg>
-                    </button>
-                </div>
-                {open && (
-                    <div className="md:hidden pb-4 flex flex-col gap-3 text-sm text-slate-600">
-                        <Link href="#hero" className="hover:text-[#1A1A2E]">Home</Link>
-                        <Link href="#features" className="hover:text-[#1A1A2E]">Fitur</Link>
-                        <Link href="#how-it-works" className="hover:text-[#1A1A2E]">Cara Kerja</Link>
-                        <Link href="/blog" className="hover:text-[#1A1A2E]">Blog</Link>
-                        <Link href="/login" className="bg-primary text-white px-6 py-2 rounded-full text-center">Login</Link>
-                    </div>
-                )}
+                </ContainerScroll>
             </div>
-        </nav>
+        </section>
     );
 }
 
-function Hero() {
+/* ───────────────── FEATURES ───────────────── */
+function Features() {
     return (
-        <section id="hero" className="relative overflow-hidden bg-gradient-to-b from-[#2D3A8C] to-[#1A2460] pt-20 pb-32">
-            <div className="absolute inset-0 opacity-40">
-                <div className="absolute -top-10 -right-10 w-64 h-64 bg-[#4F6FE8] blur-3xl rounded-full"></div>
-                <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#23307B] blur-3xl rounded-full"></div>
-            </div>
-            <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-                <div className="inline-flex items-center gap-2 border border-white/30 rounded-full px-4 py-1.5 text-[11px]">
-                    SDG 4 • Education & SDG 8 • Decent Work
+        <section id="features" className="bg-[#f6f6f6] pt-10 pb-20 md:pt-16 md:pb-28">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center max-w-2xl mx-auto mb-16">
+                    <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-xs font-semibold mb-5">Fitur Utama</div>
+                    <h2 className="text-3xl sm:text-[48px] font-extrabold text-[#1A1A2E] font-[family-name:var(--font-heading)] leading-tight">
+                        Empat Pilar Transformasi Karier Digital Anda.
+                    </h2>
                 </div>
-                <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight font-[family:var(--font-heading)]">
-                    Build Your Dream Career
-                    <span className="block">Based on Real Data</span>
-                </h1>
-                <div className="mt-7 flex items-center justify-center">
-                    <Link
-                        href="/register"
-                        className="px-6 py-2.5 rounded-full border border-white/60 text-sm font-semibold hover:bg-white/10 transition-all"
-                    >
-                        Get Started
-                    </Link>
-                </div>
-
-                <div className="relative mt-14 flex items-center justify-center">
-                    <div className="hidden md:block absolute left-0 top-10 bg-white/10 border border-white/30 rounded-xl px-4 py-3 w-56 text-left backdrop-blur">
-                        <div className="flex items-center justify-between mb-2">
-                            <p className="text-[11px] font-semibold">Skill Gap Detected!</p>
-                            <div className="w-5 h-5 rounded bg-white/20 flex items-center justify-center">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-amber-300" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M12 9v4"></path>
-                                    <path d="M12 17h.01"></path>
-                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                                </svg>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    {/* Card 1 */}
+                    <div className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
+                        <div className="bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative">
+                            <div className="absolute inset-x-8 top-10 bottom-0 bg-white rounded-t-2xl p-6 border-b-0 transition-transform duration-500 group-hover:-translate-y-2">
+                                <div className="flex items-center gap-4 mb-6 pb-4 border-b border-slate-100">
+                                    <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center ring-4 ring-white ">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                    </div>
+                                    <div>
+                                        <div className="text-[12px] text-slate-500 font-medium mb-0.5 uppercase tracking-wider">Target Karier</div>
+                                        <div className="text-base font-bold text-slate-900 leading-tight">Full Stack Developer</div>
+                                    </div>
+                                    <div className="ml-auto text-right">
+                                        <div className="text-[12px] text-slate-500 font-medium mb-0.5 uppercase tracking-wider">Kecocokan</div>
+                                        <div className="text-lg font-black text-primary">82%</div>
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    {[
+                                        { skill: 'Laravel Framework', status: 'Dikuasai', icon: '✓', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+                                        { skill: 'React / Inertia.js', status: 'Dikuasai', icon: '✓', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+                                        { skill: 'Docker & CI/CD', status: 'Kesenjangan', icon: '×', color: 'text-rose-500', bg: 'bg-rose-50' }
+                                    ].map((s, idx) => (
+                                        <div key={idx} className="flex justify-between items-center bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-6 h-6 flex items-center justify-center rounded-md ${s.bg} ${s.color} font-bold text-sm`}>{s.icon}</div>
+                                                <span className="font-semibold text-slate-700 text-sm">{s.skill}</span>
+                                            </div>
+                                            <span className={`text-xs font-bold ${s.color}`}>{s.status}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                        <ul className="text-[11px] text-white/80 space-y-1">
-                            <li>Docker</li>
-                            <li>TypeScript</li>
-                            <li>Testing</li>
+                        <div className="px-6 pb-8 pt-2">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-3 font-[family-name:var(--font-heading)]">Diagnostic Assessment & Skill-Gap Profiling</h3>
+                            <p className="text-[16px] text-slate-500 leading-relaxed font-medium">
+                                Gunakan AI untuk mengekstrak kompetensi dari CV Anda dan bandingkan langsung dengan standar industri terkini untuk mengkalkulasi celah keahlian secara presisi.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Card 2 */}
+                    <div className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
+                        <div className="bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[280px] transition-transform duration-500 group-hover:scale-105">
+                                <div className="bg-white px-5 py-5 rounded-2xl border border-slate-100">
+                                    <div className="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3 flex items-center justify-between">
+                                        Roadmap Belajar <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-md">8/12 Modul</span>
+                                    </div>
+                                    <div className="relative border-l-2 border-slate-200 ml-2 space-y-5">
+                                        <div className="relative">
+                                            <div className="absolute -left-[25px] bg-emerald-500 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
+                                                <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                            </div>
+                                            <div className="pl-6">
+                                                <div className="text-xs font-bold text-slate-800">Modul 8: Backend Laravel</div>
+                                                <div className="text-[11px] text-slate-500 font-medium">Selesai • 100 XP</div>
+                                            </div>
+                                        </div>
+                                        <div className="relative">
+                                            <div className="absolute -left-[25px] bg-primary w-5 h-5 rounded-full border-4 border-white "></div>
+                                            <div className="pl-6">
+                                                <div className="text-xs font-bold text-primary">Modul 9: API & JWT Auth</div>
+                                                <div className="text-[11px] font-medium text-primary bg-primary/10 inline-block px-2 py-0.5 rounded mt-1">Sedang Berjalan</div>
+                                            </div>
+                                        </div>
+                                        <div className="relative">
+                                            <div className="absolute -left-[25px] bg-slate-200 w-5 h-5 rounded-full border-4 border-white"></div>
+                                            <div className="pl-6">
+                                                <div className="flex items-center gap-1.5"><span className="text-xs font-bold text-slate-400">Capstone Project</span></div>
+                                                <div className="text-[11px] text-slate-400 font-medium">Terkunci</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="px-6 pb-8 pt-2">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-3 font-[family-name:var(--font-heading)]">Personalized Learning Path</h3>
+                            <p className="text-[16px] text-slate-500 leading-relaxed font-medium">
+                                Dapatkan alur belajar adaptif yang dipersonalisasi serta kewajiban pengerjaan Capstone Project yang divalidasi otomatis.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Card 3 */}
+                    <div className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
+                        <div className="bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative">
+                            <div className="w-full max-w-[320px] space-y-3 transition-transform duration-500 group-hover:-translate-y-2">
+                                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center justify-between">
+                                    <span>Market Insights</span>
+                                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live API</span>
+                                </div>
+                                {[
+                                    { name: 'PostgreSQL', val: '12.4k', color: 'text-blue-600', bg: 'bg-blue-100' },
+                                    { name: 'TypeScript', val: '9.8k', color: 'text-indigo-600', bg: 'bg-indigo-100' },
+                                    { name: 'Tailwind CSS', val: '8.2k', color: 'text-cyan-600', bg: 'bg-cyan-100' },
+                                ].map((item, i) => (
+                                    <div key={i} className="bg-white p-4 rounded-2xl border border-slate-100 flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center`}>
+                                                <TrendingUp className={`w-4 h-4 ${item.color}`} />
+                                            </div>
+                                            <div className="text-[14px] font-bold text-slate-800">{item.name}</div>
+                                        </div>
+                                        <div className="text-[12px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">{item.val} Job</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="px-6 pb-8 pt-2">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-3 font-[family-name:var(--font-heading)]">Dynamic Curriculum Synchronization</h3>
+                            <p className="text-[16px] text-slate-500 leading-relaxed font-medium">
+                                Sistem mengekstraksi data kebutuhan industri secara otomatis sebagai sensor untuk mengidentifikasi Trending Skills secara real-time.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Card 4 */}
+                    <div className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
+                        <div className="bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex align-center justify-center p-6 relative">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] transition-transform duration-500 group-hover:scale-105">
+                                <div className="bg-white p-8 rounded-[32px] border border-slate-100">
+                                    <div className="text-center mb-6">
+                                        <div className="text-[13px] text-slate-500 font-medium mb-3 uppercase tracking-wider">Readiness Score</div>
+                                        <div className="relative inline-flex items-center justify-center">
+                                            <svg className="w-28 h-28 transform -rotate-90">
+                                                <circle cx="56" cy="56" r="46" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-100" />
+                                                <circle cx="56" cy="56" r="46" stroke="#3b82f6" strokeWidth="8" fill="transparent" strokeDasharray="289" strokeDashoffset="43" className="text-primary rounded-full transition-all duration-1000" />
+                                            </svg>
+                                            <div className="absolute flex flex-col items-center">
+                                                <div className="text-3xl font-extrabold tracking-tight text-slate-900">85<span className="text-xl text-slate-400 font-normal">%</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-center gap-3">
+                                        <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center border-4 border-white shadow-sm z-20"><Trophy className="w-5 h-5 text-amber-600"/></div>
+                                        <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center border-4 border-white shadow-sm z-10"><CheckCircle2 className="w-5 h-5 text-emerald-600"/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="px-6 pb-8 pt-2">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-3 font-[family-name:var(--font-heading)]">Learning Outcomes & Engagement</h3>
+                            <p className="text-[16px] text-slate-500 leading-relaxed font-medium">
+                                Validasi hasil belajar melalui Job Readiness Score (0-100%) dan portofolio publik yang didukung sistem gamifikasi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+/* ───────────────── BENEFITS ───────────────── */
+function Benefits() {
+    const otherTools = [
+        "Pembelajaran tidak terarah & generik",
+        "Sulit mengetahui skill apa yang sedang dicari HRD",
+        "Tidak ada bukti riil penguasaan kompetensi",
+        "Kurikulum sering tertinggal",
+        "Fokus hanya pada teori"
+    ];
+    const kembangin = [
+        "Roadmap belajar terpersonalisasi oleh AI",
+        "Diagnosis skill-gap presisi industri",
+        "Portofolio divalidasi via GitHub",
+        "Sinkronisasi kurikulum real-time",
+        "Job Readiness Score terukur"
+    ];
+    return (
+        <section id="benefits" className="bg-[#f6f6f6] py-20 md:py-28">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center max-w-3xl mx-auto mb-16">
+                    <div className="inline-flex items-center gap-2 border border-primary/30 text-primary rounded-full px-5 py-1.5 text-sm font-semibold mb-6 bg-white/50 backdrop-blur-sm">Kenapa Kembangin?</div>
+                    <h2 className="text-4xl md:text-[46px] font-extrabold text-[#1A1A2E] leading-tight mb-6">Cara Lebih Cerdas Membangun Karier Digital</h2>
+                </div>
+                <div className="bg-white rounded-[32px] p-2 sm:p-4 shadow-sm border border-slate-200">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-8"><h3 className="text-2xl font-bold mb-6">Platform Lain</h3><ul className="space-y-4">{otherTools.map((t,i)=>(<li key={i} className="flex items-center gap-3 text-slate-500"><X className="w-4 h-4 text-slate-300"/>{t}</li>))}</ul></div>
+                        <div className="p-8 rounded-[28px] bg-primary/5 border-2 border-primary/20"><h3 className="text-2xl font-bold mb-6 text-primary">Kembangin</h3><ul className="space-y-4">{kembangin.map((t,i)=>(<li key={i} className="flex items-center gap-3 text-slate-700 font-bold"><CheckCircle2 className="w-4 h-4 text-primary"/>{t}</li>))}</ul></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+/* ───────────────── HOW IT WORKS ───────────────── */
+function HowItWorks() {
+    const steps = [
+        {
+            title: "Diagnosis AI & Profiling",
+            desc: "AI memindai CV Anda untuk mengekstrak kompetensi dan membandingkannya dengan standar industri.",
+            visual: (
+                <div className="relative w-full h-48 mt-8 flex items-center justify-center overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent rounded-full blur-3xl" />
+                    <div className="relative flex items-center justify-center">
+                        <div className="w-32 h-32 bg-white rounded-2xl shadow-xl border border-slate-100 flex items-center justify-center relative z-10">
+                            <Upload className="w-12 h-12 text-primary" />
+                        </div>
+                        <div className="absolute -right-8 -top-4 w-16 h-16 bg-blue-50 rounded-xl shadow-lg border border-blue-100 flex items-center justify-center z-20 rotate-12">
+                            <FileSearch className="w-8 h-8 text-blue-500" />
+                        </div>
+                        <div className="absolute w-48 h-48 border border-primary/10 rounded-full" />
+                    </div>
+                </div>
+            )
+        },
+        {
+            title: "Personalized Roadmap",
+            desc: "Dapatkan alur belajar adaptif yang dirancang khusus untuk menutup gap kompetensi Anda.",
+            visual: (
+                <div className="relative w-full h-48 mt-8 flex items-center justify-center overflow-hidden">
+                    <div className="w-full max-w-[200px] bg-slate-50 rounded-2xl p-4 border border-slate-200 shadow-inner">
+                        <div className="h-2 w-full bg-slate-200 rounded-full mb-4 overflow-hidden">
+                            <div className="h-full bg-primary w-2/3" />
+                        </div>
+                        <div className="space-y-3">
+                            <div className="h-8 w-full bg-white rounded-lg border border-slate-100 flex items-center px-2 gap-2">
+                                <div className="w-4 h-4 rounded bg-emerald-500 flex items-center justify-center"><CheckCircle2 className="w-2.5 h-2.5 text-white" /></div>
+                                <div className="h-2 w-16 bg-slate-100 rounded" />
+                            </div>
+                            <div className="h-8 w-full bg-white rounded-lg border border-primary/20 flex items-center px-2 gap-2 shadow-sm">
+                                <div className="w-4 h-4 rounded bg-primary" />
+                                <div className="h-2 w-20 bg-primary/10 rounded" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            title: "Job Readiness & Karier",
+            desc: "Validasi hasil belajar melalui proyek riil dan dapatkan bukti kesiapan kerja yang diakui industri.",
+            visual: (
+                <div className="relative w-full h-48 mt-8 flex items-center justify-center">
+                    <div className="relative w-36 h-36">
+                        <svg className="w-full h-full transform -rotate-90">
+                            <circle cx="72" cy="72" r="60" stroke="currentColor" strokeWidth="10" fill="transparent" className="text-slate-100" />
+                            <circle cx="72" cy="72" r="60" stroke="#3b82f6" strokeWidth="10" fill="transparent" strokeDasharray="377" strokeDashoffset="56" strokeLinecap="round" />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <div className="text-2xl font-black text-slate-900">85%</div>
+                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ready</div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    ];
+
+    return (
+        <section id="how-it-works" className="bg-[#f6f6 f6] py-24 md:py-32 overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center max-w-3xl mx-auto mb-20">
+                    <div className="inline-flex items-center gap-2 bg-primary/5 text-primary rounded-full px-5 py-1.5 text-xs font-bold mb-6 border border-primary/10">How It Works</div>
+                    <h2 className="text-4xl md:text-[56px] font-bold text-slate-950 leading-tight mb-6 tracking-tight">Wujudkan Karier Impian<br />Dalam 3 Langkah Mudah</h2>
+                    <p className="text-slate-500 text-lg sm:text-xl font-medium leading-relaxed max-w-2xl mx-auto">Sistem cerdas kami membimbing Anda dari tahap awal hingga siap kerja di industri.</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {steps.map((step, idx) => (
+                        <motion.div 
+                            key={idx}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="bg-[#F8FAFC] border border-slate-100 rounded-[32px] p-8 lg:p-10 flex flex-col items-center text-center group hover:bg-white hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-500"
+                        >
+                            <h3 className="text-2xl font-bold text-slate-950 mb-3">{step.title}</h3>
+                            <p className="text-slate-500 font-medium leading-relaxed">{step.desc}</p>
+                            {step.visual}
+                        </motion.div>
+                    ))}
+                </div>
+                <div className="mt-20 text-center">
+                    <Link href="/how-it-works" className="inline-flex items-center gap-2 bg-white border-2 border-slate-200 text-slate-600 hover:border-primary hover:text-primary px-8 py-4 rounded-2xl font-bold transition-all shadow-sm hover:shadow-xl hover:shadow-primary/10">
+                        Pelajari Selengkapnya <ArrowRight className="w-5 h-5" />
+                    </Link>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+/* ───────────────── FOOTER ───────────────── */
+function Footer() {
+    return (
+        <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 pt-24 pb-12 overflow-hidden relative">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+            <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 mb-20">
+                    <div className="lg:col-span-1">
+                        <Link href="/" className="flex items-center gap-3 mb-8">
+                            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                                <img src="/logo1.svg" alt="Logo" className="w-6 h-6 object-contain invert brightness-0" />
+                            </div>
+                            <span className="text-2xl font-bold text-white tracking-tight font-[family-name:var(--font-heading)]">Kembangin</span>
+                        </Link>
+                        <p className="text-base leading-relaxed mb-8 max-w-sm text-slate-400 font-medium">
+                            Solusi cerdas berbasis AI untuk mengakselerasi karier digital Anda dengan menjembatani kesenjangan antara pendidikan dan industri.
+                        </p>
+                        <div className="flex items-center gap-4">
+                            {[
+                                { icon: Send, href: "#", label: "Twitter" },
+                                { icon: Briefcase, href: "#", label: "LinkedIn" },
+                                { icon: Cpu, href: "#", label: "GitHub" },
+                                { icon: Camera, href: "#", label: "Instagram" }
+                            ].map((social, i) => (
+                                <a key={i} href={social.href} className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary/20 hover:border-primary/50 transition-all duration-300">
+                                    <social.icon className="w-5 h-5" />
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 className="text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]">Produk</h4>
+                        <ul className="space-y-4">
+                            {[
+                                { name: "Fitur Utama", href: "#features" },
+                                { name: "Cara Kerja", href: "#how-it-works" },
+                                { name: "Market Insights", href: "/market" },
+                                { name: "Skill Assessment", href: "/assessment" }
+                            ].map((link, i) => (
+                                <li key={i}>
+                                    <Link href={link.href} className="text-base hover:text-white transition-colors duration-200 flex items-center group">
+                                        <div className="w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                                        {link.name}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
-                    <div className="relative bg-white rounded-2xl shadow-lg px-8 pt-6 pb-10 w-64 text-[#1A1A2E]">
-                        <p className="text-[10px] text-slate-500">Work Readiness Score</p>
-                        <div className="mt-2 text-4xl font-extrabold text-[#4F6FE8]">
-                            72<span className="text-base text-slate-400">/100</span>
-                        </div>
-                        <div className="mt-1 text-[11px] text-emerald-600 font-semibold flex items-center justify-center gap-1">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 19V5" />
-                                <path d="m5 12 7-7 7 7" />
-                            </svg>
-                            Naik 10 poin minggu ini
-                        </div>
-                        <div className="mt-4 h-2 w-full bg-slate-100 rounded-full">
-                            <div className="h-2 bg-[#4F6FE8] rounded-full" style={{ width: '72%' }}></div>
-                        </div>
-                        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/80 text-xs flex items-center gap-2">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="m6 9 6 6 6-6" />
-                            </svg>
-                            Scroll
-                        </div>
-                    </div>
-
-                    <div className="hidden md:block absolute right-0 top-10 bg-white/10 border border-white/30 rounded-xl px-4 py-3 w-52 text-left backdrop-blur">
-                        <p className="text-[11px] text-white/70">Trending Minggu Ini</p>
-                        <p className="mt-1 font-semibold">TypeScript</p>
-                        <div className="mt-2 inline-flex items-center gap-2 text-[10px] text-white/80 bg-white/10 px-2 py-1 rounded-full">
-                            40% demand naik
-                        </div>
-                        <div className="mt-3 w-8 h-8 rounded-full border border-white/60 text-white flex items-center justify-center hover:bg-white/10 transition-colors">
-                            →
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function StatsBar({ stats }: Props) {
-    return (
-        <section className="bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-200 text-center">
-                    {[
-                        { label: 'Lowongan Dianalisa', value: `${formatNumber(stats.jobs_analyzed)}+` },
-                        { label: 'Akurasi Analisis', value: `${stats.accuracy}%` },
-                        { label: 'Skill Terpetakan', value: `${formatNumber(stats.skills_mapped)}+` },
-                        { label: 'Pengguna Aktif', value: `${formatNumber(stats.users)}+` },
-                    ].map((item) => (
-                        <div key={item.label} className="py-6">
-                            <div className="text-2xl sm:text-3xl font-extrabold text-primary">{item.value}</div>
-                            <p className="text-xs text-slate-500 mt-1">{item.label}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function Features() {
-    return (
-        <section id="features" className="bg-[#F8F9FA] py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center">
-                    {/* <span className="text-xs font-semibold text-[#4F6FE8] uppercase">Fitur Utama</span> */}
-                    <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-[#2D3A8C] font-[family:var(--font-heading)]">Fitur Utama</h2>
-                </div>
-                <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[
-                        {
-                            icon: '📊',
-                            title: 'Industry Data Crawler',
-                            desc: 'Analisis ribuan lowongan kerja IT Indonesia secara real-time untuk menentukan skill yang paling dicari',
-                        },
-                        {
-                            icon: '🎯',
-                            title: 'Skill Gap Radar',
-                            desc: 'Visualisasi radar chart yang menunjukkan jarak antara kemampuan dan standar industri saat ini',
-                        },
-                        {
-                            icon: '🗺️',
-                            title: 'Dynamic Roadmap',
-                            desc: 'Learning path interaktif yang berubah mengikuti tren pasar — bukan template statis',
-                        },
-                        {
-                            icon: '⭐',
-                            title: 'Work Readiness Score',
-                            desc: 'Skor 0-100 yang mengukur kesiapan kerjamu berdasarkan skill, pengalaman dan progres belajar',
-                        },
-                    ].map((feature) => (
-                        <div
-                            key={feature.title}
-                            className="bg-[#1A2460] text-white rounded-2xl p-8 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all"
-                        >
-                            <div className="text-3xl mb-4">{feature.icon}</div>
-                            <h3 className="text-lg font-bold mb-2 font-[family:var(--font-heading)]">{feature.title}</h3>
-                            <p className="text-sm text-slate-300">{feature.desc}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function HowItWorks() {
-    return (
-        <section id="how-it-works" className="bg-white py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center max-w-2xl mx-auto">
-                    <span className="text-xs font-semibold text-[#4F6FE8] uppercase">CARA KERJA</span>
-                    <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-[#1A1A2E] font-[family:var(--font-heading)]">
-                        Dari CV ke Karir dalam 3 Langkah
-                    </h2>
-                    <p className="mt-3 text-sm text-slate-500">
-                        Tidak perlu riset manual berjam-jam. AI kami analisis pasar kerja dan profilmu secara bersamaan.
-                    </p>
-                </div>
-
-                <div className="mt-14 space-y-12">
-                    {[
-                        {
-                            step: 'Step 1',
-                            title: 'Upload CV Kamu',
-                            desc: 'Upload CV kamu ke dashboard dan AI kami akan mengekstrak semua skill dan pengalaman kamu secara otomatis',
-                            reverse: false,
-                        },
-                        {
-                            step: 'Step 2',
-                            title: 'Analisis AI',
-                            desc: 'Sistem membandingkan profilmu dengan ribuan lowongan aktif dan mengidentifikasi gap secara presisi.',
-                            reverse: true,
-                        },
-                        {
-                            step: 'Step 3',
-                            title: 'Dapatkan Dynamic Learning Path',
-                            desc: 'Terima learning path yang dipersonalisasi — dengan resource gratis dan project portofolio yang konkret.',
-                            reverse: false,
-                        },
-                    ].map((item) => (
-                        <div
-                            key={item.step}
-                            className={`flex flex-col ${item.reverse ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center`}
-                        >
-                            <div className="flex-1">
-                                <div className="h-56 w-full rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 shadow-lg"></div>
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-xs font-semibold text-[#4F6FE8]">{item.step}</p>
-                                <h3 className="mt-2 text-2xl font-bold text-[#1A1A2E] font-[family:var(--font-heading)]">
-                                    {item.title}
-                                </h3>
-                                <p className="mt-3 text-sm text-slate-500">{item.desc}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function CTABanner() {
-    return (
-        <section className="bg-[#F8F9FA] py-20">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="bg-[#2D3A8C] rounded-2xl px-6 sm:px-10 py-12 text-center text-white shadow-lg">
-                    <h2 className="text-2xl sm:text-3xl font-extrabold font-[family:var(--font-heading)]">
-                        Tunggu Apa Lagi? Mulai Sekarang!
-                    </h2>
-                    <p className="mt-3 text-sm text-white/80">Analisis CV, Ketahui Skill Gap, Raih Mimpi Besarmu</p>
-                    <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                        <Link
-                            href="/register"
-                            className="bg-white text-[#2D3A8C] px-6 py-3 rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all"
-                        >
-                            Buat Akun
-                        </Link>
-                        <Link
-                            href="/contact"
-                            className="border border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white/10 transition-all"
-                        >
-                            Hubungi Kami
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function Footer() {
-    return (
-        <footer className="bg-[#2D3A8C] text-white/80">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div>
-                        <p className="text-xs font-semibold text-white mb-4">*Name APSS</p>
-                        <p className="text-xs leading-relaxed text-white/70 max-w-xs">
-                            Platform AI untuk bridging skill gap antara kurikulum kampus dan kebutuhan industri IT Indonesia.
-                        </p>
+                        <h4 className="text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]">Sumber</h4>
+                        <ul className="space-y-4">
+                            {[
+                                { name: "Blog Karier", href: "/blog" },
+                                { name: "Dokumentasi", href: "/docs" },
+                                { name: "FAQ", href: "/faq" }
+                            ].map((link, i) => (
+                                <li key={i}>
+                                    <Link href={link.href} className="text-base hover:text-white transition-colors duration-200 flex items-center group">
+                                        <div className="w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
+                                        {link.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
+
                     <div>
-                        <p className="text-xs font-semibold text-white mb-4">PRODUK</p>
-                        <div className="flex flex-col gap-2 text-xs">
-                            <Link href="#features" className="hover:text-white transition-colors">Fitur</Link>
-                            <Link href="#how-it-works" className="hover:text-white transition-colors">Cara Kerja</Link>
-                            <Link href="/demo" className="hover:text-white transition-colors">Demo Langsung</Link>
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-xs font-semibold text-white mb-4">SUMBER</p>
-                        <div className="flex flex-col gap-2 text-xs">
-                            <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
-                            <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
-                            <Link href="/about" className="hover:text-white transition-colors">Tentang Kami</Link>
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-xs font-semibold text-white mb-4">SUMBER</p>
-                        <div className="flex flex-col gap-2 text-xs">
-                            <Link href="/login" className="hover:text-white transition-colors">Masuk</Link>
-                            <Link href="/register" className="hover:text-white transition-colors">Daftar Gratis</Link>
+                        <h4 className="text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]">Tetap Terhubung</h4>
+                        <p className="text-base mb-6 text-slate-500 font-medium">Dapatkan update terbaru mengenai tren industri.</p>
+                        <div className="relative">
+                            <input type="email" placeholder="Email Anda" className="w-full bg-slate-900 border border-slate-800 rounded-xl py-3 px-4 text-sm focus:border-primary/50 text-white transition-all" />
+                            <button className="absolute right-1 top-1 bg-primary text-white p-2 rounded-lg shadow-lg shadow-primary/20"><ArrowRight className="w-4 h-4" /></button>
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-10 border-t border-white/10 pt-4 text-xs text-white/60">
-                    © 2026 Career Sync Academy. Dibuat untuk SDG 4 & SDG 8.
+                <div className="pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="text-sm font-medium">&copy; {new Date().getFullYear()} Kembangin. Seluruh hak cipta dilindungi.</div>
+                    <div className="flex items-center gap-2 px-4 py-1.5 bg-slate-900 rounded-full border border-slate-800 text-xs font-bold text-slate-500">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        SDG 4 & SDG 8 COMPLIANT
+                    </div>
                 </div>
             </div>
         </footer>
     );
 }
 
+/* ───────────────── MAIN PAGE ───────────────── */
 export default function Landing({ stats }: Props) {
     return (
-        <div className="min-h-screen bg-white text-[#1A1A2E]">
+        <div className="min-h-screen bg-[#f6f6f6] text-[#1A1A2E]">
+            <Head title="Kembangin — AI-Powered Career Intelligence" />
             <Navbar />
             <Hero />
-            {/* <StatsBar stats={stats} /> */}
             <Features />
+            <Benefits />
             <HowItWorks />
-            <CTABanner />
+            <CTAWithVerticalMarquee />
             <Footer />
         </div>
     );

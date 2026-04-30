@@ -15,6 +15,33 @@ Platform ini tidak hanya menganalisis CV, tetapi juga memantau tren pasar kerja 
   - Materi belajar terkurasi yang memprioritaskan konten **Bahasa Indonesia** (Sandhika Galih, Eko Kurniawan, dsb).
   - Link YouTube 100% valid dengan sistem *Search-Engine fallback*.
 - **📈 Skill Gap & Readiness Score**: Visualisasi *Radar Chart* yang membandingkan kemampuan pengguna dengan standar industri saat ini.
+
+- **🏆 Capstone Project & GitHub Validation**: Evaluasi keahlian berbasis *Project-Based Learning* di mana pengguna mengerjakan studi kasus dan divalidasi langsung melalui metadata *commit* GitHub secara otomatis.
+- **💬 Peer Discussion & Community**: Forum tanya jawab dan kolaborasi teknis antarpengguna.
+- **🎯 Gamifikasi & Badges**: Sistem pencapaian (*badge*) untuk meningkatkan retensi dan motivasi pengguna dalam menyelesaikan *roadmap*.
+
+---
+
+## 🏗️ Alur Penggunaan (User Flow)
+1. **Onboarding**: Pengguna mendaftar, mengatur target profesi, dan mengunggah CV.
+2. **AI Analysis**: Fitur "Intelligent CV Parsing" mengekstraksi data *skill* dan memetakannya dengan tren industri terkini secara *real-time*.
+3. **Adaptive Roadmap**: Sistem menyusun jalur belajar personal dan efisien yang hanya berfokus pada keahlian yang belum dikuasai (*Skill Gap*).
+4. **Learning & Capstone**: Pengguna mempelajari materi terkurasi, lalu mengerjakan proyek nyata.
+5. **Validation**: Sistem memverifikasi tautan repositori GitHub pengguna untuk memastikan keaslian *coding* dan keaktifan pekerjaan.
+6. **Career Readiness**: Setelah tervalidasi, skor kesiapan kerja meningkat dan sistem memberikan rekomendasi lowongan pekerjaan yang cocok (*job matching*).
+
+---
+
+## 📚 Landasan Teori (Theoretical Foundation)
+Platform ini dibangun dengan fondasi yang kuat, menerapkan 5 pilar utama keilmuan teknologi dan edukasi:
+1. **Educational Technology (EdTech)**: Menerapkan solusi teknologi untuk memfasilitasi proses pendidikan interaktif dan terukur.
+2. **Skill Gap Analysis**: Membandingkan profil kandidat dengan agregasi data lowongan (*scraped jobs*) untuk menemukan kesenjangan kompetensi.
+3. **Adaptive Learning System**: Menyajikan materi (*roadmap*) yang dipersonalisasi secara unik untuk masing-masing pengguna berdasarkan tingkat kebutuhannya.
+4. **Web Scraping & Data Crawling**: Mengambil tren pasar kerja aktual dari portal seperti LinkedIn atau JSearch untuk rujukan keterampilan baru yang permintaannya sedang tinggi.
+5. **Project-Based Learning (PBL)**: Menerapkan skema validasi kemampuan secara praktikal (*hands-on*), menghilangkan asumsi teoritis dengan integrasi validasi API GitHub.
+
+---
+
 - **🤝 Community Hub**: Ruang kolaborasi untuk berdiskusi dengan rekan seperjuangan (Peer Discussion).
 - **🎨 Premium UI Experience**: Antarmuka modern menggunakan **Tailwind CSS v4** dengan animasi mikro dan indikator progres yang interaktif.
 

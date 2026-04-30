@@ -49,7 +49,7 @@ export default function PublicProfile({ profile_user, projects, badges }: any) {
                         </div>
                         {profile_user.score >= 80 && (
                             <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-2xl flex flex-col items-center">
-                                <div className="text-xs uppercase tracking-wider font-bold mb-1">Status</div>
+                                <div className="text-xs font-bold mb-1">Status</div>
                                 <div className="font-black text-xl flex items-center gap-1"><ShieldCheck className="w-5 h-5"/> Market Ready</div>
                             </div>
                         )}

@@ -88,7 +88,7 @@ class PublicController extends Controller
                     ],
                     [
                         'heading' => 'Apa yang Bisa Kamu Lakukan Sekarang',
-                        'body' => 'Langkah pertama adalah audit skill kamu sendiri secara jujur. Bandingkan dengan deskripsi pekerjaan untuk role yang kamu inginkan — bukan hanya satu, tapi minimal 20-30 lowongan. Pola yang muncul di mayoritas lowongan itu adalah sinyal pasar yang valid. Career-Sync Academy melakukan ini secara otomatis dan real-time.',
+                        'body' => 'Langkah pertama adalah audit skill kamu sendiri secara jujur. Bandingkan dengan deskripsi pekerjaan untuk role yang kamu inginkan — bukan hanya satu, tapi minimal 20-30 lowongan. Pola yang muncul di mayoritas lowongan itu adalah sinyal pasar yang valid. Kembangin melakukan ini secara otomatis dan real-time.',
                     ],
                 ],
                 'related_slugs' => ['cara-baca-tren-pasar-kerja-it', 'roadmap-frontend-engineer-2026'],

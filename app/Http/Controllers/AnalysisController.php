@@ -119,7 +119,7 @@ class AnalysisController extends Controller
         }
     }
 
-    private function runAnalysisForUser(int $userId, string $cvText, array $careerTargets): void
+    protected function runAnalysisForUser(int $userId, string $cvText, array $careerTargets): void
     {
         set_time_limit(120);
 
@@ -221,10 +221,10 @@ class AnalysisController extends Controller
             };
 
             $statusLabel = match (true) {
-                $gap <= 0 => 'SIAP INDUSTRI',
-                $gap <= 10 => 'HAMPIR STANDAR',
-                $gap <= 25 => 'PERLU PENINGKATAN',
-                default => 'PRIORITAS BELAJAR',
+                $gap <= 0 => 'Siap Industri',
+                $gap <= 10 => 'Hampir Standar',
+                $gap <= 25 => 'Perlu Peningkatan',
+                default => 'Prioritas Belajar',
             };
 
             $skillGaps[] = [

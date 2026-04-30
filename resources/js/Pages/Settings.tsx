@@ -27,7 +27,7 @@ export default function Settings({ settings }: SettingsProps) {
 
     return (
         <AppLayout header="Settings">
-            <Head title="Settings | CareerSync" />
+            <Head title="Settings | Kembangin" />
 
             <div className="max-w-3xl mx-auto">
                 <form onSubmit={submit} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-6">
