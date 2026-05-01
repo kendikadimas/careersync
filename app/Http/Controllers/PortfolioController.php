@@ -88,7 +88,7 @@ class PortfolioController extends Controller
 
     public function destroy(PortfolioProject $project)
     {
-        if ($project->user_id !== auth()->id()) abort(403);
+        if ($project->user_id != auth()->id()) abort(403);
         $project->delete();
         return back()->with('success', 'Project dihapus.');
     }

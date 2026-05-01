@@ -38,7 +38,6 @@ class JobApiService
             $searchQuery = $query . ' Indonesia';
             $attempts = [
                 ['query' => $searchQuery, 'country' => 'id', 'page' => 1, 'num_pages' => 1],
-                ['query' => $searchQuery, 'page' => 1, 'num_pages' => 1],
                 ['query' => $query, 'country' => 'id', 'page' => 1, 'num_pages' => 1],
             ];
 
@@ -51,8 +50,8 @@ class JobApiService
                         'X-RapidAPI-Key' => $apiKey,
                         'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
                     ])
-                    ->connectTimeout(5)
-                    ->timeout(8)
+                    ->connectTimeout(3)
+                    ->timeout(5)
                     ->get("{$this->baseUrl}/search", $params);
 
                 if ($response->failed()) {
@@ -93,73 +92,79 @@ class JobApiService
     public function fetchMarketJobs(array|string|null $careerTarget = ''): array
     {
         $roleQueries = $this->getRoleQueries($careerTarget);
-        $allJobs = [];
+        $cacheKey = "market_jobs_combined_" . md5(json_encode($roleQueries));
 
-        foreach ($roleQueries as $query) {
-            $jobs = $this->fetchJobs($query, 10);
-            $allJobs = array_merge($allJobs, $jobs);
-        }
+        return Cache::remember($cacheKey, 3600, function() use ($roleQueries, $careerTarget) {
+            $allJobs = [];
 
-        // Count how many jobs are from Indonesia to decide if we need fallbacks
-        $indoCount = count(array_filter($allJobs, function ($job) {
-            return $this->isIndonesiaRelatedLocation((string) ($job['location'] ?? ''));
-        }));
-
-        // Secondary source: JobsAPI14 LinkedIn wrapper.
-        if ($indoCount < 15) {
             foreach ($roleQueries as $query) {
-                $api14Jobs = array_merge(
-                    $this->fetchJobsApi14($query, 'Indonesia', 8),
-                    $this->fetchJobsApi14($query, 'Jakarta', 8)
-                );
-                $allJobs = array_merge($allJobs, $api14Jobs);
+                $jobs = $this->fetchJobs($query, 12);
+                $allJobs = array_merge($allJobs, $jobs);
+                // Early exit if we got enough from primary source
+                if (count($allJobs) >= 15) break;
             }
-        }
 
-        $indoCount = count(array_filter($allJobs, function ($job) {
-            return $this->isIndonesiaRelatedLocation((string) ($job['location'] ?? ''));
-        }));
+            // Count how many jobs are from Indonesia to decide if we need fallbacks
+            $indoCount = count(array_filter($allJobs, function ($job) {
+                return $this->isIndonesiaRelatedLocation((string) ($job['location'] ?? ''));
+            }));
 
-        // Optional sources (only active if keys configured).
-        if ($indoCount < 20) {
-            foreach ($roleQueries as $query) {
-                $allJobs = array_merge($allJobs, $this->fetchAdzunaJobs($query, 8));
-                $allJobs = array_merge($allJobs, $this->fetchJoobleJobs($query, 8));
+            // Secondary source: JobsAPI14 LinkedIn wrapper.
+            if ($indoCount < 15) {
+                foreach ($roleQueries as $query) {
+                    $api14Jobs = array_merge(
+                        $this->fetchJobsApi14($query, 'Indonesia', 8),
+                        $this->fetchJobsApi14($query, 'Jakarta', 8)
+                    );
+                    $allJobs = array_merge($allJobs, $api14Jobs);
+                }
             }
-        }
 
-        // If still empty and primary API failed, try a key-less fallback API (Arbeitnow)
-        if (empty($allJobs)) {
-            Log::info('JSearch: No results or key missing. Trying Arbeitnow (No-Key Fallback)...');
-            $allJobs = $this->fetchArbeitnowJobs($careerTarget);
-        }
+            $indoCount = count(array_filter($allJobs, function ($job) {
+                return $this->isIndonesiaRelatedLocation((string) ($job['location'] ?? ''));
+            }));
 
-        // Deduplicate by title + company
-        $seen = [];
-        $unique = [];
-        foreach ($allJobs as $job) {
-            $key = strtolower(trim($job['title'] . '_' . $job['company']));
-            if (!isset($seen[$key])) {
-                $seen[$key] = true;
-                $unique[] = $job;
+            // Optional sources (only active if keys configured).
+            if ($indoCount < 20) {
+                foreach ($roleQueries as $query) {
+                    $allJobs = array_merge($allJobs, $this->fetchAdzunaJobs($query, 8));
+                    $allJobs = array_merge($allJobs, $this->fetchJoobleJobs($query, 8));
+                }
             }
-        }
 
-        // Prioritaskan lowongan yang jelas Indonesia/remote.
-        $indonesiaRelevant = [];
-        $others = [];
-        
-        foreach ($unique as $job) {
-            if ($this->isIndonesiaRelatedLocation((string) ($job['location'] ?? ''))) {
-                $indonesiaRelevant[] = $job;
-            } else {
-                $others[] = $job;
+            // If still empty and primary API failed, try a key-less fallback API (Arbeitnow)
+            if (empty($allJobs)) {
+                Log::info('JSearch: No results or key missing. Trying Arbeitnow (No-Key Fallback)...');
+                $allJobs = $this->fetchArbeitnowJobs($careerTarget);
             }
-        }
 
-        $sortedJobs = array_merge($indonesiaRelevant, $others);
+            // Deduplicate by title + company
+            $seen = [];
+            $unique = [];
+            foreach ($allJobs as $job) {
+                $key = strtolower(trim($job['title'] . '_' . $job['company']));
+                if (!isset($seen[$key])) {
+                    $seen[$key] = true;
+                    $unique[] = $job;
+                }
+            }
 
-        return array_slice($sortedJobs, 0, 35);
+            // Prioritaskan lowongan yang jelas Indonesia/remote.
+            $indonesiaRelevant = [];
+            $others = [];
+            
+            foreach ($unique as $job) {
+                if ($this->isIndonesiaRelatedLocation((string) ($job['location'] ?? ''))) {
+                    $indonesiaRelevant[] = $job;
+                } else {
+                    $others[] = $job;
+                }
+            }
+
+            $sortedJobs = array_merge($indonesiaRelevant, $others);
+
+            return array_slice($sortedJobs, 0, 35);
+        });
     }
 
     /**
@@ -526,8 +531,8 @@ class JobApiService
                         'X-RapidAPI-Key' => $apiKey,
                         'X-RapidAPI-Host' => 'jobs-api14.p.rapidapi.com',
                     ])
-                    ->connectTimeout(15)
-                    ->timeout(30)
+                    ->connectTimeout(5)
+                    ->timeout(10)
                     ->get('https://jobs-api14.p.rapidapi.com/v2/linkedin/search', [
                         'query' => $query,
                         'location' => $location,

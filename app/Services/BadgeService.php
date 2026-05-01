@@ -42,8 +42,8 @@ class BadgeService
             }
         }
 
-        // Update rank dan total points
-        $this->updateRankAndPoints($user);
+        // Update rank dan total points - use fresh user to get latest badges
+        $this->updateRankAndPoints($user->fresh());
 
         return $awarded;
     }
@@ -87,8 +87,9 @@ class BadgeService
 
     public function updateRankAndPoints(User $user): void
     {
+        // Re-fetch badges directly from DB to avoid relationship caching issues
         $badges = $user->badges()->get();
-        $totalPoints = $badges->sum(fn($b) => $b->points ?? 10);
+        $totalPoints = $badges->sum(fn($b) => $b->points ?? 0);
         $badgeCount = $badges->count();
 
         $rank = match(true) {
@@ -99,6 +100,11 @@ class BadgeService
             default           => 'Apprentice',
         };
 
-        $user->update(['rank' => $rank, 'total_points' => $totalPoints]);
+        $user->update([
+            'rank' => $rank, 
+            'total_points' => (int) $totalPoints
+        ]);
+        
+        \Illuminate\Support\Facades\Log::info("User {$user->id} updated: Points={$totalPoints}, Rank={$rank}, Badges={$badgeCount}");
     }
 }

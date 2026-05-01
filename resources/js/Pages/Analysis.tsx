@@ -24,6 +24,13 @@ interface CareerPath {
     required_skills: string[];
 }
 
+interface AnalysisResult {
+    radarSkills: { label: string; userVal: number; industryVal: number }[];
+    skillGaps: { name: string; userScore: number; industryScore: number }[];
+    aiRecommendation: string;
+    alternativePositions: { title: string; skills: string; match: number }[];
+}
+
 interface Props {
     profile: any;
     marketSkills: any[];
@@ -203,7 +210,7 @@ function RadarChart({ data }: { data: { label: string; userVal: number; industry
             {data.map((d, i) => {
                 const lp = labelPoint(i);
                 const cos = Math.cos(lp.angle);
-                let anchor = "middle";
+                let anchor: "start" | "middle" | "end" = "middle";
                 if (cos > 0.2) anchor = "start";
                 else if (cos < -0.2) anchor = "end";
 

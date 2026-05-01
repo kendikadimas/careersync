@@ -391,8 +391,14 @@ PROMPT;
             $cleaned = $this->cleanJson($text);
             $details = json_decode($cleaned, true) ?: ['why_important' => 'Milestone ini krusial untuk kompetensi industri.'];
             
-            // Integrasi dengan YouTubeSearchService untuk materi REAL
-            $resources = $this->youtube->searchForSkill($title, $careerTarget);
+            // Ambil skill pertama atau gabungan skill untuk pencarian yang lebih akurat
+            // Daripada pakai judul milestone yang panjang (misal: "Advanced Git Workflow..."), 
+            // lebih akurat pakai skill spesifik (misal: "Git")
+            $searchQuery = !empty($milestone['skill_gaps_addressed']) 
+                ? $milestone['skill_gaps_addressed'][0] 
+                : $title;
+
+            $resources = $this->youtube->searchForSkill($searchQuery, $careerTarget);
             $details['resources'] = array_map(function($res) {
                 return [
                     'title' => $res['title'],

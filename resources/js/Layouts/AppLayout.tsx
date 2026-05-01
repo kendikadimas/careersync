@@ -63,10 +63,11 @@ export default function AppLayout({ children, header }: Props) {
             ]
         }
     ];
-    const activeItem = menuGroups.flatMap(g => g.items).find((item) => item.active);
+    const navItems = menuGroups.flatMap(g => g.items);
+    const activeItem = navItems.find((item) => item.active);
 
     return (
-        <div className="min-h-screen bg-[#F3F6FF] flex text-[#1A1A2E] font-(--font-heading) max-w-full items-start">
+        <div className="min-h-screen bg-[#F3F6FF] flex text-[#1A1A2E] dashboard-font max-w-full items-start">
             {/* Sidebar Desktop */}
             <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-indigo-950 sticky top-0 h-screen z-20 border-r border-white/5 transition-all duration-200 shadow-2xl`}>
                 <div className="p-6 flex items-center gap-3">
@@ -86,7 +87,7 @@ export default function AppLayout({ children, header }: Props) {
                     {menuGroups.map((group, idx) => (
                         <div key={group.title} className={idx !== 0 ? 'mt-8' : ''}>
                             {!isSidebarCollapsed && (
-                                <p className="text-[10px] font-black text-indigo-400/50 tracking-widest px-4 mb-3">
+                                <p className="text-[10px] font-extrabold text-white tracking-widest px-4 mb-3">
                                     {group.title}
                                 </p>
                             )}
@@ -98,7 +99,7 @@ export default function AppLayout({ children, header }: Props) {
                                         className={`w-full h-10 ${isSidebarCollapsed ? 'px-0 justify-center' : 'px-4 justify-between'} rounded-lg text-[12px] font-black inline-flex items-center transition-all ${
                                             item.active
                                                 ? 'bg-white text-indigo-950 shadow-lg shadow-indigo-950/20'
-                                                : 'text-indigo-100/60 hover:bg-white/10 hover:text-white'
+                                                : 'text-indigo-100/60 font-bold hover:bg-white/10 hover:text-white'
                                         }`}
                                     >
                                         <span className={`inline-flex items-center ${isSidebarCollapsed ? '' : 'gap-3'}`}>

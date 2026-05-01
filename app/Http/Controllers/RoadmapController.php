@@ -109,7 +109,7 @@ class RoadmapController extends Controller
     public function getMilestoneDetails(Request $request, $roadmapId, $milestoneId)
     {
         $roadmap = UserRoadmap::findOrFail($roadmapId);
-        if ($roadmap->user_id !== auth()->id()) abort(403);
+        if ($roadmap->user_id != auth()->id()) abort(403);
 
         $data = $roadmap->roadmap_data;
         $milestoneIndex = -1;

@@ -490,7 +490,7 @@ export default function Dashboard({
                             </div>
                         </div>
 
-                        {/* Quick Stats Grid */}
+                        
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1 min-h-[180px]">
                             <div className="bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group">
                                 <div className="relative z-10">

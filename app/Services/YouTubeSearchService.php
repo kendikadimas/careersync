@@ -17,73 +17,127 @@ class YouTubeSearchService
     }
 
     /**
+     * Channel ID kreator IT populer Indonesia yang sudah terverifikasi
+     */
+    private array $trustedChannels = [
+        'UCkXmLjEr95LVtGuIm3l2dPg', // Web Programming UNPAS
+        'UC14ZKB9XsDZbnHVmr4AmUpQ', // Programmer Zaman Now
+        'UCJz2UMVqtJ7BpBovArX5q6Q', // Sekolah Koding
+        'UCYxxuYRwJeHqMpHJQqYG3MA', // Kelas Terbuka
+        'UCQ7FMXFdT0Q4mGGOB30KeqA', // Dicoding Indonesia
+        'UCc9XtqOoqmZN_ZFMK0j-7zg', // buildwithangga
+    ];
+
+    /**
      * Cari video YouTube bahasa Indonesia untuk topik tertentu
-     * Prioritaskan channel populer Indonesia yang relevan dengan IT
+     * Prioritaskan channel populer Indonesia — BUKAN Shorts, BUKAN search query
      */
     public function searchForSkill(string $skillName, string $context = ''): array
     {
         // Cache per topik — hemat quota API
-        $cacheKey = 'yt_' . md5($skillName . $context);
+        $cacheKey = 'yt_v3_' . md5($skillName . $context);
 
         return Cache::remember($cacheKey, now()->addDays(7), function () use ($skillName, $context) {
-            // Query bahasa Indonesia untuk hasil yang lebih relatable
-            $query = trim($skillName . ' tutorial bahasa indonesia ' . $context);
 
             if (empty($this->apiKey)) {
                 return $this->getFallbackResources($skillName);
             }
 
-            $response = Http::withoutVerifying()->get($this->baseUrl, [
-                'part'          => 'snippet',
-                'q'             => $query,
-                'type'          => 'video',
-                'maxResults'    => 4,
-                'relevanceLanguage' => 'id',
-                'regionCode'    => 'ID',
-                'key'           => $this->apiKey,
-                // Filter channel populer IT Indonesia
-                'videoCategoryId' => '28', // Science & Technology
+            // Satu query langsung — lebih cepat, filter tetap ketat
+            $results = $this->searchWithParams($skillName . ' tutorial', [
+                'videoDuration'    => 'medium',
+                'videoEmbeddable'  => 'true',
+                'maxResults'       => 8,   // Kita cuma butuh 4, ambil 8 buat ruang filter
+                'relevanceLanguage'=> 'id',
+                'regionCode'       => 'ID',
+                'videoCategoryId'  => '28',
             ]);
 
-            if (!$response->successful()) {
-                \Illuminate\Support\Facades\Log::error('YouTube API Error: ' . $response->body());
+            if (empty($results)) {
                 return $this->getFallbackResources($skillName);
             }
 
-            $items = $response->json('items', []);
-
-            if (empty($items)) {
-                return $this->getFallbackResources($skillName);
+            // Tambahkan artikel hanya kalau hasil YT < 3
+            if (count($results) < 3) {
+                $article = $this->searchArticle($skillName);
+                if ($article) {
+                    $results[] = $article;
+                }
             }
 
-            $resources = [];
-            foreach ($items as $item) {
-                $videoId = $item['id']['videoId'] ?? null;
-                if (!$videoId) continue;
-
-                $channelTitle = $item['snippet']['channelTitle'] ?? 'YouTube';
-                $title = $item['snippet']['title'] ?? $skillName . ' Tutorial';
-
-                $resources[] = [
-                    'title'       => html_entity_decode($title),
-                    'url'         => 'https://www.youtube.com/watch?v=' . $videoId,
-                    'type'        => 'youtube',
-                    'channel'     => $channelTitle,
-                    'thumbnail'   => $item['snippet']['thumbnails']['medium']['url'] ?? null,
-                    'is_free'     => true,
-                    'language'    => 'id',
-                    'verified'    => true, // URL ini pasti valid karena dari API
-                ];
-            }
-
-            // Tambahkan 1 artikel Google sebagai pelengkap
-            $article = $this->searchArticle($skillName);
-            if ($article) {
-                $resources[] = $article;
-            }
-
-            return array_filter($resources);
+            return array_values(array_filter($results));
         });
+    }
+
+    /**
+     * Eksekusi pencarian ke YouTube API dengan validasi ketat
+     */
+    private function searchWithParams(string $skillName, array $extraParams): array
+    {
+        $query = $skillName . ' tutorial bahasa indonesia';
+
+        $params = array_merge([
+            'part' => 'snippet',
+            'q'    => $query,
+            'type' => 'video',
+            'key'  => $this->apiKey,
+        ], $extraParams);
+
+        $response = Http::withoutVerifying()->get($this->baseUrl, $params);
+
+        if (!$response->successful()) {
+            \Illuminate\Support\Facades\Log::error('YouTube API Error: ' . $response->body());
+            return [];
+        }
+
+        $items = $response->json('items', []);
+        $resources = [];
+
+        foreach ($items as $item) {
+            $videoId     = $item['id']['videoId'] ?? null;
+            $title       = $item['snippet']['title'] ?? '';
+            $description = strtolower($item['snippet']['description'] ?? '');
+            $channelId   = $item['snippet']['channelId'] ?? '';
+            $channelName = $item['snippet']['channelTitle'] ?? 'YouTube';
+
+            // 1. Harus punya videoId yang valid
+            if (!$videoId || strlen($videoId) !== 11) continue;
+
+            // 2. Blok Shorts: cek hashtag di title/desc & URL pattern
+            $titleLower = strtolower($title);
+            $isShort = str_contains($titleLower, '#shorts')
+                || str_contains($titleLower, '#short')
+                || str_contains($description, '#shorts')
+                || str_contains($description, '#short');
+
+            if ($isShort) continue;
+
+            // 3. Bonus skor: prioritaskan channel Indonesia yang dikenal
+            $isTrustedChannel = in_array($channelId, $this->trustedChannels);
+
+            // 4. Hanya ambil video dari trusted channel atau yang mengandung nama skill di judul
+            $skillInTitle = str_contains($titleLower, strtolower($skillName));
+            if (!$isTrustedChannel && !$skillInTitle) continue;
+
+            $resources[] = [
+                'title'        => html_entity_decode($title),
+                'url'          => 'https://www.youtube.com/watch?v=' . $videoId,
+                'type'         => 'youtube',
+                'channel'      => $channelName,
+                'thumbnail'    => $item['snippet']['thumbnails']['medium']['url'] ?? null,
+                'is_free'      => true,
+                'language'     => 'id',
+                'verified'     => true,
+                'trusted_id_channel' => $isTrustedChannel,
+            ];
+
+            if (count($resources) >= 4) break;
+        }
+
+        // Urutkan: trusted channel dulu, sisanya belakang
+        usort($resources, fn($a, $b) => ($b['trusted_id_channel'] ? 1 : 0) - ($a['trusted_id_channel'] ? 1 : 0));
+
+        return $resources;
     }
 
     /**

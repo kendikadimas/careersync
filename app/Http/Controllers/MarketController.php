@@ -19,6 +19,7 @@ class MarketController extends Controller
 
     public function index(Request $request)
     {
+        set_time_limit(60);
         $profile = UserProfile::where('user_id', auth()->id())->first();
         $careerTargets = $profile?->career_target ?? 'software engineer'; // Default fallback
 

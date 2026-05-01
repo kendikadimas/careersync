@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -16,6 +16,7 @@
   --color-teal-600: #3D5DD6;
   --font-sans: "Geist", ui-sans-serif, system-ui;
   --font-heading: "Geist", ui-sans-serif, system-ui;
+  --font-montserrat: "Montserrat", ui-sans-serif, system-ui;
 }
 
 @layer base {
@@ -24,6 +25,14 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+  }
+}
+
+@utility dashboard-font {
+  font-family: var(--font-montserrat) !important;
+  
+  & h1, & h2, & h3, & h4, & h5, & h6, & span, & p, & button, & a, & input {
+    font-family: var(--font-montserrat) !important;
   }
 }
 

@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
     Cpu, Briefcase, Camera, Send, 
     Upload, CheckCircle2, X, Trophy, 
@@ -133,16 +133,6 @@ function PremiumFooter() {
 }
 
 export default function HowItWorks() {
-    const { scrollYProgress } = useScroll();
-    
-    // Balanced timing: 0.9 ensures it stays visible but follows the scroll consistently
-    const acceleratedProgress = useTransform(scrollYProgress, [0, 0.9], [0, 1]);
-    
-    const pathLength = useSpring(acceleratedProgress, {
-        stiffness: 800,
-        damping: 60,
-        restDelta: 0.001
-    });
 
     const steps = [
         {
@@ -306,12 +296,11 @@ export default function HowItWorks() {
                             strokeWidth="32" 
                             strokeLinecap="round" 
                         />
-                        <motion.path 
+                        <path 
                             d="M1200,300 C1100,500 350,600 350,1100 C350,1300 100,1500 350,1900 C600,2300 350,2300 350,2700 C350,3100 100,3100 350,3500 C600,3900 350,3900 350,4300 C350,4700 100,4700 350,4900" 
                             stroke="url(#line-gradient-blue)" 
                             strokeWidth="32" 
                             strokeLinecap="round" 
-                            style={{ pathLength }}
                         />
                         <defs>
                             <linearGradient id="line-gradient-blue" x1="0" y1="0" x2="0" y2="1">
@@ -339,9 +328,9 @@ export default function HowItWorks() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1 }}
-                                className="text-5xl lg:text-7xl font-black text-[#1A1A2E] font-[family-name:var(--font-heading)] leading-[0.9] mb-8 tracking-tighter"
+                                className="text-5xl lg:text-7xl font-black text-[#1A1A2E] font-[family-name:var(--font-heading)] mb-8 tracking-tighter"
                             >
-                                The simple way <br /> to get <span className="text-primary">perfect</span> <br /> career path.
+                                Jalan Pintas <br /> Menuju<br /> <span className="text-primary">Karir Impian.</span>
                             </motion.h1>
                             <motion.p 
                                 initial={{ opacity: 0, y: 20 }}

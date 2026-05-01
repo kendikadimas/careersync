@@ -9,7 +9,6 @@ class LeaderboardController extends Controller
     public function index()
     {
         $leaders = User::where('show_on_leaderboard', true)
-            ->whereHas('badges')
             ->with(['badges' => fn($q) => $q->orderByPivot('earned_at','desc')->take(3)])
             ->withCount('badges')
             ->orderByDesc('total_points')

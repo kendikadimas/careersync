@@ -12,12 +12,14 @@ use Inertia\Inertia;
 
 use App\Services\GeminiService;
 use App\Services\JobApiService;
+use App\Services\BadgeService;
 
 class DashboardController extends Controller
 {
     public function __construct(
         protected GeminiService $gemini,
-        protected JobApiService $jobApi
+        protected JobApiService $jobApi,
+        protected BadgeService $badgeService
     ) {}
 
     public function index()
@@ -38,6 +40,8 @@ class DashboardController extends Controller
             ->values();
         
         // NOTE: Auto-generate insights disabled as per user request to use manual trigger
+        // Trigger initial badges (like first-login)
+        $this->badgeService->checkAndAwardBadges($user);
 
         $careerTargets = $profile?->career_target ?? 'software engineer';
         $primaryTarget = is_array($careerTargets) ? ($careerTargets[0] ?? 'software engineer') : $careerTargets;
