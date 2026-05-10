@@ -114,7 +114,7 @@ export default function CTAWithVerticalMarquee() {
   }, []);
 
   return (
-    <section className="bg-[#f6f6f6] pt-4 pb-16 md:pt-8 md:pb-24">
+    <section className="bg-[#f6f6f6] pt-4 pb-8 md:pt-8 md:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative bg-white rounded-[40px] px-8 py-16 sm:px-16 overflow-hidden shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] border border-slate-100 flex items-center min-h-[500px]">
           
@@ -127,7 +127,7 @@ export default function CTAWithVerticalMarquee() {
             {/* Left Content (Text & Button) */}
             <div className="flex-1 text-center lg:text-left py-8 lg:py-0 relative z-20 max-w-xl">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1A1A2E] font-[family-name:var(--font-heading)] leading-[1.1] mb-6 tracking-tight animate-fade-in-up">
-                Saatnya Mulai Transformasi<br className="hidden md:block"/>Karier Anda 
+                Saatnya Mulai Transformasi<br className="hidden md:block"/> Karier Anda 
               </h2>
               <p className="mt-4 text-slate-500 text-lg md:text-xl mb-10 font-medium leading-relaxed animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                 Dapatkan roadmap presisi secara instan, validasi portofolio cerdas, dan sinkronisasi menuju posisi idaman Anda di industri.
@@ -149,7 +149,7 @@ export default function CTAWithVerticalMarquee() {
             </div>
 
             {/* Right Marquee + Logo Kembangin */}
-            <div className="relative flex-1 h-[400px] lg:h-[550px] w-full flex items-center justify-center animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+            <div className="hidden md:flex relative flex-1 h-[400px] lg:h-[550px] w-full items-center justify-center animate-fade-in-up" style={{ animationDelay: '600ms' }}>
               
               {/* Logo removed as requested */}
 

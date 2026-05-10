@@ -21,18 +21,18 @@ const fmt = (v: number) => v.toLocaleString('id-ID');
 /* ───────────────── HERO ───────────────── */
 function Hero() {
     return (
-        <section className="relative overflow-hidden bg-[#f6f6f6] pt-28 pb-4 md:pt-8 md:pb-2">
+        <section className="relative overflow-hidden bg-[#f6f6f6] pt-12 pb-4 md:pt-8 md:pb-2">
             <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-40" />
             <div className="flex flex-col overflow-hidden">
                 <ContainerScroll
                     titleComponent={
                         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16 md:mb-24">
-                            <div className="inline-flex items-center gap-2.5 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 text-[13px] font-semibold text-accent mb-8 hover:bg-accent/15 transition-colors cursor-default">
+                            <div className="inline-flex items-center gap-2.5 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 text-xs sm:text-[13px] font-semibold text-accent mb-6 hover:bg-accent/15 transition-colors cursor-default">
                                 AI-Powered Skill Gap Analysis v2.0
                             </div>
-                            <h1 className="text-[44px] sm:text-[60px] font-extrabold text-slate-900 leading-[1.1] sm:leading-[66px] tracking-tight font-[family-name:var(--font-heading)]">
+                            <h1 className="text-[38px] sm:text-[60px] font-extrabold text-slate-900 leading-[1.1] sm:leading-[66px] tracking-tight font-[family-name:var(--font-heading)]">
                                 Kembangkan Potensimu.<br />
-                                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent block mt-1">
                                     Sinkronkan dengan Industri.
                                 </span>
                             </h1>
@@ -42,7 +42,7 @@ function Hero() {
                             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <InteractiveHoverButton
                                     text="Mulai Analisis CV"
-                                    className="rounded-lg shadow-xl shadow-primary/20 text-[16px] px-8 py-3.5 min-w-0"
+                                    className="rounded-lg shadow-xl shadow-primary/20 text-sm sm:text-[16px] px-6 sm:px-8 py-3 min-w-0"
                                     onClick={() => {
                                         setTimeout(() => {
                                             router.visit('/register');

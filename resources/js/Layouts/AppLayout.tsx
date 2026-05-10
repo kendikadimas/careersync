@@ -72,7 +72,7 @@ export default function AppLayout({ children, header }: Props) {
             <aside className={`hidden md:flex flex-col ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-indigo-950 sticky top-0 h-screen z-20 border-r border-white/5 transition-all duration-200 shadow-2xl`}>
                 <div className="p-6 flex items-center gap-3">
                     <img src="/logo-white.svg" alt="Logo" className="w-10 h-10 object-contain" />
-                    {!isSidebarCollapsed && <span className="font-bold text-lg text-white tracking-tight">Kembangin</span>}
+                    {!isSidebarCollapsed && <span className="font-bold text-lg text-white tracking-tight">Kembang.in</span>}
                     <button
                         type="button"
                         onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -297,8 +297,8 @@ export default function AppLayout({ children, header }: Props) {
                     <aside className="absolute left-0 top-0 bottom-0 w-[80%] max-w-sm sm:w-80 bg-indigo-950 text-white flex flex-col p-5 animate-in slide-in-from-left duration-300">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">K</div>
-                                <span className="font-bold text-lg tracking-tight">Kembangin</span>
+                                <img src="/logo-white.svg" alt="Logo" className="w-10 h-10 object-contain" />
+                                <span className="font-bold text-lg tracking-tight">Kembang.in</span>
                             </div>
                             <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/50 hover:text-white">
                                 <X className="w-6 h-6" />

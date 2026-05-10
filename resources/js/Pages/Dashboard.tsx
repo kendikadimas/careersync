@@ -224,7 +224,7 @@ function TrendingSkillsChart({ data }: { data: any[] }) {
         }));
 
     // Find max growth to scale the chart nicely
-    const maxGrowth = Math.max(...chartData.map(d => d.growth), 10);
+    const maxGrowth = Math.max(...chartData.map(d => d.growth), 1);
 
     return (
         <div className="h-[280px] w-full">
@@ -232,18 +232,18 @@ function TrendingSkillsChart({ data }: { data: any[] }) {
                 <BarChart
                     layout="vertical"
                     data={chartData}
-                    margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+                    margin={{ top: 5, right: 35, left: 0, bottom: 5 }}
                     barSize={12}
                 >
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
-                    <XAxis type="number" hide domain={[0, maxGrowth + 2]} />
+                    <XAxis type="number" hide domain={[0, maxGrowth * 1.25]} />
                     <YAxis 
                         dataKey="name" 
                         type="category" 
                         axisLine={false} 
                         tickLine={false}
-                        width={100}
-                        tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }}
+                        width={125}
+                        tick={{ fill: '#64748b', fontSize: 11, fontWeight: 600 }}
                     />
                     <Tooltip 
                         cursor={{ fill: '#f8fafc' }}
@@ -380,12 +380,12 @@ export default function Dashboard({
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang, {user.name}!</h1>
-                        <div className="flex items-center gap-3 mt-1">
-                            <p className="text-slate-500 text-sm">Pantau perkembangan karirmu dan raih target kerjamu hari ini.</p>
+                        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Selamat Datang, {user.name}!</h1>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2">
+                            <p className="text-slate-500 text-sm leading-snug">Pantau perkembangan karirmu dan raih target kerjamu hari ini.</p>
                             <Link 
                                 href={route('profile.public', user.rank === 'admin' ? 1 : user.id)} 
-                                className="flex items-center gap-1.5 text-[11px] font-black text-indigo-600 hover:text-indigo-700 transition-colors bg-indigo-50 px-2.5 py-1 rounded-lg"
+                                className="inline-flex w-fit items-center gap-1.5 text-[11px] font-black text-indigo-600 hover:text-indigo-700 transition-colors bg-indigo-50 px-2.5 py-1.5 rounded-lg"
                             >
                                 <Eye className="w-3 h-3" />
                                 Lihat Profil Publik
@@ -411,7 +411,7 @@ export default function Dashboard({
                 {/* Top Row: Readiness & Focus */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                     {/* Readiness Gauge */}
-                    <div className="lg:col-span-4 bg-white rounded-lg p-6 sm:p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center h-full">
+                    <div className="lg:col-span-4 bg-white rounded-lg p-5 sm:p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center h-full">
                         <div className="w-full flex items-center justify-between mb-6">
                             <h3 className="text-lg font-black text-slate-900">Work Readiness</h3>
                             <div className="flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded-lg">
@@ -472,7 +472,7 @@ export default function Dashboard({
                                     </Link>
                                 </div>
                                 <div className="mt-auto">
-                                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-4">{careerTarget}</h2>
+                                    <h2 className="text-xl sm:text-3xl font-black tracking-tight mb-3 sm:mb-4">{careerTarget}</h2>
                                     <div className="flex items-center gap-3 mt-2">
                                         <div className="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
                                             <div className="flex gap-1">
@@ -491,34 +491,34 @@ export default function Dashboard({
                         </div>
 
                         
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1 min-h-[180px]">
-                            <div className="bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 flex-1 min-h-[160px] sm:min-h-[180px]">
+                            <div className="bg-white rounded-lg p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group col-span-1">
                                 <div className="relative z-10">
-                                    <p className="text-black text-[18px] font-bold ">Total Skills</p>
+                                    <p className="text-black text-[14px] sm:text-[18px] font-bold leading-tight">Total Skills</p>
                                 </div>
-                                <div className="relative z-10 mt-auto">
-                                    <p className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter">{skillCount}</p>
-                                    <p className="text-[10px] font-bold text-black mt-1 italic">Terdata di sistem</p>
+                                <div className="relative z-10 mt-2 sm:mt-auto">
+                                    <p className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tighter">{skillCount}</p>
+                                    <p className="text-[9px] sm:text-[10px] font-bold text-black mt-1 italic leading-tight">Terdata di sistem</p>
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group">
+                            <div className="bg-white rounded-lg p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group col-span-1">
                                 <div className="relative z-10">
-                                    <p className="text-black text-[18px] font-bold ">Skill Gap</p>
+                                    <p className="text-black text-[14px] sm:text-[18px] font-bold leading-tight">Skill Gap</p>
                                 </div>
-                                <div className="relative z-10 mt-auto">
-                                    <p className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter">{skillGap}</p>
-                                    <p className="text-[10px] font-bold text-black mt-1 italic">Perlu dipelajari</p>
+                                <div className="relative z-10 mt-2 sm:mt-auto">
+                                    <p className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tighter">{skillGap}</p>
+                                    <p className="text-[9px] sm:text-[10px] font-bold text-black mt-1 italic leading-tight">Perlu dipelajari</p>
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between text-white overflow-hidden relative h-full group">
+                            <div className="bg-white rounded-lg p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between text-black overflow-hidden relative h-full group col-span-2 sm:col-span-1">
                                 <div className="relative z-10">
-                                    <p className="text-black text-[18px] font-bold ">Milestones</p>
+                                    <p className="text-black text-[14px] sm:text-[18px] font-bold leading-tight">Milestones</p>
                                 </div>
-                                <div className="relative z-10 mt-auto">
-                                    <p className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter">{milestoneReached}</p>
-                                    <p className="text-[10px] font-bold text-black mt-1 italic">Telah dicapai</p>
+                                <div className="relative z-10 mt-2 sm:mt-auto">
+                                    <p className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tighter">{milestoneReached}</p>
+                                    <p className="text-[9px] sm:text-[10px] font-bold text-black mt-1 italic leading-tight">Telah dicapai</p>
                                 </div>
                             </div>
                         </div>
@@ -536,7 +536,9 @@ export default function Dashboard({
                                 <span className="text-[11px] font-bold text-slate-500">Daily Progress</span>
                             </div>
                         </div>
-                        <GrowthChart data={growthData} labels={growthLabels} />
+                        <div className="w-full min-h-[120px] flex items-end">
+                            <GrowthChart data={growthData} labels={growthLabels} />
+                        </div>
                     </div>
 
                     {/* Mastered Skills Row Carousel */}

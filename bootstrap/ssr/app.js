@@ -180,116 +180,70 @@ function Navbar() {
 //#region resources/js/Components/Footer.tsx
 function Footer() {
 	return /* @__PURE__ */ jsxs("footer", {
-		className: "bg-slate-950 text-slate-400 border-t border-slate-900 pt-24 pb-12 overflow-hidden relative",
-		children: [
-			/* @__PURE__ */ jsx("div", { className: "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" }),
-			/* @__PURE__ */ jsx("div", { className: "absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none" }),
-			/* @__PURE__ */ jsxs("div", {
-				className: "max-w-7xl mx-auto px-6 lg:px-8",
+		className: "bg-[#0B0F19] text-slate-400 border-t border-slate-800/60 pt-20 pb-10 overflow-hidden relative",
+		children: [/* @__PURE__ */ jsxs("div", {
+			className: "max-w-7xl mx-auto px-6 lg:px-8 relative z-10",
+			children: [/* @__PURE__ */ jsxs("div", {
+				className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16",
 				children: [/* @__PURE__ */ jsxs("div", {
-					className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 mb-20",
-					children: [
-						/* @__PURE__ */ jsxs("div", {
-							className: "lg:col-span-1",
-							children: [/* @__PURE__ */ jsxs(Link, {
-								href: "/",
-								className: "flex items-center gap-3 mb-8",
-								children: [/* @__PURE__ */ jsx("div", {
-									className: "w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20",
-									children: /* @__PURE__ */ jsx("img", {
-										src: "/logo1.svg",
-										alt: "Logo",
-										className: "w-6 h-6 object-contain invert brightness-0"
-									})
-								}), /* @__PURE__ */ jsx("span", {
-									className: "text-2xl font-bold text-white tracking-tight font-[family-name:var(--font-heading)]",
-									children: "Kembangin"
-								})]
-							}), /* @__PURE__ */ jsx("p", {
-								className: "text-base leading-relaxed max-w-sm text-slate-400 font-medium",
-								children: "Solusi cerdas berbasis AI untuk mengakselerasi karier digital Anda dengan menjembatani kesenjangan antara pendidikan dan industri."
-							})]
-						}),
-						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
-							className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-							children: "Produk"
-						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-4",
-							children: [{
-								name: "Fitur Utama",
-								href: "/#features"
-							}, {
-								name: "Cara Kerja",
-								href: "/how-it-works"
-							}].map((link, i) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, {
-								href: link.href,
-								className: "text-base hover:text-white transition-colors duration-200 flex items-center group",
-								children: [/* @__PURE__ */ jsx("div", { className: "w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" }), link.name]
-							}) }, i))
-						})] }),
-						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
-							className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-							children: "Sumber"
-						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-4",
-							children: [
-								{
-									name: "Tentang Kami",
-									href: "/about"
-								},
-								{
-									name: "Blog Karier",
-									href: "/blog"
-								},
-								{
-									name: "FAQ",
-									href: "/faq"
-								}
-							].map((link, i) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, {
-								href: link.href,
-								className: "text-base hover:text-white transition-colors duration-200 flex items-center group",
-								children: [/* @__PURE__ */ jsx("div", { className: "w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" }), link.name]
-							}) }, i))
-						})] }),
-						/* @__PURE__ */ jsxs("div", { children: [
-							/* @__PURE__ */ jsx("h4", {
-								className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-								children: "Tetap Terhubung"
-							}),
-							/* @__PURE__ */ jsx("p", {
-								className: "text-base mb-6 text-slate-500 font-medium",
-								children: "Dapatkan update terbaru mengenai tren industri."
-							}),
-							/* @__PURE__ */ jsxs("div", {
-								className: "relative",
-								children: [/* @__PURE__ */ jsx("input", {
-									type: "email",
-									placeholder: "Email Anda",
-									className: "w-full bg-slate-900 border border-slate-800 rounded-xl py-3 px-4 text-sm focus:border-primary/50 text-white transition-all"
-								}), /* @__PURE__ */ jsx("button", {
-									className: "absolute right-1 top-1 bg-primary text-white p-2 rounded-lg shadow-lg shadow-primary/20",
-									"aria-label": "Subscribe",
-									children: /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4" })
-								})]
+					className: "lg:col-span-2",
+					children: [/* @__PURE__ */ jsxs(Link, {
+						href: "/",
+						className: "flex items-center gap-3 mb-6",
+						children: [/* @__PURE__ */ jsx("div", {
+							className: "w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20",
+							children: /* @__PURE__ */ jsx("img", {
+								src: "/logo1.svg",
+								alt: "Logo",
+								className: "w-6 h-6 object-contain invert brightness-0"
 							})
-						] })
-					]
-				}), /* @__PURE__ */ jsxs("div", {
-					className: "pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6",
-					children: [/* @__PURE__ */ jsxs("div", {
-						className: "text-sm font-medium",
-						children: [
-							"© ",
-							(/* @__PURE__ */ new Date()).getFullYear(),
-							" Kembangin. Seluruh hak cipta dilindungi."
-						]
-					}), /* @__PURE__ */ jsxs("div", {
-						className: "flex items-center gap-2 px-4 py-1.5 bg-slate-900 rounded-full border border-slate-800 text-xs font-bold text-slate-500",
-						children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), "SDG 4 & SDG 8 COMPLIANT"]
+						}), /* @__PURE__ */ jsx("span", {
+							className: "text-2xl font-bold text-white tracking-tight font-[family-name:var(--font-heading)]",
+							children: "Kembang.in"
+						})]
+					}), /* @__PURE__ */ jsx("p", {
+						className: "text-sm leading-relaxed mb-8 max-w-[280px] text-slate-400 font-medium",
+						children: "Platform cerdas berbasis AI yang menjembatani kesenjangan antara kurikulum pendidikan dan kebutuhan industri IT masa kini."
 					})]
+				}), /* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
+					className: "text-white font-bold text-base mb-6 tracking-wide",
+					children: "Produk"
+				}), /* @__PURE__ */ jsx("ul", {
+					className: "space-y-4",
+					children: [
+						{
+							name: "Fitur Utama",
+							href: "/features"
+						},
+						{
+							name: "Cara Kerja",
+							href: "/how-it-works"
+						},
+						{
+							name: "Coba Demo",
+							href: "/demo"
+						}
+					].map((link, i) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsx(Link, {
+						href: link.href,
+						className: "text-sm hover:text-white transition-colors duration-200",
+						children: link.name
+					}) }, i))
+				})] })]
+			}), /* @__PURE__ */ jsxs("div", {
+				className: "pt-8 border-t border-slate-800/60 flex flex-col md:flex-row justify-between items-center gap-6",
+				children: [/* @__PURE__ */ jsxs("div", {
+					className: "flex items-center gap-2 px-4 py-1.5 bg-slate-900/50 rounded-full border border-slate-800 text-xs font-semibold text-slate-400",
+					children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), "Mendukung SDG 4 & SDG 8"]
+				}), /* @__PURE__ */ jsxs("div", {
+					className: "text-xs text-slate-500 font-medium",
+					children: [
+						"© ",
+						(/* @__PURE__ */ new Date()).getFullYear(),
+						" Kembang.in. Hak cipta dilindungi."
+					]
 				})]
-			})
-		]
+			})]
+		}), /* @__PURE__ */ jsx("div", { className: "absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" })]
 	});
 }
 //#endregion
@@ -730,7 +684,7 @@ function AppLayout({ children, header }) {
 							}),
 							!isSidebarCollapsed && /* @__PURE__ */ jsx("span", {
 								className: "font-bold text-lg text-white tracking-tight",
-								children: "Kembangin"
+								children: "Kembang.in"
 							}),
 							/* @__PURE__ */ jsx("button", {
 								type: "button",
@@ -1016,12 +970,13 @@ function AppLayout({ children, header }) {
 							className: "flex items-center justify-between mb-8",
 							children: [/* @__PURE__ */ jsxs("div", {
 								className: "flex items-center gap-3",
-								children: [/* @__PURE__ */ jsx("div", {
-									className: "w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20",
-									children: "K"
+								children: [/* @__PURE__ */ jsx("img", {
+									src: "/logo-white.svg",
+									alt: "Logo",
+									className: "w-10 h-10 object-contain"
 								}), /* @__PURE__ */ jsx("span", {
 									className: "font-bold text-lg tracking-tight",
-									children: "Kembangin"
+									children: "Kembang.in"
 								})]
 							}), /* @__PURE__ */ jsx("button", {
 								onClick: () => setIsMobileMenuOpen(false),
@@ -3622,7 +3577,7 @@ function TrendingSkillsChart({ data }) {
 		growth: s.change || 0,
 		full: 100
 	}));
-	const maxGrowth = Math.max(...chartData.map((d) => d.growth), 10);
+	const maxGrowth = Math.max(...chartData.map((d) => d.growth), 1);
 	return /* @__PURE__ */ jsx("div", {
 		className: "h-[280px] w-full",
 		children: /* @__PURE__ */ jsx(ResponsiveContainer, {
@@ -3633,8 +3588,8 @@ function TrendingSkillsChart({ data }) {
 				data: chartData,
 				margin: {
 					top: 5,
-					right: 30,
-					left: 10,
+					right: 35,
+					left: 0,
 					bottom: 5
 				},
 				barSize: 12,
@@ -3647,17 +3602,17 @@ function TrendingSkillsChart({ data }) {
 					/* @__PURE__ */ jsx(XAxis, {
 						type: "number",
 						hide: true,
-						domain: [0, maxGrowth + 2]
+						domain: [0, maxGrowth * 1.25]
 					}),
 					/* @__PURE__ */ jsx(YAxis, {
 						dataKey: "name",
 						type: "category",
 						axisLine: false,
 						tickLine: false,
-						width: 100,
+						width: 125,
 						tick: {
 							fill: "#64748b",
-							fontSize: 12,
+							fontSize: 11,
 							fontWeight: 600
 						}
 					}),
@@ -3776,20 +3731,20 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 			/* @__PURE__ */ jsxs("div", {
 				className: "flex flex-col md:flex-row md:items-center justify-between gap-4",
 				children: [/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsxs("h1", {
-					className: "text-2xl font-black text-slate-900 tracking-tight",
+					className: "text-xl sm:text-2xl font-black text-slate-900 tracking-tight",
 					children: [
 						"Selamat Datang, ",
 						user.name,
 						"!"
 					]
 				}), /* @__PURE__ */ jsxs("div", {
-					className: "flex items-center gap-3 mt-1",
+					className: "flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2",
 					children: [/* @__PURE__ */ jsx("p", {
-						className: "text-slate-500 text-sm",
+						className: "text-slate-500 text-sm leading-snug",
 						children: "Pantau perkembangan karirmu dan raih target kerjamu hari ini."
 					}), /* @__PURE__ */ jsxs(Link, {
 						href: route("profile.public", user.rank === "admin" ? 1 : user.id),
-						className: "flex items-center gap-1.5 text-[11px] font-black text-indigo-600 hover:text-indigo-700 transition-colors bg-indigo-50 px-2.5 py-1 rounded-lg",
+						className: "inline-flex w-fit items-center gap-1.5 text-[11px] font-black text-indigo-600 hover:text-indigo-700 transition-colors bg-indigo-50 px-2.5 py-1.5 rounded-lg",
 						children: [/* @__PURE__ */ jsx(Eye, { className: "w-3 h-3" }), "Lihat Profil Publik"]
 					})]
 				})] }), /* @__PURE__ */ jsxs("div", {
@@ -3820,7 +3775,7 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 			/* @__PURE__ */ jsxs("div", {
 				className: "grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch",
 				children: [/* @__PURE__ */ jsxs("div", {
-					className: "lg:col-span-4 bg-white rounded-lg p-6 sm:p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center h-full",
+					className: "lg:col-span-4 bg-white rounded-lg p-5 sm:p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center h-full",
 					children: [
 						/* @__PURE__ */ jsxs("div", {
 							className: "w-full flex items-center justify-between mb-6",
@@ -3893,7 +3848,7 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 							}), /* @__PURE__ */ jsxs("div", {
 								className: "mt-auto",
 								children: [/* @__PURE__ */ jsx("h2", {
-									className: "text-2xl sm:text-3xl font-black tracking-tight mb-4",
+									className: "text-xl sm:text-3xl font-black tracking-tight mb-3 sm:mb-4",
 									children: careerTarget
 								}), /* @__PURE__ */ jsx("div", {
 									className: "flex items-center gap-3 mt-2",
@@ -3919,61 +3874,61 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 							})]
 						})
 					}), /* @__PURE__ */ jsxs("div", {
-						className: "grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1 min-h-[180px]",
+						className: "grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 flex-1 min-h-[160px] sm:min-h-[180px]",
 						children: [
 							/* @__PURE__ */ jsxs("div", {
-								className: "bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group",
+								className: "bg-white rounded-lg p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group col-span-1",
 								children: [/* @__PURE__ */ jsx("div", {
 									className: "relative z-10",
 									children: /* @__PURE__ */ jsx("p", {
-										className: "text-black text-[18px] font-bold ",
+										className: "text-black text-[14px] sm:text-[18px] font-bold leading-tight",
 										children: "Total Skills"
 									})
 								}), /* @__PURE__ */ jsxs("div", {
-									className: "relative z-10 mt-auto",
+									className: "relative z-10 mt-2 sm:mt-auto",
 									children: [/* @__PURE__ */ jsx("p", {
-										className: "text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter",
+										className: "text-3xl sm:text-5xl font-black text-slate-900 tracking-tighter",
 										children: skillCount
 									}), /* @__PURE__ */ jsx("p", {
-										className: "text-[10px] font-bold text-black mt-1 italic",
+										className: "text-[9px] sm:text-[10px] font-bold text-black mt-1 italic leading-tight",
 										children: "Terdata di sistem"
 									})]
 								})]
 							}),
 							/* @__PURE__ */ jsxs("div", {
-								className: "bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group",
+								className: "bg-white rounded-lg p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group col-span-1",
 								children: [/* @__PURE__ */ jsx("div", {
 									className: "relative z-10",
 									children: /* @__PURE__ */ jsx("p", {
-										className: "text-black text-[18px] font-bold ",
+										className: "text-black text-[14px] sm:text-[18px] font-bold leading-tight",
 										children: "Skill Gap"
 									})
 								}), /* @__PURE__ */ jsxs("div", {
-									className: "relative z-10 mt-auto",
+									className: "relative z-10 mt-2 sm:mt-auto",
 									children: [/* @__PURE__ */ jsx("p", {
-										className: "text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter",
+										className: "text-3xl sm:text-5xl font-black text-slate-900 tracking-tighter",
 										children: skillGap
 									}), /* @__PURE__ */ jsx("p", {
-										className: "text-[10px] font-bold text-black mt-1 italic",
+										className: "text-[9px] sm:text-[10px] font-bold text-black mt-1 italic leading-tight",
 										children: "Perlu dipelajari"
 									})]
 								})]
 							}),
 							/* @__PURE__ */ jsxs("div", {
-								className: "bg-white rounded-lg p-6 border border-slate-100 shadow-sm flex flex-col justify-between text-white overflow-hidden relative h-full group",
+								className: "bg-white rounded-lg p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col justify-between text-black overflow-hidden relative h-full group col-span-2 sm:col-span-1",
 								children: [/* @__PURE__ */ jsx("div", {
 									className: "relative z-10",
 									children: /* @__PURE__ */ jsx("p", {
-										className: "text-black text-[18px] font-bold ",
+										className: "text-black text-[14px] sm:text-[18px] font-bold leading-tight",
 										children: "Milestones"
 									})
 								}), /* @__PURE__ */ jsxs("div", {
-									className: "relative z-10 mt-auto",
+									className: "relative z-10 mt-2 sm:mt-auto",
 									children: [/* @__PURE__ */ jsx("p", {
-										className: "text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter",
+										className: "text-3xl sm:text-5xl font-black text-slate-900 tracking-tighter",
 										children: milestoneReached
 									}), /* @__PURE__ */ jsx("p", {
-										className: "text-[10px] font-bold text-black mt-1 italic",
+										className: "text-[9px] sm:text-[10px] font-bold text-black mt-1 italic leading-tight",
 										children: "Telah dicapai"
 									})]
 								})]
@@ -3998,9 +3953,12 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 								children: "Daily Progress"
 							})]
 						})]
-					}), /* @__PURE__ */ jsx(GrowthChart, {
-						data: growthData,
-						labels: growthLabels
+					}), /* @__PURE__ */ jsx("div", {
+						className: "w-full min-h-[120px] flex items-end",
+						children: /* @__PURE__ */ jsx(GrowthChart, {
+							data: growthData,
+							labels: growthLabels
+						})
 					})]
 				}), /* @__PURE__ */ jsxs("div", {
 					className: "lg:col-span-4 bg-white rounded-lg p-6 sm:p-8 shadow-sm border border-slate-100 flex flex-col h-full justify-between overflow-hidden",
@@ -6171,7 +6129,7 @@ function CTAWithVerticalMarquee() {
 		return () => cancelAnimationFrame(frame);
 	}, []);
 	return /* @__PURE__ */ jsx("section", {
-		className: "bg-[#f6f6f6] pt-4 pb-16 md:pt-8 md:pb-24",
+		className: "bg-[#f6f6f6] pt-4 pb-8 md:pt-8 md:pb-12",
 		children: /* @__PURE__ */ jsx("div", {
 			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
 			children: /* @__PURE__ */ jsxs("div", {
@@ -6190,7 +6148,7 @@ function CTAWithVerticalMarquee() {
 									children: [
 										"Saatnya Mulai Transformasi",
 										/* @__PURE__ */ jsx("br", { className: "hidden md:block" }),
-										"Karier Anda"
+										" Karier Anda"
 									]
 								}),
 								/* @__PURE__ */ jsx("p", {
@@ -6215,7 +6173,7 @@ function CTAWithVerticalMarquee() {
 								})
 							]
 						}), /* @__PURE__ */ jsx("div", {
-							className: "relative flex-1 h-[400px] lg:h-[550px] w-full flex items-center justify-center animate-fade-in-up",
+							className: "hidden md:flex relative flex-1 h-[400px] lg:h-[550px] w-full items-center justify-center animate-fade-in-up",
 							style: { animationDelay: "600ms" },
 							children: /* @__PURE__ */ jsxs("div", {
 								ref: marqueeRef,
@@ -6256,14 +6214,11 @@ var ContainerScroll = ({ titleComponent, children }) => {
 			window.removeEventListener("resize", checkMobile);
 		};
 	}, []);
-	const scaleDimensions = () => {
-		return isMobile ? [.7, .9] : [1.05, 1];
-	};
-	const rotate = useTransform(scrollYProgress, [0, 1], [20, 0]);
-	const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
-	const translate = useTransform(scrollYProgress, [0, 1], [0, -100]);
+	const rotate = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [20, 0]);
+	const scale = useTransform(scrollYProgress, [0, 1], isMobile ? [1, 1] : [1.05, 1]);
+	const translate = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, -100]);
 	return /* @__PURE__ */ jsx("div", {
-		className: "h-[40rem] md:h-[80rem] flex items-start justify-center relative p-2 md:px-20 md:pt-2 md:pb-10",
+		className: "h-auto md:h-[80rem] flex items-start justify-center relative p-4 md:px-20 md:pt-2 md:pb-10",
 		ref: containerRef,
 		children: /* @__PURE__ */ jsxs("div", {
 			className: "py-2 md:py-4 w-full relative",
@@ -6294,9 +6249,9 @@ var Card = ({ rotate, scale, children }) => {
 			scale,
 			boxShadow: "0 10px 25px -5px #3b82f626, 0 8px 10px -6px #3b82f61a"
 		},
-		className: "max-w-5xl -mt-12 mx-auto h-fit w-full border border-white p-2 md:p-6 bg-white/40 backdrop-blur-md rounded-[30px] shadow-xl",
+		className: "max-w-5xl -mt-4 md:-mt-12 mx-auto h-fit w-full border border-white p-2 md:p-6 bg-white/40 backdrop-blur-md rounded-[30px] shadow-xl",
 		children: /* @__PURE__ */ jsx("div", {
-			className: "h-auto w-full overflow-hidden rounded-2xl bg-transparent",
+			className: "h-auto w-full overflow-hidden rounded-2xl bg-slate-100",
 			children
 		})
 	});
@@ -6306,7 +6261,7 @@ var Card = ({ rotate, scale, children }) => {
 var Landing_exports = /* @__PURE__ */ __exportAll({ default: () => Landing });
 function Hero() {
 	return /* @__PURE__ */ jsxs("section", {
-		className: "relative overflow-hidden bg-[#f6f6f6] pt-28 pb-4 md:pt-8 md:pb-2",
+		className: "relative overflow-hidden bg-[#f6f6f6] pt-12 pb-4 md:pt-8 md:pb-2",
 		children: [/* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-40" }), /* @__PURE__ */ jsx("div", {
 			className: "flex flex-col overflow-hidden",
 			children: /* @__PURE__ */ jsx(ContainerScroll, {
@@ -6314,16 +6269,16 @@ function Hero() {
 					className: "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16 md:mb-24",
 					children: [
 						/* @__PURE__ */ jsx("div", {
-							className: "inline-flex items-center gap-2.5 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 text-[13px] font-semibold text-accent mb-8 hover:bg-accent/15 transition-colors cursor-default",
+							className: "inline-flex items-center gap-2.5 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 text-xs sm:text-[13px] font-semibold text-accent mb-6 hover:bg-accent/15 transition-colors cursor-default",
 							children: "AI-Powered Skill Gap Analysis v2.0"
 						}),
 						/* @__PURE__ */ jsxs("h1", {
-							className: "text-[44px] sm:text-[60px] font-extrabold text-slate-900 leading-[1.1] sm:leading-[66px] tracking-tight font-[family-name:var(--font-heading)]",
+							className: "text-[38px] sm:text-[60px] font-extrabold text-slate-900 leading-[1.1] sm:leading-[66px] tracking-tight font-[family-name:var(--font-heading)]",
 							children: [
 								"Kembangkan Potensimu.",
 								/* @__PURE__ */ jsx("br", {}),
 								/* @__PURE__ */ jsx("span", {
-									className: "bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent",
+									className: "bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent block mt-1",
 									children: "Sinkronkan dengan Industri."
 								})
 							]
@@ -6336,7 +6291,7 @@ function Hero() {
 							className: "mt-10 flex flex-col sm:flex-row items-center justify-center gap-4",
 							children: /* @__PURE__ */ jsx(InteractiveHoverButton, {
 								text: "Mulai Analisis CV",
-								className: "rounded-lg shadow-xl shadow-primary/20 text-[16px] px-8 py-3.5 min-w-0",
+								className: "rounded-lg shadow-xl shadow-primary/20 text-sm sm:text-[16px] px-6 sm:px-8 py-3 min-w-0",
 								onClick: () => {
 									setTimeout(() => {
 										router.visit("/register");
