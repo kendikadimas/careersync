@@ -352,7 +352,7 @@ export default function HowItWorks() {
                     </div>
 
                     {/* Timeline Steps - All Images Left */}
-                    <div className="space-y-[40vh] pb-[20vh]">
+                    <div className="space-y-24 sm:space-y-32 md:space-y-48 pb-20 md:pb-[20vh]">
                         {steps.map((step, idx) => (
                             <motion.div 
                                 key={idx} 

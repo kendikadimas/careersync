@@ -20,7 +20,7 @@ const fmt = (v: number) => v.toLocaleString('id-ID');
 /* ───────────────── HERO ───────────────── */
 function Hero() {
     return (
-        <section className="relative overflow-hidden bg-[#f6f6f6] pt-4 pb-4 md:pt-6 md:pb-2">
+        <section className="relative overflow-hidden bg-[#f6f6f6] pt-32 pb-4 md:pt-40 md:pb-2">
             <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-40" />
             <div className="flex flex-col overflow-hidden">
                 <ContainerScroll
@@ -78,7 +78,7 @@ function Features() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     
                     {/* Card 1 */}
-                    <div className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
+                    <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: 0.1 }} className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
                         <div className="bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative">
                             <div className="absolute inset-x-4 md:inset-x-8 top-10 bottom-0 bg-white rounded-t-2xl p-6 border-b-0 transition-transform duration-500 group-hover:-translate-y-2 text-left">
                                 <div className="flex items-center gap-4 mb-6 pb-4 border-b border-slate-100">
@@ -117,10 +117,10 @@ function Features() {
                                 Gunakan AI untuk mengekstrak kompetensi dari CV Anda dan bandingkan langsung dengan standar industri terkini untuk mengkalkulasi celah keahlian secara presisi.
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Card 2 */}
-                    <div className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
+                    <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: 0.2 }} className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
                         <div className="bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative">
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[280px] transition-transform duration-500 group-hover:scale-105">
                                 <div className="bg-white px-5 py-5 rounded-2xl border border-slate-100">
@@ -161,10 +161,10 @@ function Features() {
                                 Dapatkan alur belajar adaptif yang dipersonalisasi serta kewajiban pengerjaan Capstone Project yang divalidasi otomatis.
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Card 3 */}
-                    <div className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
+                    <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: 0.3 }} className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
                         <div className="bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative">
                             <div className="w-full max-w-[320px] space-y-3 transition-transform duration-500 group-hover:-translate-y-2">
                                 <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center justify-between">
@@ -194,10 +194,10 @@ function Features() {
                                 Sistem mengekstraksi data kebutuhan industri secara otomatis sebagai sensor untuk mengidentifikasi Trending Skills secara real-time.
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Card 4 */}
-                    <div className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
+                    <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: 0.4 }} className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
                         <div className="bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex align-center justify-center p-6 relative">
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-[340px] transition-transform duration-500 group-hover:scale-105">
                                 <div className="bg-white p-8 rounded-[32px] border border-slate-100">
@@ -226,7 +226,7 @@ function Features() {
                                 Validasi hasil belajar melalui Job Readiness Score (0-100%) dan portofolio publik yang didukung sistem gamifikasi.
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </section>

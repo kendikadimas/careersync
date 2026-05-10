@@ -114,7 +114,7 @@ export default function CTAWithVerticalMarquee() {
   }, []);
 
   return (
-    <section className="bg-[#f6f6f6] py-16 md:py-24">
+    <section className="bg-[#f6f6f6] pt-4 pb-16 md:pt-8 md:pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative bg-white rounded-[40px] px-8 py-16 sm:px-16 overflow-hidden shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] border border-slate-100 flex items-center min-h-[500px]">
           

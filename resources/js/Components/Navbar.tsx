@@ -36,15 +36,15 @@ export default function Navbar() {
                     </button>
                 </div>
                 {open && (
-                    <div className="md:hidden pb-4 flex flex-col gap-2 text-sm">
-                        <Link href="/how-it-works" className="py-4 text-slate-600 font-medium border-t border-slate-50">Cara Kerja</Link>
-                        <Link href="/about" className="py-4 text-slate-600 font-medium border-t border-slate-50">Tentang Kami</Link>
-                        <Link href="/login" className="py-4 text-slate-600 font-medium border-t border-slate-50">Masuk</Link>
+                    <div className="md:hidden pb-6 px-4 flex flex-col gap-2 text-sm">
+                        <Link href="/how-it-works" className="py-4 px-4 text-slate-600 font-medium border-t border-slate-50">Cara Kerja</Link>
+                        <Link href="/about" className="py-4 px-4 text-slate-600 font-medium border-t border-slate-50">Tentang Kami</Link>
+                        <Link href="/login" className="py-4 px-4 text-slate-600 font-medium border-t border-slate-50">Masuk</Link>
                         <InteractiveHoverButton
                             text="Mulai Gratis"
                             loadingText=""
                             successText=""
-                            className="rounded-lg mt-2 min-w-0"
+                            className="rounded-lg mt-2 mx-4 min-w-0"
                             onClick={() => {
                                 setTimeout(() => {
                                     router.visit('/register');

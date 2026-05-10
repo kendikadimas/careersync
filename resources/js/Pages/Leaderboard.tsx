@@ -71,8 +71,8 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
                 </div>
 
                 {/* PODIUM TOP 3 */}
-                <div className="flex flex-col sm:flex-row justify-center items-end gap-0 sm:gap-4 md:gap-8 pt-10 pb-4 px-4 overflow-x-auto sm:overflow-x-visible no-scrollbar">
-                    {[1, 0, 2].map(idx => {
+                <div className="flex flex-col sm:flex-row justify-center items-center sm:items-end gap-12 sm:gap-4 md:gap-8 pt-10 pb-4 px-4">
+                    {[0, 1, 2].map(idx => {
                         const leader = leaders[idx];
                         if (!leader) return null;
                         const isFirst = idx === 0;
@@ -80,7 +80,7 @@ export default function Leaderboard({ leaders, current_user_rank, user_opted_in 
                         const isThird = idx === 2;
 
                         return (
-                            <div key={leader.id} className={`flex flex-col items-center flex-shrink-0 sm:flex-shrink w-64 sm:w-1/3 max-w-[260px] group transition-all duration-500 ${isFirst ? 'z-10 -mb-2' : 'z-0'}`}>
+                            <div key={leader.id} className={`flex flex-col items-center w-full max-w-[260px] sm:w-1/3 group transition-all duration-500 ${isFirst ? 'order-1 sm:order-2 z-10' : isSecond ? 'order-2 sm:order-1 z-0' : 'order-3 z-0'}`}>
                                 {/* Avatar & Top Badges */}
                                 <div className="relative mb-6">
                                     <div className={`w-20 h-20 rounded-full p-1 bg-white shadow-2xl flex items-center justify-center text-2xl font-black relative z-10 border-4 ${

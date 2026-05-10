@@ -143,28 +143,28 @@ function Navbar() {
 					})
 				]
 			}), open && /* @__PURE__ */ jsxs("div", {
-				className: "md:hidden pb-4 flex flex-col gap-2 text-sm",
+				className: "md:hidden pb-6 px-4 flex flex-col gap-2 text-sm",
 				children: [
 					/* @__PURE__ */ jsx(Link, {
 						href: "/how-it-works",
-						className: "py-4 text-slate-600 font-medium border-t border-slate-50",
+						className: "py-4 px-4 text-slate-600 font-medium border-t border-slate-50",
 						children: "Cara Kerja"
 					}),
 					/* @__PURE__ */ jsx(Link, {
 						href: "/about",
-						className: "py-4 text-slate-600 font-medium border-t border-slate-50",
+						className: "py-4 px-4 text-slate-600 font-medium border-t border-slate-50",
 						children: "Tentang Kami"
 					}),
 					/* @__PURE__ */ jsx(Link, {
 						href: "/login",
-						className: "py-4 text-slate-600 font-medium border-t border-slate-50",
+						className: "py-4 px-4 text-slate-600 font-medium border-t border-slate-50",
 						children: "Masuk"
 					}),
 					/* @__PURE__ */ jsx(InteractiveHoverButton, {
 						text: "Mulai Gratis",
 						loadingText: "",
 						successText: "",
-						className: "rounded-lg mt-2 min-w-0",
+						className: "rounded-lg mt-2 mx-4 min-w-0",
 						onClick: () => {
 							setTimeout(() => {
 								router.visit("/register");
@@ -2192,23 +2192,23 @@ function Login({ status, canResetPassword }) {
 			children: status
 		}),
 		/* @__PURE__ */ jsxs("div", {
-			className: "mb-8",
+			className: "mb-6",
 			children: [/* @__PURE__ */ jsx("h2", {
-				className: "text-3xl font-black text-slate-950 mb-2 tracking-tight",
+				className: "text-2xl md:text-3xl font-black text-slate-950 mb-2 tracking-tight",
 				children: "Selamat Datang"
 			}), /* @__PURE__ */ jsx("p", {
-				className: "text-slate-500 font-medium tracking-tight",
+				className: "text-slate-500 text-sm md:text-base font-medium tracking-tight",
 				children: "Masuk untuk melanjutkan kemajuan karier Anda."
 			})]
 		}),
 		/* @__PURE__ */ jsxs("form", {
 			onSubmit: submit,
-			className: "space-y-6",
+			className: "space-y-4",
 			children: [
 				/* @__PURE__ */ jsxs("div", { children: [
 					/* @__PURE__ */ jsx("label", {
 						htmlFor: "email",
-						className: "block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wider",
+						className: "block text-xs md:text-[13px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider",
 						children: "Alamat Email"
 					}),
 					/* @__PURE__ */ jsxs("div", {
@@ -2221,7 +2221,7 @@ function Login({ status, canResetPassword }) {
 							type: "email",
 							name: "email",
 							value: data.email,
-							className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-4 transition-all focus:bg-white shadow-sm",
+							className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-3.5 transition-all focus:bg-white shadow-sm",
 							autoComplete: "username",
 							onChange: (e) => setData("email", e.target.value),
 							placeholder: "nama@email.com",
@@ -2236,7 +2236,7 @@ function Login({ status, canResetPassword }) {
 				/* @__PURE__ */ jsxs("div", { children: [
 					/* @__PURE__ */ jsx("label", {
 						htmlFor: "password",
-						className: "block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wider",
+						className: "block text-xs md:text-[13px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider",
 						children: "Password"
 					}),
 					/* @__PURE__ */ jsxs("div", {
@@ -2249,7 +2249,7 @@ function Login({ status, canResetPassword }) {
 							type: "password",
 							name: "password",
 							value: data.password,
-							className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-4 transition-all focus:bg-white shadow-sm",
+							className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-3.5 transition-all focus:bg-white shadow-sm",
 							autoComplete: "current-password",
 							onChange: (e) => setData("password", e.target.value),
 							placeholder: "••••••••",
@@ -2281,10 +2281,10 @@ function Login({ status, canResetPassword }) {
 					})]
 				}),
 				/* @__PURE__ */ jsx("div", {
-					className: "pt-2",
+					className: "pt-1",
 					children: /* @__PURE__ */ jsxs("button", {
 						disabled: processing,
-						className: "w-full flex items-center justify-center gap-2 px-6 py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed group",
+						className: "w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed group",
 						children: [
 							/* @__PURE__ */ jsx(LogIn, { className: "w-5 h-5" }),
 							"Masuk Sekarang",
@@ -2293,7 +2293,7 @@ function Login({ status, canResetPassword }) {
 					})
 				}),
 				/* @__PURE__ */ jsxs("p", {
-					className: "text-center text-sm font-medium text-slate-500 pt-4",
+					className: "text-center text-sm font-medium text-slate-500 pt-2",
 					children: [
 						"Belum punya akun?",
 						" ",
@@ -2325,23 +2325,23 @@ function Register() {
 	return /* @__PURE__ */ jsxs(Guest, { children: [
 		/* @__PURE__ */ jsx(Head, { title: "Daftar Akun" }),
 		/* @__PURE__ */ jsxs("div", {
-			className: "mb-8",
+			className: "mb-6",
 			children: [/* @__PURE__ */ jsx("h2", {
-				className: "text-3xl font-black text-slate-950 mb-2 tracking-tight",
+				className: "text-2xl md:text-3xl font-black text-slate-950 mb-2 tracking-tight",
 				children: "Mulai Akselerasi"
 			}), /* @__PURE__ */ jsx("p", {
-				className: "text-slate-500 font-medium tracking-tight",
+				className: "text-slate-500 text-sm md:text-base font-medium tracking-tight",
 				children: "Buat profil Anda dan dapatkan kurikulum belajar hari ini."
 			})]
 		}),
 		/* @__PURE__ */ jsxs("form", {
 			onSubmit: submit,
-			className: "space-y-5",
+			className: "space-y-4",
 			children: [
 				/* @__PURE__ */ jsxs("div", { children: [
 					/* @__PURE__ */ jsx("label", {
 						htmlFor: "name",
-						className: "block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wider",
+						className: "block text-xs md:text-[13px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider",
 						children: "Nama Lengkap"
 					}),
 					/* @__PURE__ */ jsxs("div", {
@@ -2354,7 +2354,7 @@ function Register() {
 							type: "text",
 							name: "name",
 							value: data.name,
-							className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-4 transition-all focus:bg-white shadow-sm",
+							className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-3.5 transition-all focus:bg-white shadow-sm",
 							autoComplete: "name",
 							onChange: (e) => setData("name", e.target.value),
 							placeholder: "Nama Anda",
@@ -2369,7 +2369,7 @@ function Register() {
 				/* @__PURE__ */ jsxs("div", { children: [
 					/* @__PURE__ */ jsx("label", {
 						htmlFor: "email",
-						className: "block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wider",
+						className: "block text-xs md:text-[13px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider",
 						children: "Alamat Email"
 					}),
 					/* @__PURE__ */ jsxs("div", {
@@ -2382,7 +2382,7 @@ function Register() {
 							type: "email",
 							name: "email",
 							value: data.email,
-							className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-4 transition-all focus:bg-white shadow-sm",
+							className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-3.5 transition-all focus:bg-white shadow-sm",
 							autoComplete: "username",
 							onChange: (e) => setData("email", e.target.value),
 							placeholder: "nama@email.com",
@@ -2395,11 +2395,11 @@ function Register() {
 					})
 				] }),
 				/* @__PURE__ */ jsxs("div", {
-					className: "grid grid-cols-1 sm:grid-cols-2 gap-5",
+					className: "grid grid-cols-1 sm:grid-cols-2 gap-4",
 					children: [/* @__PURE__ */ jsxs("div", { children: [
 						/* @__PURE__ */ jsx("label", {
 							htmlFor: "password",
-							className: "block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wider",
+							className: "block text-xs md:text-[13px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider",
 							children: "Password"
 						}),
 						/* @__PURE__ */ jsxs("div", {
@@ -2412,7 +2412,7 @@ function Register() {
 								type: "password",
 								name: "password",
 								value: data.password,
-								className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-4 transition-all focus:bg-white shadow-sm",
+								className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-3.5 transition-all focus:bg-white shadow-sm",
 								autoComplete: "new-password",
 								onChange: (e) => setData("password", e.target.value),
 								placeholder: "••••••••",
@@ -2426,7 +2426,7 @@ function Register() {
 					] }), /* @__PURE__ */ jsxs("div", { children: [
 						/* @__PURE__ */ jsx("label", {
 							htmlFor: "password_confirmation",
-							className: "block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wider",
+							className: "block text-xs md:text-[13px] font-bold text-slate-700 mb-1.5 uppercase tracking-wider",
 							children: "Ulangi Password"
 						}),
 						/* @__PURE__ */ jsxs("div", {
@@ -2439,7 +2439,7 @@ function Register() {
 								type: "password",
 								name: "password_confirmation",
 								value: data.password_confirmation,
-								className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-4 transition-all focus:bg-white shadow-sm",
+								className: "bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-primary focus:border-primary block w-full pl-11 p-3.5 transition-all focus:bg-white shadow-sm",
 								autoComplete: "new-password",
 								onChange: (e) => setData("password_confirmation", e.target.value),
 								placeholder: "••••••••",
@@ -2453,10 +2453,10 @@ function Register() {
 					] })]
 				}),
 				/* @__PURE__ */ jsx("div", {
-					className: "pt-4",
+					className: "pt-2",
 					children: /* @__PURE__ */ jsxs("button", {
 						disabled: processing,
-						className: "w-full flex items-center justify-center gap-2 px-6 py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed group",
+						className: "w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed group",
 						children: [
 							/* @__PURE__ */ jsx(UserPlus, { className: "w-5 h-5" }),
 							"Buat Akun Sekarang",
@@ -3994,7 +3994,7 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 				}), /* @__PURE__ */ jsxs("div", {
 					className: "lg:col-span-8 flex flex-col gap-6 h-full",
 					children: [/* @__PURE__ */ jsx("div", {
-						className: "bg-indigo-900 rounded-lg py-8 px-10 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex-1 flex flex-col justify-end min-h-[180px]",
+						className: "bg-indigo-900 rounded-lg py-6 sm:py-8 px-6 sm:px-10 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex-1 flex flex-col justify-end min-h-[160px] sm:min-h-[180px]",
 						children: /* @__PURE__ */ jsxs("div", {
 							className: "relative z-10 flex flex-col h-full",
 							children: [/* @__PURE__ */ jsxs("div", {
@@ -4026,7 +4026,7 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 							}), /* @__PURE__ */ jsxs("div", {
 								className: "mt-auto",
 								children: [/* @__PURE__ */ jsx("h2", {
-									className: "text-3xl font-black tracking-tight mb-4",
+									className: "text-2xl sm:text-3xl font-black tracking-tight mb-4",
 									children: careerTarget
 								}), /* @__PURE__ */ jsx("div", {
 									className: "flex items-center gap-3 mt-2",
@@ -4065,7 +4065,7 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 								}), /* @__PURE__ */ jsxs("div", {
 									className: "relative z-10 mt-auto",
 									children: [/* @__PURE__ */ jsx("p", {
-										className: "text-5xl font-black text-slate-900 tracking-tighter",
+										className: "text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter",
 										children: skillCount
 									}), /* @__PURE__ */ jsx("p", {
 										className: "text-[10px] font-bold text-black mt-1 italic",
@@ -4084,7 +4084,7 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 								}), /* @__PURE__ */ jsxs("div", {
 									className: "relative z-10 mt-auto",
 									children: [/* @__PURE__ */ jsx("p", {
-										className: "text-5xl font-black text-slate-900 tracking-tighter",
+										className: "text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter",
 										children: skillGap
 									}), /* @__PURE__ */ jsx("p", {
 										className: "text-[10px] font-bold text-black mt-1 italic",
@@ -4103,7 +4103,7 @@ function Dashboard({ user, badges = [], profile, score, scoreHistory = [], trend
 								}), /* @__PURE__ */ jsxs("div", {
 									className: "relative z-10 mt-auto",
 									children: [/* @__PURE__ */ jsx("p", {
-										className: "text-5xl font-black text-slate-900 tracking-tighter",
+										className: "text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter",
 										children: milestoneReached
 									}), /* @__PURE__ */ jsx("p", {
 										className: "text-[10px] font-bold text-black mt-1 italic",
@@ -6189,7 +6189,7 @@ function HowItWorks$1() {
 							})
 						})]
 					}), /* @__PURE__ */ jsx("div", {
-						className: "space-y-[40vh] pb-[20vh]",
+						className: "space-y-24 sm:space-y-32 md:space-y-48 pb-20 md:pb-[20vh]",
 						children: steps.map((step, idx) => /* @__PURE__ */ jsxs(motion.div, {
 							initial: {
 								opacity: 0,
@@ -6484,7 +6484,7 @@ function CTAWithVerticalMarquee() {
 		return () => cancelAnimationFrame(frame);
 	}, []);
 	return /* @__PURE__ */ jsx("section", {
-		className: "bg-[#f6f6f6] py-16 md:py-24",
+		className: "bg-[#f6f6f6] pt-4 pb-16 md:pt-8 md:pb-24",
 		children: /* @__PURE__ */ jsx("div", {
 			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
 			children: /* @__PURE__ */ jsxs("div", {
@@ -6619,7 +6619,7 @@ var Card = ({ rotate, scale, children }) => {
 var Landing_exports = /* @__PURE__ */ __exportAll({ default: () => Landing });
 function Hero() {
 	return /* @__PURE__ */ jsxs("section", {
-		className: "relative overflow-hidden bg-[#f6f6f6] pt-4 pb-4 md:pt-6 md:pb-2",
+		className: "relative overflow-hidden bg-[#f6f6f6] pt-32 pb-4 md:pt-40 md:pb-2",
 		children: [/* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-40" }), /* @__PURE__ */ jsx("div", {
 			className: "flex flex-col overflow-hidden",
 			children: /* @__PURE__ */ jsx(ContainerScroll, {
@@ -6692,7 +6692,23 @@ function Features() {
 			}), /* @__PURE__ */ jsxs("div", {
 				className: "grid grid-cols-1 md:grid-cols-2 gap-8",
 				children: [
-					/* @__PURE__ */ jsxs("div", {
+					/* @__PURE__ */ jsxs(motion.div, {
+						initial: {
+							opacity: 0,
+							y: 40
+						},
+						whileInView: {
+							opacity: 1,
+							y: 0
+						},
+						viewport: {
+							once: true,
+							margin: "-50px"
+						},
+						transition: {
+							duration: .6,
+							delay: .1
+						},
 						className: "bg-white rounded-[24px] p-2 transition-all duration-300 group",
 						children: [/* @__PURE__ */ jsx("div", {
 							className: "bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative",
@@ -6787,7 +6803,23 @@ function Features() {
 							})]
 						})]
 					}),
-					/* @__PURE__ */ jsxs("div", {
+					/* @__PURE__ */ jsxs(motion.div, {
+						initial: {
+							opacity: 0,
+							y: 40
+						},
+						whileInView: {
+							opacity: 1,
+							y: 0
+						},
+						viewport: {
+							once: true,
+							margin: "-50px"
+						},
+						transition: {
+							duration: .6,
+							delay: .2
+						},
 						className: "bg-white rounded-[24px] p-2 transition-all duration-300 group",
 						children: [/* @__PURE__ */ jsx("div", {
 							className: "bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative",
@@ -6875,7 +6907,23 @@ function Features() {
 							})]
 						})]
 					}),
-					/* @__PURE__ */ jsxs("div", {
+					/* @__PURE__ */ jsxs(motion.div, {
+						initial: {
+							opacity: 0,
+							y: 40
+						},
+						whileInView: {
+							opacity: 1,
+							y: 0
+						},
+						viewport: {
+							once: true,
+							margin: "-50px"
+						},
+						transition: {
+							duration: .6,
+							delay: .3
+						},
 						className: "bg-white rounded-[24px] p-2 transition-all duration-300 group",
 						children: [/* @__PURE__ */ jsx("div", {
 							className: "bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative",
@@ -6934,7 +6982,23 @@ function Features() {
 							})]
 						})]
 					}),
-					/* @__PURE__ */ jsxs("div", {
+					/* @__PURE__ */ jsxs(motion.div, {
+						initial: {
+							opacity: 0,
+							y: 40
+						},
+						whileInView: {
+							opacity: 1,
+							y: 0
+						},
+						viewport: {
+							once: true,
+							margin: "-50px"
+						},
+						transition: {
+							duration: .6,
+							delay: .4
+						},
 						className: "bg-white rounded-[24px] p-2 transition-all duration-300 group",
 						children: [/* @__PURE__ */ jsx("div", {
 							className: "bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex align-center justify-center p-6 relative",
@@ -7479,10 +7543,10 @@ function Leaderboard({ leaders, current_user_rank, user_opted_in }) {
 				})]
 			}),
 			/* @__PURE__ */ jsx("div", {
-				className: "flex flex-col sm:flex-row justify-center items-end gap-0 sm:gap-4 md:gap-8 pt-10 pb-4 px-4 overflow-x-auto sm:overflow-x-visible no-scrollbar",
+				className: "flex flex-col sm:flex-row justify-center items-center sm:items-end gap-12 sm:gap-4 md:gap-8 pt-10 pb-4 px-4",
 				children: [
-					1,
 					0,
+					1,
 					2
 				].map((idx) => {
 					const leader = leaders[idx];
@@ -7490,7 +7554,7 @@ function Leaderboard({ leaders, current_user_rank, user_opted_in }) {
 					const isFirst = idx === 0;
 					const isSecond = idx === 1;
 					return /* @__PURE__ */ jsxs("div", {
-						className: `flex flex-col items-center flex-shrink-0 sm:flex-shrink w-64 sm:w-1/3 max-w-[260px] group transition-all duration-500 ${isFirst ? "z-10 -mb-2" : "z-0"}`,
+						className: `flex flex-col items-center w-full max-w-[260px] sm:w-1/3 group transition-all duration-500 ${isFirst ? "order-1 sm:order-2 z-10" : isSecond ? "order-2 sm:order-1 z-0" : "order-3 z-0"}`,
 						children: [
 							/* @__PURE__ */ jsxs("div", {
 								className: "relative mb-6",

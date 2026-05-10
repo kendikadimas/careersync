@@ -463,7 +463,7 @@ export default function Dashboard({
                     {/* Career Focus & Stats */}
                     <div className="lg:col-span-8 flex flex-col gap-6 h-full">
                         {/* Target Banner */}
-                        <div className="bg-indigo-900 rounded-lg py-8 px-10 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex-1 flex flex-col justify-end min-h-[180px]">
+                        <div className="bg-indigo-900 rounded-lg py-6 sm:py-8 px-6 sm:px-10 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex-1 flex flex-col justify-end min-h-[160px] sm:min-h-[180px]">
                             <div className="relative z-10 flex flex-col h-full">
                                 <div className="flex justify-between items-start">
                                     <p className="text-white text-[14px] font-normal mb-2">Target Karir Utama</p>
@@ -472,7 +472,7 @@ export default function Dashboard({
                                     </Link>
                                 </div>
                                 <div className="mt-auto">
-                                    <h2 className="text-3xl font-black tracking-tight mb-4">{careerTarget}</h2>
+                                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-4">{careerTarget}</h2>
                                     <div className="flex items-center gap-3 mt-2">
                                         <div className="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
                                             <div className="flex gap-1">
@@ -497,7 +497,7 @@ export default function Dashboard({
                                     <p className="text-black text-[18px] font-bold ">Total Skills</p>
                                 </div>
                                 <div className="relative z-10 mt-auto">
-                                    <p className="text-5xl font-black text-slate-900 tracking-tighter">{skillCount}</p>
+                                    <p className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter">{skillCount}</p>
                                     <p className="text-[10px] font-bold text-black mt-1 italic">Terdata di sistem</p>
                                 </div>
                             </div>
@@ -507,7 +507,7 @@ export default function Dashboard({
                                     <p className="text-black text-[18px] font-bold ">Skill Gap</p>
                                 </div>
                                 <div className="relative z-10 mt-auto">
-                                    <p className="text-5xl font-black text-slate-900 tracking-tighter">{skillGap}</p>
+                                    <p className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter">{skillGap}</p>
                                     <p className="text-[10px] font-bold text-black mt-1 italic">Perlu dipelajari</p>
                                 </div>
                             </div>
@@ -517,7 +517,7 @@ export default function Dashboard({
                                     <p className="text-black text-[18px] font-bold ">Milestones</p>
                                 </div>
                                 <div className="relative z-10 mt-auto">
-                                    <p className="text-5xl font-black text-slate-900 tracking-tighter">{milestoneReached}</p>
+                                    <p className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter">{milestoneReached}</p>
                                     <p className="text-[10px] font-bold text-black mt-1 italic">Telah dicapai</p>
                                 </div>
                             </div>
