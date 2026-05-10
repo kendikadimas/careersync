@@ -5262,11 +5262,11 @@ function Features$1() {
 							children: "Fitur Masa Depan"
 						}),
 						/* @__PURE__ */ jsx("h1", {
-							className: "text-3xl sm:text-4xl md:text-6xl font-black text-navy-900 mb-6 md:mb-8 leading-tight tracking-tighter text-left md:text-center",
+							className: "text-[44px] md:text-6xl font-black text-navy-900 mb-6 md:mb-8 leading-tight tracking-tighter text-center",
 							children: "Teknologi yang Menutup Celah Karirmu"
 						}),
 						/* @__PURE__ */ jsx("p", {
-							className: "text-slate-500 text-base sm:text-lg md:text-xl leading-relaxed font-medium text-left md:text-center",
+							className: "text-slate-500 text-base md:text-xl leading-relaxed font-medium text-center",
 							children: "Kami menggabungkan data pasar kerja real-time dengan Generative AI untuk memberikan panduan karir paling presisi di Indonesia."
 						})
 					]
@@ -5282,11 +5282,15 @@ function Features$1() {
 					children: [/* @__PURE__ */ jsxs(motion.div, {
 						initial: {
 							opacity: 0,
-							x: i % 2 === 0 ? -30 : 30
+							x: -20
 						},
 						whileInView: {
 							opacity: 1,
 							x: 0
+						},
+						transition: {
+							duration: .5,
+							delay: .2
 						},
 						viewport: { once: true },
 						className: "flex-1 text-left",
@@ -5301,7 +5305,7 @@ function Features$1() {
 									className: `w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-navy-900 shadow-xl shadow-slate-200/50`,
 									children: /* @__PURE__ */ jsx(f.icon, { className: "w-7 h-7" })
 								}), /* @__PURE__ */ jsx("h2", {
-									className: "text-2xl sm:text-3xl md:text-4xl font-black text-navy-900 tracking-tight",
+									className: "text-xl md:text-4xl font-black text-navy-900 tracking-tight",
 									children: f.title
 								})]
 							}),
@@ -5382,10 +5386,10 @@ function Features$1() {
 				children: [/* @__PURE__ */ jsxs("div", {
 					className: "text-center mb-20 text-balance",
 					children: [/* @__PURE__ */ jsx("h2", {
-						className: "text-2xl sm:text-3xl md:text-4xl font-black mb-4 md:mb-6 tracking-tighter uppercase tracking-widest text-left md:text-center",
+						className: "text-[28px] md:text-4xl font-black mb-4 md:mb-6 tracking-tighter uppercase tracking-widest text-center",
 						children: "Kenapa Memilih Kembangin?"
 					}), /* @__PURE__ */ jsx("p", {
-						className: "text-navy-300 text-sm md:text-base font-medium max-w-xl mx-auto leading-relaxed text-left md:text-center",
+						className: "text-navy-300 text-base md:text-base font-medium max-w-xl mx-auto leading-relaxed text-center",
 						children: "Perbandingan nyata antara metode belajar konvensional yang lambat vs platform kami yang berbasis data."
 					})]
 				}), /* @__PURE__ */ jsxs("div", {
@@ -5478,11 +5482,11 @@ function Features$1() {
 						children: /* @__PURE__ */ jsx(Cpu, { className: "w-10 h-10" })
 					}),
 					/* @__PURE__ */ jsx("h2", {
-						className: "text-3xl md:text-5xl font-black text-navy-900 mb-6 md:mb-8 leading-tight tracking-tighter uppercase tracking-widest text-left md:text-center",
+						className: "text-[28px] md:text-5xl font-black text-navy-900 mb-6 md:mb-8 leading-tight tracking-tighter uppercase tracking-widest text-center",
 						children: "Siap Mengambil Kendali Karirmu?"
 					}),
 					/* @__PURE__ */ jsx("p", {
-						className: "text-slate-500 text-base md:text-lg mb-8 md:mb-12 max-w-sm mx-auto leading-relaxed font-medium text-left md:text-center",
+						className: "text-slate-500 text-base md:text-lg mb-8 md:mb-12 max-w-sm mx-auto leading-relaxed font-medium text-center",
 						children: "Bergabunglah dengan 1.200+ mahasiswa lainnya yang telah membangun karir IT mereka berbasis data."
 					}),
 					/* @__PURE__ */ jsxs("div", {
@@ -6620,14 +6624,14 @@ function Hero() {
 			className: "flex flex-col overflow-hidden",
 			children: /* @__PURE__ */ jsx(ContainerScroll, {
 				titleComponent: /* @__PURE__ */ jsxs("div", {
-					className: "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-left md:text-center mb-24",
+					className: "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16 md:mb-24",
 					children: [
 						/* @__PURE__ */ jsx("div", {
 							className: "inline-flex items-center gap-2.5 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 text-[13px] font-semibold text-accent mb-8 hover:bg-accent/15 transition-colors cursor-default",
 							children: "AI-Powered Skill Gap Analysis v2.0"
 						}),
 						/* @__PURE__ */ jsxs("h1", {
-							className: "text-4xl sm:text-[60px] font-extrabold text-slate-900 leading-tight sm:leading-[66px] tracking-tight font-[family-name:var(--font-heading)]",
+							className: "text-[44px] sm:text-[60px] font-extrabold text-slate-900 leading-[1.1] sm:leading-[66px] tracking-tight font-[family-name:var(--font-heading)]",
 							children: [
 								"Kembangkan Potensimu.",
 								/* @__PURE__ */ jsx("br", {}),
@@ -6677,12 +6681,12 @@ function Features() {
 		children: /* @__PURE__ */ jsxs("div", {
 			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
 			children: [/* @__PURE__ */ jsxs("div", {
-				className: "text-left md:text-center max-w-2xl mx-auto mb-16",
+				className: "text-center max-w-2xl mx-auto mb-12 md:mb-16",
 				children: [/* @__PURE__ */ jsx("div", {
 					className: "inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-xs font-semibold mb-5",
 					children: "Fitur Utama"
 				}), /* @__PURE__ */ jsx("h2", {
-					className: "text-3xl md:text-[48px] font-extrabold text-[#1A1A2E] font-[family-name:var(--font-heading)] leading-tight",
+					className: "text-[28px] md:text-[48px] font-extrabold text-[#1A1A2E] font-[family-name:var(--font-heading)] leading-tight",
 					children: "Empat Pilar Transformasi Karier Digital Anda."
 				})]
 			}), /* @__PURE__ */ jsxs("div", {
@@ -6693,7 +6697,7 @@ function Features() {
 						children: [/* @__PURE__ */ jsx("div", {
 							className: "bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex flex-col items-center justify-center p-6 relative",
 							children: /* @__PURE__ */ jsxs("div", {
-								className: "absolute inset-x-8 top-10 bottom-0 bg-white rounded-t-2xl p-6 border-b-0 transition-transform duration-500 group-hover:-translate-y-2",
+								className: "absolute inset-x-4 md:inset-x-8 top-10 bottom-0 bg-white rounded-t-2xl p-6 border-b-0 transition-transform duration-500 group-hover:-translate-y-2 text-left",
 								children: [/* @__PURE__ */ jsxs("div", {
 									className: "flex items-center gap-4 mb-6 pb-4 border-b border-slate-100",
 									children: [
@@ -6775,10 +6779,10 @@ function Features() {
 						}), /* @__PURE__ */ jsxs("div", {
 							className: "px-6 pb-8 pt-2",
 							children: [/* @__PURE__ */ jsx("h3", {
-								className: "text-2xl font-bold text-slate-900 mb-3 font-[family-name:var(--font-heading)]",
+								className: "text-xl md:text-2xl font-bold text-slate-900 mb-2 md:mb-3 font-[family-name:var(--font-heading)] text-left",
 								children: "Diagnostic Assessment & Skill-Gap Profiling"
 							}), /* @__PURE__ */ jsx("p", {
-								className: "text-[16px] text-slate-500 leading-relaxed font-medium",
+								className: "text-base text-slate-500 leading-relaxed font-medium text-left",
 								children: "Gunakan AI untuk mengekstrak kompetensi dari CV Anda dan bandingkan langsung dengan standar industri terkini untuk mengkalkulasi celah keahlian secara presisi."
 							})]
 						})]
@@ -6863,10 +6867,10 @@ function Features() {
 						}), /* @__PURE__ */ jsxs("div", {
 							className: "px-6 pb-8 pt-2",
 							children: [/* @__PURE__ */ jsx("h3", {
-								className: "text-2xl font-bold text-slate-900 mb-3 font-[family-name:var(--font-heading)]",
+								className: "text-xl md:text-2xl font-bold text-slate-900 mb-2 md:mb-3 font-[family-name:var(--font-heading)] text-left",
 								children: "Personalized Learning Path"
 							}), /* @__PURE__ */ jsx("p", {
-								className: "text-[16px] text-slate-500 leading-relaxed font-medium",
+								className: "text-base text-slate-500 leading-relaxed font-medium text-left",
 								children: "Dapatkan alur belajar adaptif yang dipersonalisasi serta kewajiban pengerjaan Capstone Project yang divalidasi otomatis."
 							})]
 						})]
@@ -6922,10 +6926,10 @@ function Features() {
 						}), /* @__PURE__ */ jsxs("div", {
 							className: "px-6 pb-8 pt-2",
 							children: [/* @__PURE__ */ jsx("h3", {
-								className: "text-2xl font-bold text-slate-900 mb-3 font-[family-name:var(--font-heading)]",
+								className: "text-xl md:text-2xl font-bold text-slate-900 mb-2 md:mb-3 font-[family-name:var(--font-heading)] text-left",
 								children: "Dynamic Curriculum Synchronization"
 							}), /* @__PURE__ */ jsx("p", {
-								className: "text-[16px] text-slate-500 leading-relaxed font-medium",
+								className: "text-base text-slate-500 leading-relaxed font-medium text-left",
 								children: "Sistem mengekstraksi data kebutuhan industri secara otomatis sebagai sensor untuk mengidentifikasi Trending Skills secara real-time."
 							})]
 						})]
@@ -6992,10 +6996,10 @@ function Features() {
 						}), /* @__PURE__ */ jsxs("div", {
 							className: "px-6 pb-8 pt-2",
 							children: [/* @__PURE__ */ jsx("h3", {
-								className: "text-2xl font-bold text-slate-900 mb-3 font-[family-name:var(--font-heading)]",
+								className: "text-xl md:text-2xl font-bold text-slate-900 mb-2 md:mb-3 font-[family-name:var(--font-heading)] text-left",
 								children: "Learning Outcomes & Engagement"
 							}), /* @__PURE__ */ jsx("p", {
-								className: "text-[16px] text-slate-500 leading-relaxed font-medium",
+								className: "text-base text-slate-500 leading-relaxed font-medium text-left",
 								children: "Validasi hasil belajar melalui Job Readiness Score (0-100%) dan portofolio publik yang didukung sistem gamifikasi."
 							})]
 						})]
@@ -7012,12 +7016,12 @@ function Benefits() {
 		children: /* @__PURE__ */ jsxs("div", {
 			className: "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8",
 			children: [/* @__PURE__ */ jsxs("div", {
-				className: "text-left md:text-center max-w-3xl mx-auto mb-16",
+				className: "text-center max-w-3xl mx-auto mb-12 md:mb-16",
 				children: [/* @__PURE__ */ jsx("div", {
 					className: "inline-flex items-center gap-2 border border-primary/30 text-primary rounded-full px-5 py-1.5 text-sm font-semibold mb-6 bg-white/50 backdrop-blur-sm",
 					children: "Kenapa Kembangin?"
 				}), /* @__PURE__ */ jsx("h2", {
-					className: "text-3xl md:text-[46px] font-extrabold text-[#1A1A2E] leading-tight mb-6",
+					className: "text-[28px] md:text-[46px] font-extrabold text-[#1A1A2E] leading-tight mb-6",
 					children: "Cara Lebih Cerdas Membangun Karier Digital"
 				})]
 			}), /* @__PURE__ */ jsx("div", {
@@ -7025,12 +7029,12 @@ function Benefits() {
 				children: /* @__PURE__ */ jsxs("div", {
 					className: "grid grid-cols-1 md:grid-cols-2 gap-4",
 					children: [/* @__PURE__ */ jsxs("div", {
-						className: "p-8",
+						className: "p-6 md:p-8",
 						children: [/* @__PURE__ */ jsx("h3", {
-							className: "text-2xl font-bold mb-6",
+							className: "text-xl md:text-2xl font-bold mb-4 md:mb-6 text-left",
 							children: "Platform Lain"
 						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-4",
+							className: "space-y-4 text-left",
 							children: [
 								"Pembelajaran tidak terarah & generik",
 								"Sulit mengetahui skill apa yang sedang dicari HRD",
@@ -7038,17 +7042,17 @@ function Benefits() {
 								"Kurikulum sering tertinggal",
 								"Fokus hanya pada teori"
 							].map((t, i) => /* @__PURE__ */ jsxs("li", {
-								className: "flex items-center gap-3 text-slate-500",
-								children: [/* @__PURE__ */ jsx(X, { className: "w-4 h-4 text-slate-300" }), t]
+								className: "flex items-start md:items-center gap-3 text-slate-500",
+								children: [/* @__PURE__ */ jsx(X, { className: "w-4 h-4 text-slate-300 mt-1 md:mt-0 shrink-0" }), t]
 							}, i))
 						})]
 					}), /* @__PURE__ */ jsxs("div", {
-						className: "p-8 rounded-[28px] bg-primary/5 border-2 border-primary/20",
+						className: "p-6 md:p-8 rounded-[28px] bg-primary/5 border-2 border-primary/20",
 						children: [/* @__PURE__ */ jsx("h3", {
-							className: "text-2xl font-bold mb-6 text-primary",
+							className: "text-xl md:text-2xl font-bold mb-4 md:mb-6 text-primary text-left",
 							children: "Kembangin"
 						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-4",
+							className: "space-y-4 text-left",
 							children: [
 								"Roadmap belajar terpersonalisasi oleh AI",
 								"Diagnosis skill-gap presisi industri",
@@ -7056,8 +7060,8 @@ function Benefits() {
 								"Sinkronisasi kurikulum real-time",
 								"Job Readiness Score terukur"
 							].map((t, i) => /* @__PURE__ */ jsxs("li", {
-								className: "flex items-center gap-3 text-slate-700 font-bold",
-								children: [/* @__PURE__ */ jsx(CheckCircle2, { className: "w-4 h-4 text-primary" }), t]
+								className: "flex items-start md:items-center gap-3 text-slate-700 font-bold",
+								children: [/* @__PURE__ */ jsx(CheckCircle2, { className: "w-4 h-4 text-primary mt-1 md:mt-0 shrink-0" }), t]
 							}, i))
 						})]
 					})]
@@ -7074,14 +7078,14 @@ function HowItWorks() {
 			className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
 			children: [
 				/* @__PURE__ */ jsxs("div", {
-					className: "text-left md:text-center max-w-3xl mx-auto mb-20",
+					className: "text-center max-w-3xl mx-auto mb-16 md:mb-20",
 					children: [
 						/* @__PURE__ */ jsx("div", {
 							className: "inline-flex items-center gap-2 bg-primary/5 text-primary rounded-full px-5 py-1.5 text-xs font-bold mb-6 border border-primary/10",
 							children: "How It Works"
 						}),
 						/* @__PURE__ */ jsxs("h2", {
-							className: "text-3xl md:text-[56px] font-bold text-slate-950 leading-tight mb-6 tracking-tight",
+							className: "text-[28px] md:text-[56px] font-bold text-slate-950 leading-tight mb-6 tracking-tight",
 							children: [
 								"Wujudkan Karier Impian",
 								/* @__PURE__ */ jsx("br", { className: "hidden md:block" }),

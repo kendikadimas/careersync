@@ -74,8 +74,8 @@ export default function Features() {
                 <div className="max-w-3xl mx-auto">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                         <p className="text-[10px] font-black text-teal-600 uppercase tracking-[0.3em] mb-4 bg-teal-50 inline-block px-4 py-1.5 rounded-full shadow-sm">Fitur Masa Depan</p>
-                        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-navy-900 mb-6 md:mb-8 leading-tight tracking-tighter text-left md:text-center">Teknologi yang Menutup Celah Karirmu</h1>
-                        <p className="text-slate-500 text-base sm:text-lg md:text-xl leading-relaxed font-medium text-left md:text-center">Kami menggabungkan data pasar kerja real-time dengan Generative AI untuk memberikan panduan karir paling presisi di Indonesia.</p>
+                        <h1 className="text-[44px] md:text-6xl font-black text-navy-900 mb-6 md:mb-8 leading-tight tracking-tighter text-center">Teknologi yang Menutup Celah Karirmu</h1>
+                        <p className="text-slate-500 text-base md:text-xl leading-relaxed font-medium text-center">Kami menggabungkan data pasar kerja real-time dengan Generative AI untuk memberikan panduan karir paling presisi di Indonesia.</p>
                     </motion.div>
                 </div>
             </section>
@@ -86,7 +86,7 @@ export default function Features() {
                     {mainFeatures.map((f, i) => (
                         <div key={f.id} className={`flex flex-col ${i % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-16 lg:gap-24`}>
                             {/* Text content */}
-                            <motion.div initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex-1 text-left">
+                            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }} viewport={{ once: true }} className="flex-1 text-left">
                                 <span className={`inline-block px-4 py-1.5 rounded-xl bg-${f.color}-50 text-${f.color}-600 text-[10px] font-black uppercase tracking-[0.2em] mb-6 shadow-sm`}>
                                     {f.badge}
                                 </span>
@@ -94,7 +94,7 @@ export default function Features() {
                                     <div className={`w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-navy-900 shadow-xl shadow-slate-200/50`}>
                                         <f.icon className="w-7 h-7" />
                                     </div>
-                                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-navy-900 tracking-tight">{f.title}</h2>
+                                    <h2 className="text-xl md:text-4xl font-black text-navy-900 tracking-tight">{f.title}</h2>
                                 </div>
                                 <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-10 font-medium">{f.desc}</p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 mb-4">
@@ -147,8 +147,8 @@ export default function Features() {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(20,184,166,0.05),transparent_50%)]"></div>
                 <div className="max-w-5xl mx-auto relative z-10">
                     <div className="text-center mb-20 text-balance">
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-4 md:mb-6 tracking-tighter uppercase tracking-widest text-left md:text-center">Kenapa Memilih Kembangin?</h2>
-                        <p className="text-navy-300 text-sm md:text-base font-medium max-w-xl mx-auto leading-relaxed text-left md:text-center">Perbandingan nyata antara metode belajar konvensional yang lambat vs platform kami yang berbasis data.</p>
+                        <h2 className="text-[28px] md:text-4xl font-black mb-4 md:mb-6 tracking-tighter uppercase tracking-widest text-center">Kenapa Memilih Kembangin?</h2>
+                        <p className="text-navy-300 text-base md:text-base font-medium max-w-xl mx-auto leading-relaxed text-center">Perbandingan nyata antara metode belajar konvensional yang lambat vs platform kami yang berbasis data.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-800 border border-slate-800 rounded-4xl overflow-hidden text-left shadow-2xl">
@@ -195,8 +195,8 @@ export default function Features() {
                     <div className="w-20 h-20 bg-teal-500 rounded-4xl flex items-center justify-center text-white mx-auto mb-10 shadow-2xl shadow-teal-500/30 transform hover:rotate-12 transition-transform">
                         <Cpu className="w-10 h-10" />
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-black text-navy-900 mb-6 md:mb-8 leading-tight tracking-tighter uppercase tracking-widest text-left md:text-center">Siap Mengambil Kendali Karirmu?</h2>
-                    <p className="text-slate-500 text-base md:text-lg mb-8 md:mb-12 max-w-sm mx-auto leading-relaxed font-medium text-left md:text-center">Bergabunglah dengan 1.200+ mahasiswa lainnya yang telah membangun karir IT mereka berbasis data.</p>
+                    <h2 className="text-[28px] md:text-5xl font-black text-navy-900 mb-6 md:mb-8 leading-tight tracking-tighter uppercase tracking-widest text-center">Siap Mengambil Kendali Karirmu?</h2>
+                    <p className="text-slate-500 text-base md:text-lg mb-8 md:mb-12 max-w-sm mx-auto leading-relaxed font-medium text-center">Bergabunglah dengan 1.200+ mahasiswa lainnya yang telah membangun karir IT mereka berbasis data.</p>
                     <div className="flex flex-wrap gap-5 justify-center">
                         <Link href="/register" className="bg-navy-900 text-white px-10 py-5 rounded-3xl text-xs font-black uppercase tracking-[0.2em] hover:bg-teal-600 transition-all shadow-2xl shadow-navy-900/20 hover:scale-105 active:scale-95">Buat Akun Sekarang</Link>
                         <Link href="/demo" className="border-2 border-slate-100 text-slate-600 px-10 py-5 rounded-3xl text-xs font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all hover:border-slate-300">Lihat Demo</Link>
