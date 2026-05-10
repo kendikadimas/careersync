@@ -16,7 +16,7 @@ function PremiumFooter() {
         <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 pt-24 pb-12 overflow-hidden relative">
             {/* Subtle Glow Background */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 mb-20">
@@ -140,7 +140,7 @@ export default function HowItWorks() {
             title: "Upload Profil & CV Anda",
             desc: "Mulailah dengan mengunggah resume Anda. Teknologi Artificial Intelligence akan langsung memindai, mengekstrak pengalaman, serta daftar keahlian komprehensif Anda dalam hitungan detik.",
             visual: (
-                <div className="border-2 border-dashed border-slate-300 rounded-[32px] p-8 text-center bg-[#fcfcfc] flex flex-col justify-center h-[340px] shadow-[inset_0_4px_20px_-10px_rgba(0,0,0,0.05)]">
+                <div className="border-2 border-dashed border-slate-300 rounded-[32px] p-6 sm:p-8 text-center bg-[#fcfcfc] flex flex-col justify-center min-h-[340px] shadow-[inset_0_4px_20px_-10px_rgba(0,0,0,0.05)]">
                     <Upload className="w-14 h-14 text-slate-300 mx-auto mb-5" />
                     <div className="text-lg font-bold text-slate-800 mb-1 font-[family-name:var(--font-heading)]">Tarik & Lepas CV di sini</div>
                     <div className="text-sm text-slate-500 mb-8 font-medium">Mendukung PDF, DOCX (Maks. 5MB)</div>
@@ -161,7 +161,7 @@ export default function HowItWorks() {
             title: "Diagnosis Kesenjangan Skill",
             desc: "AI secara otomatis mencocokkan profil Anda dengan kualifikasi dari lowongan kerja riil di industri. Lihat persentase kecocokan dan temukan skill spesifik apa yang harus Anda kejar saat ini juga.",
             visual: (
-                <div className="bg-white border border-slate-200/60 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] rounded-[32px] p-8 sm:p-10 h-[340px] flex flex-col justify-center">
+                <div className="bg-white border border-slate-200/60 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] rounded-[32px] p-6 sm:p-10 min-h-[340px] flex flex-col justify-center">
                     <div className="flex justify-between items-center pb-6 border-b border-slate-100 mb-8">
                         <div>
                             <div className="text-[11px] text-slate-400 font-black uppercase tracking-widest mb-1">Target Posisi</div>
@@ -196,7 +196,7 @@ export default function HowItWorks() {
             title: "Roadmap Belajar Terinci",
             desc: "Tidak ada lagi pembelajaran generik yang membuang waktu. Dapatkan silabus dan rekomendasi materi yang hanya berfokus pada menutup kesenjangan (skill-gap) yang Anda butuhkan secara presisi.",
             visual: (
-                <div className="bg-white border border-slate-200/60 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] rounded-[32px] p-8 sm:p-10 h-[340px] flex items-center justify-center relative overflow-hidden">
+                <div className="bg-white border border-slate-200/60 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] rounded-[32px] p-6 sm:p-10 min-h-[340px] flex items-center justify-center relative overflow-hidden">
                     <div className="relative pl-10 border-l-2 border-slate-100 space-y-10 w-full max-w-sm text-left">
                         <div className="relative">
                             <div className="absolute -left-[51px] top-1 bg-emerald-500 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
@@ -221,7 +221,7 @@ export default function HowItWorks() {
             title: "Pengerjaan Projek Valid",
             desc: "Terapkan apa yang Anda pelajari melalui pembuatan Capstone Project riil. Sistem kami terintegrasi dengan GitHub API untuk memverifikasi struktur kodingan dan progres commit Anda.",
             visual: (
-                <div className="bg-[#0d1117] rounded-[32px] p-8 h-[340px] flex items-center justify-center relative overflow-hidden">
+                <div className="bg-[#0d1117] rounded-[32px] p-6 sm:p-8 min-h-[340px] flex items-center justify-center relative overflow-hidden">
                     <div className="absolute top-[-40%] right-[-10%] w-64 h-64 bg-blue-500/20 rounded-full blur-[60px] pointer-events-none"></div>
                     <div className="w-full max-w-[340px] bg-[#161b22] border border-[#30363d] rounded-3xl p-7 shadow-2xl relative z-10 text-left">
                         <div className="flex items-center gap-4 mb-7">
@@ -258,9 +258,9 @@ export default function HowItWorks() {
             title: "Readiness Score & Karier",
             desc: "Pantau kesiapan kerja Anda melalui Readiness Score yang dinamis. Buktikan kualifikasi kuat Anda kepada ratusan jaringan kemitraan institusi dan HRD ternama.",
             visual: (
-                <div className="bg-white border border-slate-200/60 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] rounded-[32px] p-8 h-[340px] flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="bg-white border border-slate-200/60 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] rounded-[32px] p-6 sm:p-8 min-h-[340px] flex flex-col items-center justify-center relative overflow-hidden">
                     <div className="relative inline-flex items-center justify-center mb-8">
-                        <svg className="w-[200px] h-[200px] transform -rotate-90">
+                        <svg className="w-full max-w-[200px] h-auto aspect-square transform -rotate-90">
                             <circle cx="100" cy="100" r="84" stroke="currentColor" strokeWidth="20" fill="transparent" className="text-slate-50" />
                             <circle cx="100" cy="100" r="84" stroke="url(#gradient-score-works-page)" strokeWidth="20" fill="transparent" strokeDasharray="527.7" strokeDashoffset="79.1" strokeLinecap="round" className="text-primary" />
                             <defs>

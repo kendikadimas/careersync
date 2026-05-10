@@ -115,9 +115,9 @@ export default function Features() {
                                     {/* Animated grid background */}
                                     <div className="absolute inset-0 opacity-10 bg-grid-slate-200 mask-radial-fade"></div>
                                     
-                                    <div className="text-[12rem] opacity-5 group-hover:scale-150 group-hover:rotate-12 transition-transform duration-1000 select-none grayscale">{f.visualIcon}</div>
+                                    <div className="text-[8rem] sm:text-[12rem] opacity-5 group-hover:scale-150 group-hover:rotate-12 transition-transform duration-1000 select-none grayscale">{f.visualIcon}</div>
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                         <div className="bg-white/80 backdrop-blur-xl p-10 rounded-4xl border border-white shadow-2xl flex flex-col items-center gap-6 transform -rotate-3 transition-all duration-700 group-hover:rotate-0 group-hover:scale-105">
+                                         <div className="bg-white/80 backdrop-blur-xl p-6 sm:p-10 rounded-4xl border border-white shadow-2xl flex flex-col items-center gap-6 transform -rotate-3 transition-all duration-700 group-hover:rotate-0 group-hover:scale-105">
                                               <div className={`w-20 h-20 rounded-3xl bg-${f.color}-500 flex items-center justify-center text-white shadow-xl shadow-${f.color}-500/20`}>
                                                   <f.icon className="w-10 h-10" />
                                               </div>
@@ -152,7 +152,7 @@ export default function Features() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-800 border border-slate-800 rounded-4xl overflow-hidden text-left shadow-2xl">
-                        <div className="bg-navy-900 p-12 md:p-16">
+                        <div className="bg-navy-900 p-8 md:p-16">
                             <h3 className="text-rose-400 font-black text-xs uppercase tracking-[0.3em] mb-12 flex items-center gap-3"><div className="w-2 h-2 bg-rose-400 rounded-full animate-pulse"></div> Cara Konvensional</h3>
                             <div className="space-y-8">
                                 {[
@@ -168,7 +168,7 @@ export default function Features() {
                                 ))}
                             </div>
                         </div>
-                        <div className="bg-navy-950 p-12 md:p-16 relative overflow-hidden">
+                        <div className="bg-navy-950 p-8 md:p-16 relative overflow-hidden">
                             <div className="absolute inset-0 bg-teal-500/5 pulse-slow"></div>
                             <h3 className="text-teal-400 font-black text-xs uppercase tracking-[0.3em] mb-12 flex items-center gap-3 relative z-10"><div className="w-2 h-2 bg-teal-400 rounded-full shadow-lg shadow-teal-500"></div> Kembangin</h3>
                             <div className="space-y-8 relative z-10">

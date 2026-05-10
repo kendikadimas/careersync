@@ -85,7 +85,7 @@ export default function Market({ jobs, trendingSkills, stats, profile, outlook }
 
                 {/* 3. Trending Skills Hero Widget */}
                 <div className="mb-12 bg-indigo-900 rounded-lg p-8 md:p-10 shadow-2xl shadow-indigo-900/20 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-lg blur-3xl -mr-20 -mt-20"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 bg-indigo-500/10 rounded-lg blur-3xl -mr-10 sm:-mr-20 -mt-10 sm:-mt-20"></div>
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                         <div className="lg:col-span-4">
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white/10 border border-white/20 text-teal-400 text-[10px] font-black mb-6">

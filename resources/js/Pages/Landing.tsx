@@ -199,7 +199,7 @@ function Features() {
                     {/* Card 4 */}
                     <div className="bg-white rounded-[24px] p-2 transition-all duration-300 group">
                         <div className="bg-[#f6f6f6] rounded-[20px] mb-6 h-[280px] overflow-hidden flex align-center justify-center p-6 relative">
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] transition-transform duration-500 group-hover:scale-105">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-[340px] transition-transform duration-500 group-hover:scale-105">
                                 <div className="bg-white p-8 rounded-[32px] border border-slate-100">
                                     <div className="text-center mb-6">
                                         <div className="text-[13px] text-slate-500 font-medium mb-3 uppercase tracking-wider">Readiness Score</div>
@@ -370,7 +370,7 @@ function Footer() {
     return (
         <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 pt-24 pb-12 overflow-hidden relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 mb-20">

@@ -411,7 +411,7 @@ export default function Dashboard({
                 {/* Top Row: Readiness & Focus */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                     {/* Readiness Gauge */}
-                    <div className="lg:col-span-4 bg-white rounded-lg p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center h-full">
+                    <div className="lg:col-span-4 bg-white rounded-lg p-6 sm:p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center h-full">
                         <div className="w-full flex items-center justify-between mb-6">
                             <h3 className="text-lg font-black text-slate-900">Work Readiness</h3>
                             <div className="flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded-lg">
@@ -528,7 +528,7 @@ export default function Dashboard({
                 {/* Middle Row: Progress & Badges */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     {/* Growth Chart */}
-                    <div className="lg:col-span-8 bg-white rounded-lg p-8 shadow-sm border border-slate-100">
+                    <div className="lg:col-span-8 bg-white rounded-lg p-6 sm:p-8 shadow-sm border border-slate-100">
                         <div className="flex items-center justify-between mb-8">
                             <h3 className="text-lg font-bold text-slate-900">Perkembangan Skor</h3>
                             <div className="flex items-center gap-2">
@@ -540,7 +540,7 @@ export default function Dashboard({
                     </div>
 
                     {/* Mastered Skills Row Carousel */}
-                    <div className="lg:col-span-4 bg-white rounded-lg p-8 shadow-sm border border-slate-100 flex flex-col h-full justify-between overflow-hidden">
+                    <div className="lg:col-span-4 bg-white rounded-lg p-6 sm:p-8 shadow-sm border border-slate-100 flex flex-col h-full justify-between overflow-hidden">
                         <div>
                             <h3 className="text-xl font-black text-slate-900 mb-8 tracking-tight">Skill Dikuasai</h3>
                             

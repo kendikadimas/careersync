@@ -88,8 +88,8 @@ export default function Welcome({ auth }: any) {
             <section className="relative pt-40 pb-20 md:pt-48 md:pb-32 px-4 overflow-visible">
                 {/* Background Decor */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 bg-[radial-gradient(circle_at_top,var(--color-teal-100)_0%,transparent_50%)] opacity-40"></div>
-                <div className="absolute top-40 right-10 w-64 h-64 bg-teal-300/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
-                <div className="absolute bottom-20 left-10 w-80 h-80 bg-navy-400/10 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute top-40 right-10 w-32 h-32 sm:w-64 sm:h-64 bg-teal-300/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
+                <div className="absolute bottom-20 left-10 w-40 h-40 sm:w-80 sm:h-80 bg-navy-400/10 rounded-full blur-3xl -z-10"></div>
 
                 <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 border border-teal-100 rounded-full text-teal-700 text-xs font-bold tracking-widest uppercase mb-8 animate-in fade-in slide-in-from-bottom duration-500">
@@ -229,8 +229,8 @@ export default function Welcome({ auth }: any) {
             <section className="py-20 px-4">
                 <div className="max-w-5xl mx-auto bg-navy-900 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-3xl">
                      {/* Decor */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/20 blur-3xl z-0"></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-navy-500/20 blur-3xl z-0"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 bg-teal-500/20 blur-3xl z-0"></div>
+                    <div className="absolute bottom-0 left-0 w-32 h-32 sm:w-64 sm:h-64 bg-navy-500/20 blur-3xl z-0"></div>
 
                     <div className="relative z-10">
                         <h2 className="text-3xl md:text-5xl font-black text-white mb-8">Siap Bersaing di Industri IT 2026?</h2>
