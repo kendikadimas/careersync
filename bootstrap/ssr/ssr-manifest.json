@@ -4,6 +4,7 @@
   "resources/css/app.css": [],
   "resources/js/Components/Checkbox.tsx": [],
   "resources/js/Components/DangerButton.tsx": [],
+  "resources/js/Components/Footer.tsx": [],
   "resources/js/Components/InputError.tsx": [],
   "resources/js/Components/InputLabel.tsx": [],
   "resources/js/Components/Modal.tsx": [],

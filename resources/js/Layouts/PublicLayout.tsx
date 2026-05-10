@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
+import Footer from '@/Components/Footer';
 
 interface Props {
     children: React.ReactNode;
@@ -75,53 +76,7 @@ export default function PublicLayout({ children, title }: Props) {
             {/* Page content */}
             <main>{children}</main>
 
-            {/* Footer */}
-            <footer className="bg-primary text-white/70 py-12 mt-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10 text-left">
-                        <div className="col-span-2 md:col-span-1">
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center">
-                                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                        <path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white" />
-                                    </svg>
-                                </div>
-                                <span className="font-semibold text-white text-sm">Kembangin</span>
-                            </div>
-                            <p className="text-xs leading-relaxed text-white/70">Platform AI untuk bridging skill gap antara kurikulum kampus dan kebutuhan industri IT Indonesia.</p>
-                        </div>
-                        <div>
-                            <p className="text-xs font-semibold text-white mb-3 uppercase tracking-wider">Produk</p>
-                            <div className="flex flex-col gap-2">
-                                <Link href="/features" className="text-xs hover:text-white transition-colors">Fitur</Link>
-                                <Link href="/how-it-works" className="text-xs hover:text-white transition-colors">Cara Kerja</Link>
-                                <Link href="/demo" className="text-xs hover:text-white transition-colors">Demo Langsung</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <p className="text-xs font-semibold text-white mb-3 uppercase tracking-wider">Sumber</p>
-                            <div className="flex flex-col gap-2">
-                                <Link href="/blog" className="text-xs hover:text-white transition-colors">Blog</Link>
-                                <Link href="/faq" className="text-xs hover:text-white transition-colors">FAQ</Link>
-                                <Link href="/about" className="text-xs hover:text-white transition-colors">Tentang Kami</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <p className="text-xs font-semibold text-white mb-3 uppercase tracking-wider">Akun</p>
-                            <div className="flex flex-col gap-2">
-                                <Link href="/login" className="text-xs hover:text-white transition-colors">Masuk</Link>
-                                <Link href="/register" className="text-xs hover:text-white transition-colors">Daftar Gratis</Link>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-                        <p className="text-xs">© 2026 Kembangin. Dibuat untuk SDG 4 & SDG 8.</p>
-                        <div className="flex gap-4">
-                            <Link href="https://github.com/kendikadimas/careersync" className="text-xs hover:text-white transition-colors">GitHub</Link>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }

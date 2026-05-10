@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Head, Link, createInertiaApp, router, useForm, usePage } from "@inertiajs/react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { AlertCircle, ArrowLeft, ArrowRight, Award, BarChart2, Bell, Briefcase, Building2, Calculator, Camera, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleDashed, Code, Coffee, Cpu, Database, DollarSign, ExternalLink, Eye, FileSearch, FileText, Filter, Flame, FolderGit2, Globe, GraduationCap, Info, LayoutDashboard, LayoutTemplate, Lightbulb, Link as Link$1, Loader2, Lock, LogIn, LogOut, Mail, Map, MapPin, Megaphone, Menu, Monitor, Palette, PlayCircle, Plus, RefreshCw, Rocket, Save, Search, Send, Settings, Share2, Shield, ShieldCheck, Smartphone, Sparkles, Target, Trash2, TrendingUp, Trophy, Upload, User, UserPlus, Users, Utensils, X, Zap } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, Award, BarChart2, Bell, Briefcase, Building2, Calculator, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleDashed, Code, Coffee, Cpu, Database, DollarSign, ExternalLink, Eye, FileSearch, FileText, Filter, Flame, FolderGit2, Globe, GraduationCap, Info, LayoutDashboard, LayoutTemplate, Lightbulb, Link as Link$1, Loader2, Lock, LogIn, LogOut, Mail, Map, MapPin, Megaphone, Menu, Monitor, Palette, PlayCircle, Plus, RefreshCw, Rocket, Save, Search, Settings, Share2, Shield, ShieldCheck, Smartphone, Sparkles, Target, Trash2, TrendingUp, Trophy, Upload, User, UserPlus, Users, Utensils, X, Zap } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
@@ -177,14 +177,13 @@ function Navbar() {
 	});
 }
 //#endregion
-//#region resources/js/Pages/About.tsx
-var About_exports = /* @__PURE__ */ __exportAll({ default: () => About });
-function Footer$1() {
+//#region resources/js/Components/Footer.tsx
+function Footer() {
 	return /* @__PURE__ */ jsxs("footer", {
-		className: "bg-[#0A0A0B] text-slate-400 border-t border-slate-900 pt-24 pb-12 overflow-hidden relative",
+		className: "bg-slate-950 text-slate-400 border-t border-slate-900 pt-24 pb-12 overflow-hidden relative",
 		children: [
 			/* @__PURE__ */ jsx("div", { className: "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" }),
-			/* @__PURE__ */ jsx("div", { className: "absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none" }),
+			/* @__PURE__ */ jsx("div", { className: "absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none" }),
 			/* @__PURE__ */ jsxs("div", {
 				className: "max-w-7xl mx-auto px-6 lg:px-8",
 				children: [/* @__PURE__ */ jsxs("div", {
@@ -192,54 +191,37 @@ function Footer$1() {
 					children: [
 						/* @__PURE__ */ jsxs("div", {
 							className: "lg:col-span-1",
-							children: [
-								/* @__PURE__ */ jsxs(Link, {
-									href: "/",
-									className: "flex items-center gap-3 mb-8",
-									children: [/* @__PURE__ */ jsx("div", {
-										className: "w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20",
-										children: /* @__PURE__ */ jsx("img", {
-											src: "/logo1.svg",
-											alt: "Logo",
-											className: "w-6 h-6 object-contain invert brightness-0"
-										})
-									}), /* @__PURE__ */ jsx("span", {
-										className: "text-2xl font-bold text-white tracking-tight font-[family-name:var(--font-heading)]",
-										children: "Kembangin"
-									})]
-								}),
-								/* @__PURE__ */ jsx("p", {
-									className: "text-base leading-relaxed mb-8 max-w-sm text-slate-400 font-medium",
-									children: "Solusi cerdas berbasis AI untuk mengakselerasi karier digital Anda dengan menjembatani kesenjangan antara pendidikan dan industri."
-								}),
-								/* @__PURE__ */ jsx("div", {
-									className: "flex items-center gap-4",
-									children: /* @__PURE__ */ jsx("p", {
-										className: "text-sm font-bold text-slate-500 tracking-widest",
-										children: "Follow Our Journey"
+							children: [/* @__PURE__ */ jsxs(Link, {
+								href: "/",
+								className: "flex items-center gap-3 mb-8",
+								children: [/* @__PURE__ */ jsx("div", {
+									className: "w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20",
+									children: /* @__PURE__ */ jsx("img", {
+										src: "/logo1.svg",
+										alt: "Logo",
+										className: "w-6 h-6 object-contain invert brightness-0"
 									})
-								})
-							]
+								}), /* @__PURE__ */ jsx("span", {
+									className: "text-2xl font-bold text-white tracking-tight font-[family-name:var(--font-heading)]",
+									children: "Kembangin"
+								})]
+							}), /* @__PURE__ */ jsx("p", {
+								className: "text-base leading-relaxed max-w-sm text-slate-400 font-medium",
+								children: "Solusi cerdas berbasis AI untuk mengakselerasi karier digital Anda dengan menjembatani kesenjangan antara pendidikan dan industri."
+							})]
 						}),
 						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
 							className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
 							children: "Produk"
 						}), /* @__PURE__ */ jsx("ul", {
 							className: "space-y-4",
-							children: [
-								{
-									name: "Diagnosis AI",
-									href: "/#features"
-								},
-								{
-									name: "Roadmap Adaptif",
-									href: "/how-it-works"
-								},
-								{
-									name: "Market Insights",
-									href: "/market"
-								}
-							].map((link, i) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, {
+							children: [{
+								name: "Fitur Utama",
+								href: "/#features"
+							}, {
+								name: "Cara Kerja",
+								href: "/how-it-works"
+							}].map((link, i) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, {
 								href: link.href,
 								className: "text-base hover:text-white transition-colors duration-200 flex items-center group",
 								children: [/* @__PURE__ */ jsx("div", { className: "w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" }), link.name]
@@ -252,12 +234,12 @@ function Footer$1() {
 							className: "space-y-4",
 							children: [
 								{
-									name: "Blog Karier",
-									href: "/blog"
+									name: "Tentang Kami",
+									href: "/about"
 								},
 								{
-									name: "Dokumentasi",
-									href: "/docs"
+									name: "Blog Karier",
+									href: "/blog"
 								},
 								{
 									name: "FAQ",
@@ -269,37 +251,28 @@ function Footer$1() {
 								children: [/* @__PURE__ */ jsx("div", { className: "w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" }), link.name]
 							}) }, i))
 						})] }),
-						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
-							className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-							children: "SDG Compliance"
-						}), /* @__PURE__ */ jsxs("div", {
-							className: "space-y-4",
-							children: [/* @__PURE__ */ jsxs("div", {
-								className: "flex items-center gap-3 bg-slate-900/50 p-3 rounded-xl border border-slate-800",
-								children: [/* @__PURE__ */ jsx("div", {
-									className: "w-10 h-10 bg-emerald-500 rounded flex items-center justify-center font-black text-white text-lg shrink-0",
-									children: "4"
-								}), /* @__PURE__ */ jsxs("div", {
-									className: "text-xs leading-tight",
-									children: [/* @__PURE__ */ jsx("div", {
-										className: "text-white font-bold mb-1 tracking-wide",
-										children: "Quality Education"
-									}), /* @__PURE__ */ jsx("p", { children: "Menjamin pendidikan inklusif & merata." })]
+						/* @__PURE__ */ jsxs("div", { children: [
+							/* @__PURE__ */ jsx("h4", {
+								className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
+								children: "Tetap Terhubung"
+							}),
+							/* @__PURE__ */ jsx("p", {
+								className: "text-base mb-6 text-slate-500 font-medium",
+								children: "Dapatkan update terbaru mengenai tren industri."
+							}),
+							/* @__PURE__ */ jsxs("div", {
+								className: "relative",
+								children: [/* @__PURE__ */ jsx("input", {
+									type: "email",
+									placeholder: "Email Anda",
+									className: "w-full bg-slate-900 border border-slate-800 rounded-xl py-3 px-4 text-sm focus:border-primary/50 text-white transition-all"
+								}), /* @__PURE__ */ jsx("button", {
+									className: "absolute right-1 top-1 bg-primary text-white p-2 rounded-lg shadow-lg shadow-primary/20",
+									"aria-label": "Subscribe",
+									children: /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4" })
 								})]
-							}), /* @__PURE__ */ jsxs("div", {
-								className: "flex items-center gap-3 bg-slate-900/50 p-3 rounded-xl border border-slate-800",
-								children: [/* @__PURE__ */ jsx("div", {
-									className: "w-10 h-10 bg-amber-600 rounded flex items-center justify-center font-black text-white text-lg shrink-0",
-									children: "8"
-								}), /* @__PURE__ */ jsxs("div", {
-									className: "text-xs leading-tight",
-									children: [/* @__PURE__ */ jsx("div", {
-										className: "text-white font-bold mb-1 tracking-wide",
-										children: "Decent Work"
-									}), /* @__PURE__ */ jsx("p", { children: "Pertumbuhan ekonomi & pekerjaan layak." })]
-								})]
-							})]
-						})] })
+							})
+						] })
 					]
 				}), /* @__PURE__ */ jsxs("div", {
 					className: "pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6",
@@ -312,13 +285,16 @@ function Footer$1() {
 						]
 					}), /* @__PURE__ */ jsxs("div", {
 						className: "flex items-center gap-2 px-4 py-1.5 bg-slate-900 rounded-full border border-slate-800 text-xs font-bold text-slate-500",
-						children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), "SDG 4 & SDG 8 Compliant"]
+						children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), "SDG 4 & SDG 8 COMPLIANT"]
 					})]
 				})]
 			})
 		]
 	});
 }
+//#endregion
+//#region resources/js/Pages/About.tsx
+var About_exports = /* @__PURE__ */ __exportAll({ default: () => About });
 function About() {
 	const [activeValue, setActiveValue] = useState(0);
 	return /* @__PURE__ */ jsxs("div", {
@@ -667,7 +643,7 @@ function About() {
 					})
 				})
 			}),
-			/* @__PURE__ */ jsx(Footer$1, {})
+			/* @__PURE__ */ jsx(Footer, {})
 		]
 	});
 }
@@ -2755,116 +2731,7 @@ function PublicLayout({ children, title }) {
 				})
 			}),
 			/* @__PURE__ */ jsx("main", { children }),
-			/* @__PURE__ */ jsx("footer", {
-				className: "bg-primary text-white/70 py-12 mt-20",
-				children: /* @__PURE__ */ jsxs("div", {
-					className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-					children: [/* @__PURE__ */ jsxs("div", {
-						className: "grid grid-cols-2 md:grid-cols-4 gap-8 mb-10 text-left",
-						children: [
-							/* @__PURE__ */ jsxs("div", {
-								className: "col-span-2 md:col-span-1",
-								children: [/* @__PURE__ */ jsxs("div", {
-									className: "flex items-center gap-2 mb-3",
-									children: [/* @__PURE__ */ jsx("div", {
-										className: "w-7 h-7 bg-accent rounded-md flex items-center justify-center",
-										children: /* @__PURE__ */ jsx("svg", {
-											width: "14",
-											height: "14",
-											viewBox: "0 0 16 16",
-											fill: "none",
-											children: /* @__PURE__ */ jsx("path", {
-												d: "M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z",
-												fill: "white"
-											})
-										})
-									}), /* @__PURE__ */ jsx("span", {
-										className: "font-semibold text-white text-sm",
-										children: "Kembangin"
-									})]
-								}), /* @__PURE__ */ jsx("p", {
-									className: "text-xs leading-relaxed text-white/70",
-									children: "Platform AI untuk bridging skill gap antara kurikulum kampus dan kebutuhan industri IT Indonesia."
-								})]
-							}),
-							/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("p", {
-								className: "text-xs font-semibold text-white mb-3 uppercase tracking-wider",
-								children: "Produk"
-							}), /* @__PURE__ */ jsxs("div", {
-								className: "flex flex-col gap-2",
-								children: [
-									/* @__PURE__ */ jsx(Link, {
-										href: "/features",
-										className: "text-xs hover:text-white transition-colors",
-										children: "Fitur"
-									}),
-									/* @__PURE__ */ jsx(Link, {
-										href: "/how-it-works",
-										className: "text-xs hover:text-white transition-colors",
-										children: "Cara Kerja"
-									}),
-									/* @__PURE__ */ jsx(Link, {
-										href: "/demo",
-										className: "text-xs hover:text-white transition-colors",
-										children: "Demo Langsung"
-									})
-								]
-							})] }),
-							/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("p", {
-								className: "text-xs font-semibold text-white mb-3 uppercase tracking-wider",
-								children: "Sumber"
-							}), /* @__PURE__ */ jsxs("div", {
-								className: "flex flex-col gap-2",
-								children: [
-									/* @__PURE__ */ jsx(Link, {
-										href: "/blog",
-										className: "text-xs hover:text-white transition-colors",
-										children: "Blog"
-									}),
-									/* @__PURE__ */ jsx(Link, {
-										href: "/faq",
-										className: "text-xs hover:text-white transition-colors",
-										children: "FAQ"
-									}),
-									/* @__PURE__ */ jsx(Link, {
-										href: "/about",
-										className: "text-xs hover:text-white transition-colors",
-										children: "Tentang Kami"
-									})
-								]
-							})] }),
-							/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("p", {
-								className: "text-xs font-semibold text-white mb-3 uppercase tracking-wider",
-								children: "Akun"
-							}), /* @__PURE__ */ jsxs("div", {
-								className: "flex flex-col gap-2",
-								children: [/* @__PURE__ */ jsx(Link, {
-									href: "/login",
-									className: "text-xs hover:text-white transition-colors",
-									children: "Masuk"
-								}), /* @__PURE__ */ jsx(Link, {
-									href: "/register",
-									className: "text-xs hover:text-white transition-colors",
-									children: "Daftar Gratis"
-								})]
-							})] })
-						]
-					}), /* @__PURE__ */ jsxs("div", {
-						className: "border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3",
-						children: [/* @__PURE__ */ jsx("p", {
-							className: "text-xs",
-							children: "© 2026 Kembangin. Dibuat untuk SDG 4 & SDG 8."
-						}), /* @__PURE__ */ jsx("div", {
-							className: "flex gap-4",
-							children: /* @__PURE__ */ jsx(Link, {
-								href: "https://github.com/kendikadimas/careersync",
-								className: "text-xs hover:text-white transition-colors",
-								children: "GitHub"
-							})
-						})]
-					})]
-				})
-			})
+			/* @__PURE__ */ jsx(Footer, {})
 		]
 	});
 }
@@ -5607,186 +5474,6 @@ function Help() {
 //#endregion
 //#region resources/js/Pages/HowItWorks.tsx
 var HowItWorks_exports = /* @__PURE__ */ __exportAll({ default: () => HowItWorks$1 });
-function PremiumFooter() {
-	return /* @__PURE__ */ jsxs("footer", {
-		className: "bg-slate-950 text-slate-400 border-t border-slate-900 pt-24 pb-12 overflow-hidden relative",
-		children: [
-			/* @__PURE__ */ jsx("div", { className: "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" }),
-			/* @__PURE__ */ jsx("div", { className: "absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none" }),
-			/* @__PURE__ */ jsxs("div", {
-				className: "max-w-7xl mx-auto px-6 lg:px-8",
-				children: [/* @__PURE__ */ jsxs("div", {
-					className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 mb-20",
-					children: [
-						/* @__PURE__ */ jsxs("div", {
-							className: "lg:col-span-1",
-							children: [
-								/* @__PURE__ */ jsxs(Link, {
-									href: "/",
-									className: "flex items-center gap-3 mb-8",
-									children: [/* @__PURE__ */ jsx("div", {
-										className: "w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20",
-										children: /* @__PURE__ */ jsx("img", {
-											src: "/logo1.svg",
-											alt: "Logo",
-											className: "w-6 h-6 object-contain invert brightness-0"
-										})
-									}), /* @__PURE__ */ jsx("span", {
-										className: "text-2xl font-bold text-white tracking-tight font-[family-name:var(--font-heading)]",
-										children: "Kembangin"
-									})]
-								}),
-								/* @__PURE__ */ jsx("p", {
-									className: "text-base leading-relaxed mb-8 max-w-sm text-slate-400 font-medium",
-									children: "Solusi cerdas berbasis AI untuk mengakselerasi karier digital Anda dengan menjembatani kesenjangan antara pendidikan dan industri."
-								}),
-								/* @__PURE__ */ jsx("div", {
-									className: "flex items-center gap-4",
-									children: [
-										{
-											icon: Send,
-											href: "#",
-											label: "Twitter"
-										},
-										{
-											icon: Briefcase,
-											href: "#",
-											label: "LinkedIn"
-										},
-										{
-											icon: Cpu,
-											href: "#",
-											label: "GitHub"
-										},
-										{
-											icon: Camera,
-											href: "#",
-											label: "Instagram"
-										}
-									].map((social, i) => /* @__PURE__ */ jsx("a", {
-										href: social.href,
-										className: "w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary/20 hover:border-primary/50 transition-all duration-300",
-										"aria-label": social.label,
-										children: /* @__PURE__ */ jsx(social.icon, { className: "w-5 h-5" })
-									}, i))
-								})
-							]
-						}),
-						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
-							className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-							children: "Produk"
-						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-4",
-							children: [
-								{
-									name: "Fitur Utama",
-									href: "#features"
-								},
-								{
-									name: "Cara Kerja",
-									href: "#how-it-works"
-								},
-								{
-									name: "Market Insights",
-									href: "/market"
-								},
-								{
-									name: "Skill Assessment",
-									href: "/assessment"
-								}
-							].map((link, i) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, {
-								href: link.href,
-								className: "text-base hover:text-white transition-colors duration-200 flex items-center group",
-								children: [/* @__PURE__ */ jsx("div", { className: "w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" }), link.name]
-							}) }, i))
-						})] }),
-						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
-							className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-							children: "Sumber"
-						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-4",
-							children: [
-								{
-									name: "Blog Karier",
-									href: "/blog"
-								},
-								{
-									name: "Dokumentasi",
-									href: "/docs"
-								},
-								{
-									name: "FAQ",
-									href: "/faq"
-								},
-								{
-									name: "Bantuan",
-									href: "/support"
-								}
-							].map((link, i) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, {
-								href: link.href,
-								className: "text-base hover:text-white transition-colors duration-200 flex items-center group",
-								children: [/* @__PURE__ */ jsx("div", { className: "w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" }), link.name]
-							}) }, i))
-						})] }),
-						/* @__PURE__ */ jsxs("div", { children: [
-							/* @__PURE__ */ jsx("h4", {
-								className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-								children: "Tetap Terhubung"
-							}),
-							/* @__PURE__ */ jsx("p", {
-								className: "text-base mb-6 text-slate-500 font-medium",
-								children: "Dapatkan update terbaru mengenai tren industri dan tips karier digital."
-							}),
-							/* @__PURE__ */ jsxs("div", {
-								className: "relative",
-								children: [/* @__PURE__ */ jsx("input", {
-									type: "email",
-									placeholder: "Email Anda",
-									className: "w-full bg-slate-900 border border-slate-800 rounded-xl py-3.5 px-4 text-base focus:outline-none focus:border-primary/50 text-white placeholder:text-slate-600 transition-all"
-								}), /* @__PURE__ */ jsx("button", {
-									className: "absolute right-1.5 top-1.5 bg-primary hover:bg-primary-dark text-white p-1.5 rounded-lg transition-colors shadow-lg shadow-primary/20",
-									children: /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4" })
-								})]
-							}),
-							/* @__PURE__ */ jsxs("div", {
-								className: "mt-6 flex items-center gap-3 text-sm text-slate-500 font-medium",
-								children: [/* @__PURE__ */ jsx(Mail, { className: "w-5 h-5" }), /* @__PURE__ */ jsx("span", { children: "halo@kembangin.id" })]
-							})
-						] })
-					]
-				}), /* @__PURE__ */ jsxs("div", {
-					className: "pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6",
-					children: [
-						/* @__PURE__ */ jsxs("div", {
-							className: "text-sm font-medium",
-							children: [
-								"© ",
-								(/* @__PURE__ */ new Date()).getFullYear(),
-								" Kembangin. Seluruh hak cipta dilindungi."
-							]
-						}),
-						/* @__PURE__ */ jsxs("div", {
-							className: "flex items-center gap-8 text-sm font-medium",
-							children: [/* @__PURE__ */ jsx(Link, {
-								href: "/privacy",
-								className: "hover:text-white transition-colors",
-								children: "Kebijakan Privasi"
-							}), /* @__PURE__ */ jsx(Link, {
-								href: "/terms",
-								className: "hover:text-white transition-colors",
-								children: "Syarat & Ketentuan"
-							})]
-						}),
-						/* @__PURE__ */ jsxs("div", {
-							className: "flex items-center gap-2 px-4 py-1.5 bg-slate-900 rounded-full border border-slate-800 text-xs font-bold text-slate-500",
-							children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), "SDG 4 & SDG 8 COMPLIANT"]
-						})
-					]
-				})]
-			})
-		]
-	});
-}
 function HowItWorks$1() {
 	const steps = [
 		{
@@ -6238,7 +5925,7 @@ function HowItWorks$1() {
 					})]
 				})]
 			}),
-			/* @__PURE__ */ jsx(PremiumFooter, {})
+			/* @__PURE__ */ jsx(Footer, {})
 		]
 	});
 }
@@ -6619,7 +6306,7 @@ var Card = ({ rotate, scale, children }) => {
 var Landing_exports = /* @__PURE__ */ __exportAll({ default: () => Landing });
 function Hero() {
 	return /* @__PURE__ */ jsxs("section", {
-		className: "relative overflow-hidden bg-[#f6f6f6] pt-32 pb-4 md:pt-40 md:pb-2",
+		className: "relative overflow-hidden bg-[#f6f6f6] pt-28 pb-4 md:pt-8 md:pb-2",
 		children: [/* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-40" }), /* @__PURE__ */ jsx("div", {
 			className: "flex flex-col overflow-hidden",
 			children: /* @__PURE__ */ jsx(ContainerScroll, {
@@ -7288,162 +6975,6 @@ function HowItWorks() {
 				})
 			]
 		})
-	});
-}
-function Footer() {
-	return /* @__PURE__ */ jsxs("footer", {
-		className: "bg-slate-950 text-slate-400 border-t border-slate-900 pt-24 pb-12 overflow-hidden relative",
-		children: [
-			/* @__PURE__ */ jsx("div", { className: "absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" }),
-			/* @__PURE__ */ jsx("div", { className: "absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none" }),
-			/* @__PURE__ */ jsxs("div", {
-				className: "max-w-7xl mx-auto px-6 lg:px-8",
-				children: [/* @__PURE__ */ jsxs("div", {
-					className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 mb-20",
-					children: [
-						/* @__PURE__ */ jsxs("div", {
-							className: "lg:col-span-1",
-							children: [
-								/* @__PURE__ */ jsxs(Link, {
-									href: "/",
-									className: "flex items-center gap-3 mb-8",
-									children: [/* @__PURE__ */ jsx("div", {
-										className: "w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20",
-										children: /* @__PURE__ */ jsx("img", {
-											src: "/logo1.svg",
-											alt: "Logo",
-											className: "w-6 h-6 object-contain invert brightness-0"
-										})
-									}), /* @__PURE__ */ jsx("span", {
-										className: "text-2xl font-bold text-white tracking-tight font-[family-name:var(--font-heading)]",
-										children: "Kembangin"
-									})]
-								}),
-								/* @__PURE__ */ jsx("p", {
-									className: "text-base leading-relaxed mb-8 max-w-sm text-slate-400 font-medium",
-									children: "Solusi cerdas berbasis AI untuk mengakselerasi karier digital Anda dengan menjembatani kesenjangan antara pendidikan dan industri."
-								}),
-								/* @__PURE__ */ jsx("div", {
-									className: "flex items-center gap-4",
-									children: [
-										{
-											icon: Send,
-											href: "#",
-											label: "Twitter"
-										},
-										{
-											icon: Briefcase,
-											href: "#",
-											label: "LinkedIn"
-										},
-										{
-											icon: Cpu,
-											href: "#",
-											label: "GitHub"
-										},
-										{
-											icon: Camera,
-											href: "#",
-											label: "Instagram"
-										}
-									].map((social, i) => /* @__PURE__ */ jsx("a", {
-										href: social.href,
-										className: "w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary/20 hover:border-primary/50 transition-all duration-300",
-										children: /* @__PURE__ */ jsx(social.icon, { className: "w-5 h-5" })
-									}, i))
-								})
-							]
-						}),
-						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
-							className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-							children: "Produk"
-						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-4",
-							children: [
-								{
-									name: "Fitur Utama",
-									href: "#features"
-								},
-								{
-									name: "Cara Kerja",
-									href: "#how-it-works"
-								},
-								{
-									name: "Market Insights",
-									href: "/market"
-								},
-								{
-									name: "Skill Assessment",
-									href: "/assessment"
-								}
-							].map((link, i) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, {
-								href: link.href,
-								className: "text-base hover:text-white transition-colors duration-200 flex items-center group",
-								children: [/* @__PURE__ */ jsx("div", { className: "w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" }), link.name]
-							}) }, i))
-						})] }),
-						/* @__PURE__ */ jsxs("div", { children: [/* @__PURE__ */ jsx("h4", {
-							className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-							children: "Sumber"
-						}), /* @__PURE__ */ jsx("ul", {
-							className: "space-y-4",
-							children: [
-								{
-									name: "Blog Karier",
-									href: "/blog"
-								},
-								{
-									name: "Dokumentasi",
-									href: "/docs"
-								},
-								{
-									name: "FAQ",
-									href: "/faq"
-								}
-							].map((link, i) => /* @__PURE__ */ jsx("li", { children: /* @__PURE__ */ jsxs(Link, {
-								href: link.href,
-								className: "text-base hover:text-white transition-colors duration-200 flex items-center group",
-								children: [/* @__PURE__ */ jsx("div", { className: "w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" }), link.name]
-							}) }, i))
-						})] }),
-						/* @__PURE__ */ jsxs("div", { children: [
-							/* @__PURE__ */ jsx("h4", {
-								className: "text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]",
-								children: "Tetap Terhubung"
-							}),
-							/* @__PURE__ */ jsx("p", {
-								className: "text-base mb-6 text-slate-500 font-medium",
-								children: "Dapatkan update terbaru mengenai tren industri."
-							}),
-							/* @__PURE__ */ jsxs("div", {
-								className: "relative",
-								children: [/* @__PURE__ */ jsx("input", {
-									type: "email",
-									placeholder: "Email Anda",
-									className: "w-full bg-slate-900 border border-slate-800 rounded-xl py-3 px-4 text-sm focus:border-primary/50 text-white transition-all"
-								}), /* @__PURE__ */ jsx("button", {
-									className: "absolute right-1 top-1 bg-primary text-white p-2 rounded-lg shadow-lg shadow-primary/20",
-									children: /* @__PURE__ */ jsx(ArrowRight, { className: "w-4 h-4" })
-								})]
-							})
-						] })
-					]
-				}), /* @__PURE__ */ jsxs("div", {
-					className: "pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6",
-					children: [/* @__PURE__ */ jsxs("div", {
-						className: "text-sm font-medium",
-						children: [
-							"© ",
-							(/* @__PURE__ */ new Date()).getFullYear(),
-							" Kembangin. Seluruh hak cipta dilindungi."
-						]
-					}), /* @__PURE__ */ jsxs("div", {
-						className: "flex items-center gap-2 px-4 py-1.5 bg-slate-900 rounded-full border border-slate-800 text-xs font-bold text-slate-500",
-						children: [/* @__PURE__ */ jsx("span", { className: "w-2 h-2 rounded-full bg-emerald-500 animate-pulse" }), "SDG 4 & SDG 8 COMPLIANT"]
-					})]
-				})]
-			})
-		]
 	});
 }
 function Landing({ stats }) {

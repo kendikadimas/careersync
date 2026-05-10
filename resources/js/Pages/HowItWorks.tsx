@@ -6,131 +6,7 @@ import {
     ArrowRight, Mail
 } from 'lucide-react';
 import Navbar from '@/Components/Navbar'; // Adjust path if needed
-import Footer from '@/Pages/Landing'; // I will extract the Footer or just redefine it here for simplicity, but better to import if exported.
-
-// Note: In Landing.tsx, Footer is a local function. I'll define a reusable Footer or just copy it here.
-// For now, I'll copy the premium footer logic here to ensure it looks consistent.
-
-function PremiumFooter() {
-    return (
-        <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 pt-24 pb-12 overflow-hidden relative">
-            {/* Subtle Glow Background */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
-
-            <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 mb-20">
-                    {/* Brand Section */}
-                    <div className="lg:col-span-1">
-                        <Link href="/" className="flex items-center gap-3 mb-8">
-                            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-                                <img src="/logo1.svg" alt="Logo" className="w-6 h-6 object-contain invert brightness-0" />
-                            </div>
-                            <span className="text-2xl font-bold text-white tracking-tight font-[family-name:var(--font-heading)]">Kembangin</span>
-                        </Link>
-                        <p className="text-base leading-relaxed mb-8 max-w-sm text-slate-400 font-medium">
-                            Solusi cerdas berbasis AI untuk mengakselerasi karier digital Anda dengan menjembatani kesenjangan antara pendidikan dan industri.
-                        </p>
-                        <div className="flex items-center gap-4">
-                            {[
-                                { icon: Send, href: "#", label: "Twitter" },
-                                { icon: Briefcase, href: "#", label: "LinkedIn" },
-                                { icon: Cpu, href: "#", label: "GitHub" },
-                                { icon: Camera, href: "#", label: "Instagram" }
-                            ].map((social, i) => (
-                                <a 
-                                    key={i} 
-                                    href={social.href} 
-                                    className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary/20 hover:border-primary/50 transition-all duration-300"
-                                    aria-label={social.label}
-                                >
-                                    <social.icon className="w-5 h-5" />
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Links - Column 1 */}
-                    <div>
-                        <h4 className="text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]">Produk</h4>
-                        <ul className="space-y-4">
-                            {[
-                                { name: "Fitur Utama", href: "#features" },
-                                { name: "Cara Kerja", href: "#how-it-works" },
-                                { name: "Market Insights", href: "/market" },
-                                { name: "Skill Assessment", href: "/assessment" }
-                            ].map((link, i) => (
-                                <li key={i}>
-                                    <Link href={link.href} className="text-base hover:text-white transition-colors duration-200 flex items-center group">
-                                        <div className="w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
-                                        {link.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Links - Column 2 */}
-                    <div>
-                        <h4 className="text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]">Sumber</h4>
-                        <ul className="space-y-4">
-                            {[
-                                { name: "Blog Karier", href: "/blog" },
-                                { name: "Dokumentasi", href: "/docs" },
-                                { name: "FAQ", href: "/faq" },
-                                { name: "Bantuan", href: "/support" }
-                            ].map((link, i) => (
-                                <li key={i}>
-                                    <Link href={link.href} className="text-base hover:text-white transition-colors duration-200 flex items-center group">
-                                        <div className="w-0 group-hover:w-2 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
-                                        {link.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Newsletter / Contact */}
-                    <div>
-                        <h4 className="text-white font-bold text-xl mb-8 font-[family-name:var(--font-heading)]">Tetap Terhubung</h4>
-                        <p className="text-base mb-6 text-slate-500 font-medium">Dapatkan update terbaru mengenai tren industri dan tips karier digital.</p>
-                        <div className="relative">
-                            <input 
-                                type="email" 
-                                placeholder="Email Anda" 
-                                className="w-full bg-slate-900 border border-slate-800 rounded-xl py-3.5 px-4 text-base focus:outline-none focus:border-primary/50 text-white placeholder:text-slate-600 transition-all"
-                            />
-                            <button className="absolute right-1.5 top-1.5 bg-primary hover:bg-primary-dark text-white p-1.5 rounded-lg transition-colors shadow-lg shadow-primary/20">
-                                <ArrowRight className="w-4 h-4" />
-                            </button>
-                        </div>
-                        <div className="mt-6 flex items-center gap-3 text-sm text-slate-500 font-medium">
-                            <Mail className="w-5 h-5" />
-                            <span>halo@kembangin.id</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bottom Bar */}
-                <div className="pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div className="text-sm font-medium">
-                        &copy; {new Date().getFullYear()} Kembangin. Seluruh hak cipta dilindungi.
-                    </div>
-                    
-                    <div className="flex items-center gap-8 text-sm font-medium">
-                        <Link href="/privacy" className="hover:text-white transition-colors">Kebijakan Privasi</Link>
-                        <Link href="/terms" className="hover:text-white transition-colors">Syarat & Ketentuan</Link>
-                    </div>
-
-                    <div className="flex items-center gap-2 px-4 py-1.5 bg-slate-900 rounded-full border border-slate-800 text-xs font-bold text-slate-500">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        SDG 4 & SDG 8 COMPLIANT
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
-}
+import Footer from '@/Components/Footer';
 
 export default function HowItWorks() {
 
@@ -392,7 +268,7 @@ export default function HowItWorks() {
 
 
 
-            <PremiumFooter />
+            <Footer />
         </div>
     );
 }
