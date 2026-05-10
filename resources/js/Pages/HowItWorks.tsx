@@ -328,7 +328,7 @@ export default function HowItWorks() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1 }}
-                                className="text-5xl lg:text-7xl font-black text-[#1A1A2E] font-[family-name:var(--font-heading)] mb-8 tracking-tighter"
+                                className="text-4xl sm:text-5xl lg:text-7xl font-black text-[#1A1A2E] font-[family-name:var(--font-heading)] mb-8 tracking-tighter"
                             >
                                 Jalan Pintas <br /> Menuju<br /> <span className="text-primary">Karir Impian.</span>
                             </motion.h1>
@@ -373,11 +373,11 @@ export default function HowItWorks() {
                                 </div>
 
                                 {/* Text Side (Always Right) */}
-                                <div className="w-full lg:w-1/2 text-center lg:text-left order-1 lg:order-2">
+                                <div className="w-full lg:w-1/2 text-left order-1 lg:order-2">
                                     <div className="text-5xl font-black text-slate-900 mb-6 font-[family-name:var(--font-heading)] opacity-20">
                                         {step.num.replace('Step ', '')}
                                     </div>
-                                    <h3 className="text-3xl lg:text-5xl font-black text-slate-950 mb-6 font-[family-name:var(--font-heading)] leading-tight tracking-tight">
+                                    <h3 className="text-2xl sm:text-3xl lg:text-5xl font-black text-slate-950 mb-6 font-[family-name:var(--font-heading)] leading-tight tracking-tight">
                                         {step.title}
                                     </h3>
                                     <p className="text-lg lg:text-xl text-slate-500 leading-relaxed font-medium max-w-md">

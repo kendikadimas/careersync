@@ -97,7 +97,7 @@ export default function Welcome({ auth }: any) {
                         AI-Powered Career Intelligence 2026
                     </div>
                     
-                    <h1 className="text-5xl md:text-7xl font-extrabold text-navy-900 tracking-tight leading-[1.1] mb-8 animate-in fade-in slide-in-from-bottom duration-700">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-navy-900 tracking-tight leading-[1.1] mb-6 md:mb-8 animate-in fade-in slide-in-from-bottom duration-700 text-left md:text-center">
                         Karir Impianmu, <br />
                         <span className="bg-linear-to-r from-navy-800 to-teal-500 bg-clip-text text-transparent italic">Dibangun dari Data Nyata</span>
                     </h1>
@@ -171,7 +171,7 @@ export default function Welcome({ auth }: any) {
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="text-center mb-20">
                         <h2 className="text-sm font-black text-teal-600 tracking-[0.2em] uppercase mb-4">Features</h2>
-                        <h3 className="text-4xl md:text-5xl font-extrabold text-navy-900">Lebih Dari Sekadar AI CV Generator</h3>
+                        <h3 className="text-3xl md:text-5xl font-extrabold text-navy-900 text-left md:text-center">Lebih Dari Sekadar AI CV Generator</h3>
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -198,7 +198,7 @@ export default function Welcome({ auth }: any) {
                 <div className="max-w-7xl mx-auto px-4">
                      <div className="text-center mb-20">
                         <h2 className="text-sm font-black text-teal-600 tracking-[0.2em] uppercase mb-4">Process</h2>
-                        <h3 className="text-4xl md:text-5xl font-extrabold text-navy-900">Dari Mahasiswa Jadi Pro</h3>
+                        <h3 className="text-3xl md:text-5xl font-extrabold text-navy-900 text-left md:text-center">Dari Mahasiswa Jadi Pro</h3>
                     </div>
 
                     <div className="relative flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-0">
@@ -233,7 +233,7 @@ export default function Welcome({ auth }: any) {
                     <div className="absolute bottom-0 left-0 w-32 h-32 sm:w-64 sm:h-64 bg-navy-500/20 blur-3xl z-0"></div>
 
                     <div className="relative z-10">
-                        <h2 className="text-3xl md:text-5xl font-black text-white mb-8">Siap Bersaing di Industri IT 2026?</h2>
+                        <h2 className="text-3xl md:text-5xl font-black text-white mb-6 md:mb-8 text-left md:text-center">Siap Bersaing di Industri IT 2026?</h2>
                         <p className="text-white text-lg md:text-xl mb-12 max-w-2xl mx-auto">
                             Tutup gap sekarang, apply dengan percaya diri besok. Ribuan data lowongan sedang menunggumu.
                         </p>

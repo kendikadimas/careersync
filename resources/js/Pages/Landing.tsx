@@ -25,11 +25,11 @@ function Hero() {
             <div className="flex flex-col overflow-hidden">
                 <ContainerScroll
                     titleComponent={
-                        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-24">
+                        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-left md:text-center mb-24">
                             <div className="inline-flex items-center gap-2.5 bg-accent/10 border border-accent/20 rounded-full px-4 py-1.5 text-[13px] font-semibold text-accent mb-8 hover:bg-accent/15 transition-colors cursor-default">
                                 AI-Powered Skill Gap Analysis v2.0
                             </div>
-                            <h1 className="text-[60px] font-extrabold text-slate-900 leading-[66px] tracking-tight font-[family-name:var(--font-heading)]">
+                            <h1 className="text-4xl sm:text-[60px] font-extrabold text-slate-900 leading-tight sm:leading-[66px] tracking-tight font-[family-name:var(--font-heading)]">
                                 Kembangkan Potensimu.<br />
                                 <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                                     Sinkronkan dengan Industri.
@@ -69,9 +69,9 @@ function Features() {
     return (
         <section id="features" className="bg-[#f6f6f6] pt-10 pb-20 md:pt-16 md:pb-28">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center max-w-2xl mx-auto mb-16">
+                <div className="text-left md:text-center max-w-2xl mx-auto mb-16">
                     <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-xs font-semibold mb-5">Fitur Utama</div>
-                    <h2 className="text-3xl sm:text-[48px] font-extrabold text-[#1A1A2E] font-[family-name:var(--font-heading)] leading-tight">
+                    <h2 className="text-3xl md:text-[48px] font-extrabold text-[#1A1A2E] font-[family-name:var(--font-heading)] leading-tight">
                         Empat Pilar Transformasi Karier Digital Anda.
                     </h2>
                 </div>
@@ -252,9 +252,9 @@ function Benefits() {
     return (
         <section id="benefits" className="bg-[#f6f6f6] py-20 md:py-28">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center max-w-3xl mx-auto mb-16">
+                <div className="text-left md:text-center max-w-3xl mx-auto mb-16">
                     <div className="inline-flex items-center gap-2 border border-primary/30 text-primary rounded-full px-5 py-1.5 text-sm font-semibold mb-6 bg-white/50 backdrop-blur-sm">Kenapa Kembangin?</div>
-                    <h2 className="text-4xl md:text-[46px] font-extrabold text-[#1A1A2E] leading-tight mb-6">Cara Lebih Cerdas Membangun Karier Digital</h2>
+                    <h2 className="text-3xl md:text-[46px] font-extrabold text-[#1A1A2E] leading-tight mb-6">Cara Lebih Cerdas Membangun Karier Digital</h2>
                 </div>
                 <div className="bg-white rounded-[32px] p-2 sm:p-4 shadow-sm border border-slate-200">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -334,9 +334,9 @@ function HowItWorks() {
     return (
         <section id="how-it-works" className="bg-[#f6f6 f6] py-24 md:py-32 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center max-w-3xl mx-auto mb-20">
+                <div className="text-left md:text-center max-w-3xl mx-auto mb-20">
                     <div className="inline-flex items-center gap-2 bg-primary/5 text-primary rounded-full px-5 py-1.5 text-xs font-bold mb-6 border border-primary/10">How It Works</div>
-                    <h2 className="text-4xl md:text-[56px] font-bold text-slate-950 leading-tight mb-6 tracking-tight">Wujudkan Karier Impian<br />Dalam 3 Langkah Mudah</h2>
+                    <h2 className="text-3xl md:text-[56px] font-bold text-slate-950 leading-tight mb-6 tracking-tight">Wujudkan Karier Impian<br className="hidden md:block" />Dalam 3 Langkah Mudah</h2>
                     <p className="text-slate-500 text-lg sm:text-xl font-medium leading-relaxed max-w-2xl mx-auto">Sistem cerdas kami membimbing Anda dari tahap awal hingga siap kerja di industri.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
